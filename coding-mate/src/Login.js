@@ -34,7 +34,7 @@ export default function Login() {
     fetch("http://3.37.164.99/api/login", requestOptions)
       .then(response => response.text())
       .then(result => {
-        window.alert(result)
+        window.alert(result);
         })
       .catch(error => console.log('error', error));
   }

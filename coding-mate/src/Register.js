@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -6,10 +6,41 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 
 export default function Register() {
-  
+  // const history = useHistory();
+  const handleSubmit = event => {
+    event.preventDefault();
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      "studentId": studentId,
+      "password": password
+    });
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://3.37.164.99/api/sign-up", requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        window.alert(result);
+        // history.push('/login');
+        })
+      .catch(error => console.log('error', error));
+  }
+
+  const [studentId, setstudentId] = useState('');
+  const [password, setpassword] = useState('');
+
   return (
     <div>
       <Navbar></Navbar>
@@ -62,15 +93,17 @@ export default function Register() {
               학생 인증 
               </Typography>
               <Typography variant="subtitle1" sx={{ color: 'black' }}>
-                학사정보 시스템 아이디와 비번을 입력해주세요
+                학번과 사이트에 가입하기 위한 새로운 비번을 입력해주세요.
               </Typography>
               <TextField
                 margin="normal"
                 label="학번"
                 required
                 fullWidth
-                name="studentID"
-                autoComplete="studentID"
+                name="studentId"
+                id="studentId"
+                autoComplete="studentId"
+                onChange={(e) => setstudentId(e.target.value)}
               />
               <TextField
                 margin="normal"
@@ -79,7 +112,9 @@ export default function Register() {
                 required
                 fullWidth
                 name="password"
+                id="password"
                 autoComplete="current-password"
+                onChange={(e) => setpassword(e.target.value)}
               />
               
               <Button
@@ -88,6 +123,8 @@ export default function Register() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                onClick={(event) => handleSubmit(event)}
+                component={Link} to="/login"
               >
                 회원가입하기
               </Button>
@@ -98,5 +135,3 @@ export default function Register() {
     </div>
   );
 }
-
-{/*  */}
