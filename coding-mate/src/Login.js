@@ -9,11 +9,11 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-
+// import { useHistory } from 'react-router-dom';
 
 export default function Login() {
   const imageUrl = 'https://i.imgur.com/CtgSNru.png';
-
+  // const history = useHistory();
   const handleSubmit = event => {
     event.preventDefault();
     var myHeaders = new Headers();
@@ -32,10 +32,19 @@ export default function Login() {
     };
 
     fetch("http://3.37.164.99/api/login", requestOptions)
-      .then(response => response.text())
-      .then(result => {
-        window.alert(result);
-        })
+      // .then(response => response.text())
+      .then(response => {
+        console.log(response);
+        response.text();
+      })
+      .then((result) => {
+        if (result.success){
+          // history.push('/login');
+          window.location.href='/'
+        } else {
+          window.alert(result);
+        }
+      })
       .catch(error => console.log('error', error));
   }
 

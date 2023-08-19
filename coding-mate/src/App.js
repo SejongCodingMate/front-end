@@ -3,7 +3,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './Login';
 import Categories from './Categories';
 import Register from './Register';
-import PwSearch from './PwSearch';
+import PwChange from './PwChange';
+import Select from './Select';
 
 export default function App() {
 
@@ -11,9 +12,10 @@ export default function App() {
     <div >
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Select />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          <Route path="pwsearch" element={<PwSearch />} />
+          <Route path="pwchange" element={<PwChange />} />
         </Routes>
       </BrowserRouter>
     </div>

@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 
@@ -30,11 +30,17 @@ export default function Register() {
     };
 
     fetch("http://3.37.164.99/api/sign-up", requestOptions)
-      .then(response => response.text())
-      .then(result => {
-        window.alert(result);
-        // history.push('/login');
-        })
+      .then(response => {
+        console.log(response);
+        response.text();
+      })
+      .then((result) => {
+        if (result.success) {
+          window.location.href = "/pwchange";
+        } else {
+          window.alert(result);
+        }
+      })
       .catch(error => console.log('error', error));
   }
 
@@ -44,7 +50,7 @@ export default function Register() {
   return (
     <div>
       <Navbar></Navbar>
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         <Box sx={{  background: '#f5f5f5', padding: '16px', textAlign: 'center' }}>
           <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', color: 'red' }}>
             이용약관 동의
@@ -124,7 +130,7 @@ export default function Register() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
                 onClick={(event) => handleSubmit(event)}
-                component={Link} to="/login"
+                // component={Link} to="/pwchange"
               >
                 회원가입하기
               </Button>
