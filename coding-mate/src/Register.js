@@ -29,14 +29,16 @@ export default function Register() {
       redirect: 'follow'
     };
 
-    fetch("http://3.37.164.99/api/sign-up", requestOptions)
-      .then(response => {
-        console.log(response);
-        response.text();
-      })
+    fetch("http://3.37.164.99/api/member/sign-up", requestOptions)
+      .then(response => response.text())
+      .then(result => {
+          console.log(result);
+          return result
+        })
       .then((result) => {
-        if (result.success) {
-          window.location.href = "/pwchange";
+        if (result == '회원가입 성공했습니다.'){
+          window.alert(result);
+          window.location.href='/pwchange';
         } else {
           window.alert(result);
         }
