@@ -6,12 +6,10 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-// import { useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 
 export default function Register() {
-  // const history = useHistory();
   const handleSubmit = event => {
     event.preventDefault();
     var myHeaders = new Headers();

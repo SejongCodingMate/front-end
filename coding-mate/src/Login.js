@@ -13,15 +13,6 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 export default function Login() {
   const imageUrl = 'https://i.imgur.com/CtgSNru.png';
 
-  //1. header accessToken bearer에서 토큰만 받아올 수 있도록 코드 다시 구성
-  //2. 프론트 axios, fetch 둘 중 어떤 것으로 api 연결할지 결정
-  //3. 어떠한 문제가 터졌을 때 이를 어떻게 해결했는지-> trouble shooting 정리
-  //4. 로그인 jwt 인증(사용 이유) 기반 accessToken 이론까지 공부
-  //5. accessToken을 어디에 저장할 것인지
-  //6. GPT 
-  //7. 협업할 때 각자 다른 사람이 쓴 코드 이해할 수 있도록 공유 
-  //8. 코드 왜? 원리? -> 이런 코드를 왜 짜야 되는지 
-
   const handleSubmit = event => {
     event.preventDefault();
     var myHeaders = new Headers();
@@ -40,27 +31,55 @@ export default function Login() {
     };
 
     fetch("http://3.37.164.99/api/member/login", requestOptions)
-      .then(response => response.text())
-      .then(result => {
-        console.log(result);
-        return result
-      })
-      .then((result) => {
-        if (result == '로그인 성공'){
-          window.alert(result);
-          window.location.href='/';
+      .then(response => {
+        const authHeader = response.headers.get("Authorization");
+        if (authHeader) {
+          const accessToken = authHeader.replace("Bearer ", "");
+          return accessToken
         } else {
-          window.alert(result);
+        throw new Error("access token을 받지 못했습니다.");
         }
       })
-      .catch(error => console.log('error', error));
+      .then(accessToken => {
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("studentId", studentId);
+        localStorage.setItem("password", password);
+        
+        window.alert("로그인 성공")
+        window.location.href='/';
+      })
+      .catch(error => {
+        console.error("로그인 오류:", error);
+        window.alert("로그인 실패");
+      });
+
+      const apiUrl = 'http://3.37.164.99/api/post/test';
+      const requestOptionsTest = {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "studentId": studentId,
+          "password": password,
+        }),
+      };
+
+      fetch(apiUrl, requestOptionsTest)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        })
+        .catch(error => {
+          console.error('API 요청 오류:', error);
+        });
   }
 
   const [studentId, setstudentId] = useState('');
   const [password, setpassword] = useState('');
 
   return (
-    // <React.Fragment>
       <Container component="main" maxWidth="xs">
         <Box
           sx={{
@@ -122,6 +141,5 @@ export default function Login() {
           
         </Box>
       </Container>
-    // </React.Fragment>
   );
 }

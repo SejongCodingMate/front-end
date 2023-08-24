@@ -1,4 +1,5 @@
-import React from 'react';
+import React,{useState} from 'react';
+import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
@@ -17,7 +18,20 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Navbar from './Navbar';
 
 export default function PwChange() {
+  const navigate = useNavigate();
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isPasswordChanged, setPasswordChanged] = useState(false);
   
+  const handleChangePassword = () => {
+    if (newPassword !== confirmPassword) {
+      alert('비밀번호가 일치하지 않습니다.');
+      return;
+    }
+    navigate('/login');
+    setPasswordChanged(true);
+  };
+
   return (
     <div>
       <Navbar></Navbar>
@@ -62,6 +76,8 @@ export default function PwChange() {
                 name="newPassword"
                 id="newPassword"
                 autoComplete="newPassword"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 
               />
               <TextField
@@ -73,18 +89,24 @@ export default function PwChange() {
                 name="confirmPassword"
                 id="confirmPassword"
                 autoComplete="confirmPassword"
-                
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}             
               />
-              
-              <Button
+              {/* {isPasswordChanged ? (
+                <Typography color="success">비밀번호가 변경되었습니다.</Typography>
+              ) : ( */}
+                <Button
                 color="primary"
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-              >
-                변경하기
-              </Button>
+                onClick={handleChangePassword}
+                >
+                  변경하기
+                </Button>
+
+              {/* )} */}
             </Box>
           </Container>
 
