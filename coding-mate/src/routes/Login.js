@@ -14,13 +14,14 @@ export default function Login() {
   const imageUrl = 'https://i.imgur.com/CtgSNru.png';
 
   const handleSubmit = event => {
+    // const password = localStorage.setItem("password", password);
     event.preventDefault();
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      "studentId": studentId,
-      "password": password
+      "id": studentId,
+      "pw": password
     });
 
     var requestOptions = {
@@ -42,15 +43,13 @@ export default function Login() {
       })
       .then(accessToken => {
         localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("studentId", studentId);
         localStorage.setItem("password", password);
-        
-        window.alert("로그인 성공")
-        window.location.href='/';
+        window.alert("로그인에 성공하였습니다.")
+        window.location.href='/main';
       })
       .catch(error => {
         console.error("로그인 오류:", error);
-        window.alert("로그인 실패");
+        window.alert("회원이 없거나 비밀번호가 틀렸습니다.");
       });
 
       const apiUrl = 'http://3.37.164.99/api/post/test';
@@ -135,7 +134,7 @@ export default function Login() {
                 <Link href="register">회원 가입</Link>
               </Grid>
               <Grid item>
-                <Link href="pwsearch">비밀번호 찾기</Link>
+                <Link href="studentauth">비밀번호 변경하기</Link>
               </Grid>
             </Grid>
           
