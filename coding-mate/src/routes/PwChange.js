@@ -1,40 +1,59 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import Modal from "react-modal";
 import TextField from "@mui/material/TextField";
-import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import Divider from "@mui/material/Divider";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import Nav from "../components/Nav";
 
-export default function PwChange() {
-  const navigate = useNavigate();
+import Navbar from "../Navbar";
+
+// Modal.setAppElement(document.getElementById('studentAuth'));
+
+function PasswordChange() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isPasswordChanged, setPasswordChanged] = useState(false);
+  const studentId = localStorage.getItem("studentId");
 
-  const handleChangePassword = () => {
-    if (newPassword !== confirmPassword) {
-      alert("비밀번호가 일치하지 않습니다.");
-      return;
-    }
-    navigate("/login");
-    setPasswordChanged(true);
+  const handleChangePassword = (event) => {
+    event.preventDefault();
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      id: studentId,
+      pw: confirmPassword,
+    });
+
+    var requestOptions = {
+      method: "PATCH",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch("http://3.37.164.99/api/member/password", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+        return result;
+      })
+      .then((result) => {
+        if (result["message"] == "비밀번호가 변경되었습니다.") {
+          localStorage.setItem("password", confirmPassword);
+          window.alert(result["message"]);
+
+          window.location.href = "/login";
+        } else {
+          window.alert("사용자가 존재하지 않습니다.");
+        }
+      })
+      .catch((error) => console.log("error", error));
   };
 
   return (
     <div>
-      <Nav />
+      <Navbar></Navbar>
       <Container maxWidth="xl">
         <Box
           sx={{ background: "#f5f5f5", padding: "16px", textAlign: "center" }}
@@ -56,7 +75,7 @@ export default function PwChange() {
             border: "1px solid black",
             borderRadius: "4px",
             padding: "30px",
-            marginTop: "16px",
+            marginTop: "150px",
             marginBottom: "16px",
             alignItems: "center",
           }}
@@ -84,7 +103,7 @@ export default function PwChange() {
               />
               <TextField
                 margin="normal"
-                label="비밀번호 확인"
+                label="새로운 비밀번호 확인"
                 type="password"
                 required
                 fullWidth
@@ -94,9 +113,7 @@ export default function PwChange() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
-              {/* {isPasswordChanged ? (
-                <Typography color="success">비밀번호가 변경되었습니다.</Typography>
-              ) : ( */}
+
               <Button
                 color="primary"
                 type="submit"
@@ -107,8 +124,6 @@ export default function PwChange() {
               >
                 변경하기
               </Button>
-
-              {/* )} */}
             </Box>
           </Container>
         </Box>
@@ -116,3 +131,5 @@ export default function PwChange() {
     </div>
   );
 }
+
+export default PasswordChange;

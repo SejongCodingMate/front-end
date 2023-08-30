@@ -7,7 +7,7 @@ import Divider from "@mui/material/Divider";
 import Container from "@mui/material/Container";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { Link } from "react-router-dom";
-import Nav from "../components/Nav";
+import Navbar from "../Navbar";
 
 export default function Register() {
   const handleSubmit = (event) => {
@@ -16,8 +16,8 @@ export default function Register() {
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      studentId: studentId,
-      password: password,
+      id: studentId,
+      pw: password,
     });
 
     var requestOptions = {
@@ -28,17 +28,27 @@ export default function Register() {
     };
 
     fetch("http://3.37.164.99/api/member/sign-up", requestOptions)
-      .then((response) => response.text())
+      .then((response) => response.json())
       .then((result) => {
         console.log(result);
         return result;
       })
       .then((result) => {
-        if (result == "회원가입 성공했습니다.") {
-          window.alert(result);
-          window.location.href = "/pwchange";
+        if (
+          result["message"] ==
+          "회원 가입에 성공했습니다. 비밀번호를 변경해주세요"
+        ) {
+          window.alert(result["message"]);
+          // console.log(result['data']['studentId']);
+          localStorage.setItem("studentId", result["data"]["studentId"]);
+          window.location.href = "/studentauth";
+        } else if (result["message"] == "이미 존재하는 회원입니다.") {
+          window.alert(result["message"]);
+          window.location.href = "/login";
+        } else if (result["message"] == "학생 인증에 실패하였습니다.") {
+          window.location.href = "/register";
         } else {
-          window.alert(result);
+          window.alert(result["message"]);
         }
       })
       .catch((error) => console.log("error", error));
@@ -107,10 +117,10 @@ export default function Register() {
                 variant="h5"
                 sx={{ fontWeight: "bold", textAlign: "center" }}
               >
-                학생 인증
+                회원 가입
               </Typography>
               <Typography variant="subtitle1" sx={{ color: "black" }}>
-                학번과 사이트에 가입하기 위한 새로운 비번을 입력해주세요.
+                회원가입을 위한 학번과 학사정보 시스템 비밀번호를 입력해주세요.
               </Typography>
               <TextField
                 margin="normal"
