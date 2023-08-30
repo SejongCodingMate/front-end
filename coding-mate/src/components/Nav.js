@@ -13,7 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 
-const pages = ["Products", "Pricing", "Blog"];
+const pages = ["과목 선택 ㅣ", "질문하기 ㅣ", "함께하기"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Nav() {
@@ -38,8 +38,8 @@ function Nav() {
   return (
     <AppBar
       position="static"
-      sx={{ backgroundColor: "#FFFFFF", height: "85px", boxShadow: "none" }} // 이 부분 수정
-      elevation={0} // 그림자 효과 없애는 부분 추가
+      sx={{ backgroundColor: "#FFFFFF", height: "85px", boxShadow: "none" }}
+      elevation={0}
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
@@ -97,35 +97,30 @@ function Nav() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            LOGO
-          </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
-            ))}
+
+          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "flex" } }}>
+            {/* 페이지 링크를 오른쪽으로 이동 */}
+            <Box
+              sx={{ flexGrow: 1, display: "flex", justifyContent: "flex-end" }}
+            >
+              {pages.map((page) => (
+                <Button
+                  key={page}
+                  onClick={handleCloseNavMenu}
+                  sx={{
+                    my: 2,
+                    color: "#BC0E26",
+                    display: "block",
+                    ml: 3,
+                    fontSize: "20px",
+                    fontWeight: 800,
+                    fontFamily: " Abhaya Libre ExtraBold",
+                  }}
+                >
+                  {page}
+                </Button>
+              ))}
+            </Box>
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
@@ -162,4 +157,5 @@ function Nav() {
     </AppBar>
   );
 }
+
 export default Nav;

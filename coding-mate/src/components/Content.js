@@ -3,6 +3,16 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
 
+const linkStyle = {
+  textDecoration: "none", // Remove underline
+};
+
+const imageStyle = {
+  width: "80px", // Adjust image width
+  height: "80px", // Adjust image height
+  marginBottom: "10px", // Adjust margin
+};
+
 export default function BoxSx() {
   return (
     <div
@@ -14,7 +24,7 @@ export default function BoxSx() {
         backgroundColor: "#F8F8F8",
       }}
     >
-      <Link to="/selectpage">
+      <Link to="/selectpage" style={linkStyle}>
         <Box
           sx={{
             width: 350,
@@ -34,13 +44,40 @@ export default function BoxSx() {
             alignItems: "center",
           }}
         >
-          <Typography variant="h6" gutterBottom sx={{ color: "#BC0E26" }}>
+          <img
+            src="../assets/circle.png" // 경로를 적절히 수정해주세요
+            alt="과목 선택"
+            style={imageStyle}
+          />
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{
+              color: "#BC0E26",
+              fontSize: "40px",
+              fontFamily: "Abhaya Libre SemiBold",
+              fontWeight: 600,
+              marginBottom: 6,
+            }}
+          >
             과목 선택
+          </Typography>
+          {/* 추가한 텍스트 */}
+          <Typography
+            variant="body1"
+            sx={{
+              color: "#333333",
+              fontSize: "15px",
+              fontFamily: "Almarai",
+              fontWeight: 400,
+            }}
+          >
+            가이드라인을 제공하는 페이지
           </Typography>
         </Box>
       </Link>
 
-      <Link to="/posting">
+      <Link to="/posting" style={linkStyle}>
         <Box
           sx={{
             width: 320,
@@ -59,9 +96,35 @@ export default function BoxSx() {
             alignItems: "center",
           }}
         >
-          <Typography variant="h6" gutterBottom sx={{ color: "#BC0E26" }}>
-            {/* "왁자지껄" 텍스트의 색을 변경합니다 */}
+          <img
+            src="path_to_your_image.png" // Replace with your image path
+            alt="왁자지껄"
+            style={imageStyle}
+          />
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{
+              color: "#BC0E26",
+              fontSize: "40px",
+              fontFamily: "Abhaya Libre SemiBold",
+              fontWeight: 600,
+              marginBottom: 6,
+            }}
+          >
             왁자지껄
+          </Typography>
+          {/* 추가한 텍스트 */}
+          <Typography
+            variant="body1"
+            sx={{
+              color: "#333333",
+              fontSize: "15px",
+              fontFamily: "Almarai",
+              fontWeight: 400,
+            }}
+          >
+            질문 + 함께하기 게시판
           </Typography>
         </Box>
       </Link>
