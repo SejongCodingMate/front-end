@@ -1,49 +1,50 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 
-export default function PermanentDrawerLeft() {
+export default function Side() {
   return (
-    <Drawer
-      anchor="left"
-      open={true} // 항상 열린 상태로 고정
-      variant="permanent" // 항상 열려 있는 영구적인 Drawer로 설정
+    <Box
+      sx={{
+        width: '19%',
+        height: '100vh',
+        backgroundColor: '#1F1F1F',
+        position: 'fixed',
+        top: 0,
+        right: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
     >
-      <Box sx={{ width: 250 }}>
-        <List>
-          {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {["All mail", "Trash", "Spam"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Box>
-    </Drawer>
+      <Button
+        sx={{
+          width: '86%',
+          height: '10%',
+          marginTop: '10%',
+          marginBottom: '5%',
+          backgroundColor: '#000',
+          color: '#FFF',
+          fontSize: '25px',
+          borderRadius: '10px',
+          boxShadow: '0px 4px 4px 0px rgba(255, 255, 255, 0.25)'
+        }}
+      >
+        저장하고 나가기
+      </Button>
+      <Button
+        sx={{
+          width: '86%',
+          height: '10%',
+          backgroundColor: '#000',
+          color: '#FFF',
+          fontSize: '25px',
+          borderRadius: '10px',
+          boxShadow: '0px 4px 4px 0px rgba(255, 255, 255, 0.25)'
+        }}
+      >
+        불러오기
+      </Button>
+    </Box>
   );
 }

@@ -16,7 +16,7 @@ export default function Register() {
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      id: studentId,
+      id: memberId,
       pw: password,
     });
 
@@ -36,7 +36,7 @@ export default function Register() {
       .then((result) => {
         if (
           result["message"] ==
-          "회원 가입에 성공했습니다. 비밀번호를 변경해주세요"
+          "회원 가입에 성공했습니다."
         ) {
           window.alert(result["message"]);
           // console.log(result['data']['studentId']);
@@ -44,9 +44,6 @@ export default function Register() {
           window.location.href = "/studentauth";
         } else if (result["message"] == "이미 존재하는 회원입니다.") {
           window.alert(result["message"]);
-          window.location.href = "/login";
-        } else if (result["message"] == "학생 인증에 실패하였습니다.") {
-          window.location.href = "/register";
         } else {
           window.alert(result["message"]);
         }
@@ -54,12 +51,12 @@ export default function Register() {
       .catch((error) => console.log("error", error));
   };
 
-  const [studentId, setstudentId] = useState("");
+  const [memberId, setmemberId] = useState("");
   const [password, setpassword] = useState("");
 
   return (
     <div>
-      <Nav />
+      <Navbar />
       <Container maxWidth="xl">
         <Box
           sx={{ background: "#f5f5f5", padding: "16px", textAlign: "center" }}
@@ -130,7 +127,7 @@ export default function Register() {
                 name="studentId"
                 id="studentId"
                 autoComplete="studentId"
-                onChange={(e) => setstudentId(e.target.value)}
+                // onChange={(e) => setstudentId(e.target.value)}
               />
               <TextField
                 margin="normal"
