@@ -47,7 +47,7 @@ export default function LoginBox() {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("password", password);
         window.alert("로그인에 성공하였습니다.");
-        window.location.href = "/main";
+        window.location.href = "/quiz";
       })
       .catch((error) => {
         console.error("로그인 오류:", error);
