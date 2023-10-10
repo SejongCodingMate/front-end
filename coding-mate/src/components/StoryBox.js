@@ -53,22 +53,19 @@ const fetchSave = (nextStoryId, accessToken) => {
 export default function StoryBox() {
   const [messages, setMessages] = useState([]);
   const [messageIndex, setMessageIndex] = useState(0);
-  const [showMessage, setShowMessage] = useState(false);
-  const [showUserMessage, setShowUserMessage] = useState(true);
-  const [showAiMessage, setShowAiMessage] = useState(false);
   const [accessToken, setAccessToken] = useState(null);
 
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
-    // const nextStoryId = localStorage.getItem('nextStoryId');
+    const nextStoryId = localStorage.getItem('nextStoryId');
     if (!token) {
       console.error('AccessToken이 없습니다.');
       return;
     }
     setAccessToken(token);
 
-    fetchStory(2, token) // nextStoryId
+    fetchStory(2, token) //nextStoryId
       .then((data) => {
         const initialMessages = data.data.map((message) => ({
           speaker: message.speaker,
@@ -104,6 +101,16 @@ export default function StoryBox() {
 
         fetchStory(nextStoryId, accessToken) 
           .then((data) => {
+            const res = data.data[0].story.formatId;
+            console.log(res);
+
+            if (res === 3) {
+              window.location.href = "/code";
+            }
+            if (res === 2) {
+              window.location.href = "/quiz";
+            }
+
             const newMessages = data.data.map((message) => ({
               speaker: message.speaker,
               text: message.text,
@@ -111,14 +118,6 @@ export default function StoryBox() {
               nextStoryId: message.story.nextId,
               formatId: message.story.formatId
             }));
-
-            const formatId = newMessages[0].formatId;
-            if (formatId === 3) {
-              window.location.href = "/code";
-            }
-            if (formatId === 2) {
-              window.location.href = "/quiz";
-            }
 
             setMessages([...messages, ...newMessages]);
           })
