@@ -13,6 +13,7 @@ import { defaultKeymap, indentWithTab } from '@codemirror/commands'
 import { python } from '@codemirror/lang-python'
 import { basicDark } from '@uiw/codemirror-theme-basic';
 import { basicSetup } from '@uiw/codemirror-extensions-basic-setup';
+import someModule from '@codemirror/state';
 import airobot from '../assets/Character.png';
 
 const fetchStory = (storyId, accessToken) => {

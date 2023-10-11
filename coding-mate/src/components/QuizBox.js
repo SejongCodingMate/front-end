@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
+import './Font.css'
+import back from '../assets/back.png';
 
 export default function BoxSx() {
   const [quizzes, setQuizzes] = useState([]);
   const [userAnswers, setUserAnswers] = useState([]);
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState([]);
-
 
   useEffect(() => {
     // accessToken 가져오기
@@ -64,23 +65,24 @@ export default function BoxSx() {
   const navigate = useNavigate();
 
   const handleBackButtonClick = () => {
-    navigate('/story');
+    navigate('/main');
   };
 
   const handleNextButtonClick = () => {
-    navigate('/nextPage');
+    navigate('/main');
   };
 
   const quizStyle = {
     width: '46%',
-    height: '80vh',
+    height: '60vh',
     backgroundColor: '#000',
     color: '#FFF',
-    fontSize: '22px',
+    fontSize: '24px',
     fontWeight: 400,
     marginRight: '18%',
     display: 'flex',
     justifyContent: 'center',
+    alignItems: 'center',
     flexDirection: 'row',
   };
 
@@ -89,7 +91,7 @@ export default function BoxSx() {
     color: '#FFF',
     border: '1px solid #FFF',
     cursor: 'pointer',
-    marginLeft: '10px', // 정답 입력과 제출 버튼 사이에 여백 추가
+    marginLeft: '10px',
   };
 
   return (
@@ -100,138 +102,194 @@ export default function BoxSx() {
         backgroundColor: '#000',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
+        // justifyContent: 'center',
         flexDirection: 'column',
+        gap: '2%'
       }}
     >
       <button
-        onClick={handleBackButtonClick}
-        style={{
-          position: 'absolute', // 절대 위치 설정
-          top: '20px', // 원하는 위치 (상단 여백) 설정
-          left: '20px', // 원하는 위치 (좌측 여백) 설정
-          backgroundColor: 'transparent',
-          color: '#FFF',
-          border: '1px solid #FFF',
-          cursor: 'pointer',
-        }}
-      >
-        뒤로 가기
-      </button>
+  onClick={handleBackButtonClick}
+  style={{
+    position: 'absolute',
+    width: '7%',
+    height: '8%',
+    top: '20px',
+    left: '0px',
+    backgroundColor: '#242424',
+    color: '#FFF',
+    border: '1px solid #FFF',
+    cursor: 'pointer',
+    borderTop: '5px solid #3D3D3D',
+    borderLeft: '5px solid #3D3D3D',
+    borderBottom: 'none',
+    borderRight: 'none'
+  }}
+>
+  <img style={{
+    width: '35px',
+    height: '35px',
+    float: 'right'
+  }}src={back} alt="뒤로 가기" />
+</button>
+
 
       <button
         onClick={handleNextButtonClick}
         style={{
           position: 'absolute',
-          bottom: '20px', // 원하는 위치 (하단 여백) 설정
-          right: '20px', // 원하는 위치 (우측 여백) 설정
-          backgroundColor: 'transparent',
-          color: '#FFF',
-          border: '1px solid #FFF',
+          bottom: '140px',
+          right: '0px',
+          width: '17%',
+          height: '6%',
+          backgroundColor: '#32D74B',
+          color: '#1D6127',
+          borderTop: '5px solid #6AEE7E',
+          borderLeft: '5px solid #6AEE7E',
+          borderBottom: 'none',
+          borderRight: 'none',
           cursor: 'pointer',
+          fontSize: '30px',
+          fontWeight: 700
         }}
       >
-        다음 스테이지
+        NEXT STAGE
       </button>
       
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: '2%',
           width: '60%',
-          height: '40%',
+          height: '10%',
           backgroundColor: '#000',
           color: '#FFF',
-          fontSize: '40px',
-          fontWeight: 400,
+          fontSize: '45px',
+          fontWeight: '700',
+          fontFamily: 'D2Coding',
+          marginTop: '3%'
         }}
       >
-        <span>퀴즈를 풀어보자</span>
+        <span>Chapter 1. 퀴즈</span>
       </Box>
 
       {/* 퀴즈 질문 부분 */}
       {quizzes.map((quiz, index) => (
-        <div
-          key={index}
+  <div
+  key={index}
+  style={{
+    ...quizStyle,
+    width: '62.5%',
+    height: '10vh',
+    borderTop: '5px solid #32D74B',
+    borderLeft: '5px solid #32D74B',
+    borderBottom: '1px solid #32D74B',
+    borderRight: '1px solid #32D74B',
+    marginLeft: '20%',
+    borderColor: userAnswers[index] === 'O' ? '#0A84FF' : userAnswers[index] === 'X' ? '#FF2D55' : '#32D74B',
+    display: 'flex',
+    justifyContent: 'space-between', // 오른쪽으로 정렬
+    alignItems: 'center', // 세로 가운데 정렬
+  }}
+>
+  <div>
+    {quiz.text.includes("_____") ? (
+      <>
+        {quiz.text.split("_____").map((part, i) => (
+          <span key={i}>
+            {part}
+            {i < quiz.text.split("_____").length - 1 ? (
+              <input
+                type="text"
+                style={{
+                  borderBottom: '1px solid #FFF',
+                  background: '#000',
+                  color: '#FFF',
+                  borderTop: 'none',
+                  borderLeft: 'none',
+                  borderRight: 'none',
+                  outline: 'none',
+                  width: '12%',
+                }}
+              />
+            ) : null}
+          </span>
+        ))}
+      </>
+    ) : (
+      quiz.text
+    )}
+
+    {userAnswers[index] && (
+      <div>
+        <p style={{ fontSize: '18px', color: '#FF2D55' }}>{quiz.description}</p>
+      </div>
+    )}
+  </div>
+  {/* 사용자가 이미 선택한 답변에 따라 버튼 스타일을 동적으로 설정합니다. */}
+  <div>
+    {quiz.formatId === 1 ? (
+      <div>
+        <button
+          onClick={() => handleAnswerSubmit('O', index)}
           style={{
-            ...quizStyle,
-            color: userAnswers[index] === 'O' ? 'green' : userAnswers[index] === 'X' ? 'red' : 'white',
+            ...buttonStyle,
+            color: selectedAnswers[index] === 'O' ? '#0A84FF' : '#FFF',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '24px',
           }}
         >
-          <div>
-          {quiz.text.includes("_____") ? (
-            <>
-              {quiz.text.split("_____").map((part, i) => (
-                <span key={i}>
-                  {part}
-                  {i < quiz.text.split("_____").length - 1 ? (
-                    <input
-                      type="text"
-                      style={{
-                        borderBottom: '1px solid #FFF',
-                        background: '#000',
-                        color: '#FFF',
-                        borderTop: 'none',
-                        borderLeft: 'none',
-                        borderRight: 'none',
-                        outline: 'none',
-                      }}
-                    />
-                  ) : null}
-                </span>
-              ))}
-            </>
-          ) : (
-            quiz.text
-          )}
-
-          {userAnswers[index] && (
-            <div>
-              <p>{quiz.description}</p>
-            </div>
-          )}
-        </div>
-        {/* 사용자가 이미 선택한 답변에 따라 버튼 스타일을 동적으로 설정합니다. */}
-        <div>
-          {quiz.formatId === 1 ? (
-            <div>
-              <button
-                onClick={() => handleAnswerSubmit('O', index)}
-                style={{
-                  ...buttonStyle,
-                  backgroundColor: selectedAnswers[index] === 'O' ? 'blue' : 'transparent',
-                }}
-              >
-                O
-              </button>
-              <button
-                onClick={() => handleAnswerSubmit('X', index)}
-                style={{
-                  ...buttonStyle,
-                  backgroundColor: selectedAnswers[index] === 'X' ? 'blue' : 'transparent',
-                }}
-              >
-                X
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => handleAnswerSubmit('YourAnswerHere', index)}
-              style={{ ...buttonStyle, backgroundColor: 'transparent' }}
-            >
-              제출
-            </button>
-          )}
-          {/* 정답 제출 후 설명 표시 */}
-        </div>
+          O
+        </button>
+        <span> /</span>
+        <button
+          onClick={() => handleAnswerSubmit('X', index)}
+          style={{
+            ...buttonStyle,
+            color: selectedAnswers[index] === 'X' ? '#0A84FF' : '#FFF',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '24px',
+          }}
+        >
+          X
+        </button>
       </div>
-      ))}
+    ) : (
+      <button
+        onClick={() => handleAnswerSubmit('YourAnswerHere', index)}
+        style={{
+          ...buttonStyle,
+          backgroundColor: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          fontSize: '20px',
+        }}
+      >
+        제출
+      </button>
+    )}
+    {/* 정답 제출 후 설명 표시 */}
+  </div>
+</div>
+
+))}
       {correctAnswersCount === quizzes.length && (
         <div>
           모든 질문이 완료되었습니다. 정답 수: {correctAnswersCount}
           {/* 정답 수에 따라 스토리 페이지로 이동하는 로직을 추가하세요 */}
         </div>
       )}
+      <div style={{ 
+        fontSize: '40px', 
+        color: '#FFF', 
+        marginTop: '5%', 
+        fontFamily: 'LINE Seed Sans KR',
+        }}>
+        제대로 이해했는지 확인해보자!
+      </div>
     </Box>
   );
 }
