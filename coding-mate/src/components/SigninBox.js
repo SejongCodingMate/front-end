@@ -3,79 +3,84 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
 import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function LoginBox() {
-  const navigate = useNavigate();
-  
-  const [memberId, setmemberId] = useState("");
-  const [password, setpassword] = useState("");
-  useEffect(() => {
-    // 컴포넌트가 마운트될 때 localStorage에서 memberId 값을 읽어옵니다.
-    const storedMemberId = localStorage.getItem("memberId");
-    console.log(storedMemberId);
-    if (storedMemberId) {
-      setmemberId(storedMemberId);
-    }
-  }, []); 
+export default function SigninBox() {
+    const [memberId, setmemberId] = useState("");
+    const [password, setpassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const navigate = useNavigate();
 
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      // Enter 키가 눌렸을 때 로그인 로직을 호출
-      handleLogin(event);
-    }
-  };
+    const handleKeyPress = (event) => {
+        if (event.key === "Enter") {
+          // Enter 키가 눌렸을 때 로그인 로직을 호출
+          handleRegister(event);
+        }
+      };
 
-  const handleLogin = (event) => {
-    // 로그인 로직을 여기에 구현
-    // 이 함수 내에서 ID와 PW를 가져와 로그인을 수행하면 됩니다.
-    event.preventDefault();
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
 
-    var raw = JSON.stringify({
-      memberId: memberId,
-      password: password,
-    });
+      useEffect(() => {
+        // 컴포넌트가 마운트될 때 localStorage에서 memberId 값을 읽어옵니다.
+        const storedMemberId = localStorage.getItem("memberId");
+        console.log(storedMemberId);
+        if (storedMemberId) {
+          setmemberId(storedMemberId);
+        }
+      }, []); 
 
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
+    const handleRegister = (event) => {
+        event.preventDefault();
+        if (password != confirmPassword) {
+            window.alert('비밀번호가 일치하지 않습니다.');
+            window.location.reload();
+            return;
+        }
 
-    fetch("http://3.37.164.99/api/member/login", requestOptions)
-    .then((response) => {
-      const authHeader = response.headers.get("Authorization");
-      if (authHeader) {
-        const accessToken = authHeader.replace("Bearer ", "");
-        
-        // JSON 데이터를 파싱하고 "data" 프로퍼티의 값을 localStorage에 저장
-        return response.json().then((data) => {
-          localStorage.setItem("storyId", data.data);
-          return accessToken;
+        if (password.length < 4) {
+            window.alert('비밀번호는 4자리 이상입니다.');
+            window.location.reload();
+            return;
+        } 
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+    
+        var raw = JSON.stringify({
+          memberId: memberId,
+          password: password,
         });
-      } else {
-        throw new Error("access token을 받지 못했습니다.");
-      }
-    })
-    .then((accessToken) => {
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("password", password);
-      window.alert("로그인에 성공하였습니다.");
-      window.location.href = "/landing";
-    })
-    .catch((error) => {
-      console.error("로그인 오류:", error);
-      window.alert("회원이 없거나 비밀번호가 틀렸습니다.");
-    });  
-  };
+    
+        var requestOptions = {
+          method: "POST",
+          headers: myHeaders,
+          body: raw,
+          redirect: "follow",
+        };
+    
+        fetch("http://3.37.164.99/api/member/sign-up", requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            console.log(result);
+            return result;
+          })
+          .then((result) => {
+            if (result["message"] == "회원 가입에 성공했습니다.") {
+              window.alert(result["message"]);
+              localStorage.setItem("memberId", result["data"]["memberId"]);
+              navigate("/login");
+            } else if (result["message"] == "이미 존재하는 회원입니다.") {
+              window.alert(result["message"]);
+              navigate("/login");
+            } else {
+              window.alert(result["message"]);
+            }
+          })
+          .catch((error) => console.log("error", error));
+      };
 
-  const handleForgetPassword = () => {
-    navigate("/forgetpw");
-  };
+      const GoBack = () => {
+        navigate("/");
+      };
 
   return (
     <Box
@@ -192,6 +197,49 @@ export default function LoginBox() {
             }}
             onKeyPress={handleKeyPress}
           />
+          
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            marginBottom: "1rem",
+          }}
+        >
+          <InputLabel
+            sx={{
+              color: "#0A84FF",
+              fontFamily: "D2Coding",
+              fontSize: "35px",
+              marginRight: "1%",
+            }}
+          >
+          </InputLabel>
+          <TextField
+            margin="normal"
+            type="password"
+            required
+            name="password"
+            id="password"
+            autoComplete="current-password"
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            variant="standard"
+            sx={{
+              mt: 1,
+              border: "1px solid #FFF",
+              marginLeft: '13%',
+              "& input": {
+                color: "#FFF",
+              },
+              background: "#000", // 배경색을 #000으로 변경
+              width: "70%", // 너비를 늘립니다.
+            }}
+            onKeyPress={handleKeyPress}
+          />
+          
         </div>
         <div style={{ display: "flex", flexDirection: "row", width: "100%" }}>
           <Button
@@ -206,9 +254,9 @@ export default function LoginBox() {
                 backgroundColor: "#A9A9A9",
               },
             }}
-            onClick={handleForgetPassword}
+            onClick={GoBack}
           >
-            비밀번호 찾기
+            뒤로 가기
           </Button>
 
           <Button
@@ -224,9 +272,9 @@ export default function LoginBox() {
                 backgroundColor: "#0A84FF",
               },
             }}
-            onClick={handleLogin}
+            onClick={handleRegister}
           >
-            로그인
+            회원가입
           </Button>
         </div>
       </Box>
