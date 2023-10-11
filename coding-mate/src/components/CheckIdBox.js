@@ -119,7 +119,7 @@ export default function CheckIdBox() {
               marginRight: "1%",
             }}
           >
-            ID >
+            ID 
           </InputLabel>
           <TextField
             margin="normal"

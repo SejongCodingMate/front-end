@@ -169,13 +169,14 @@ export default function Code() {
         
         const token = localStorage.getItem('accessToken');
         const nextStoryId = localStorage.getItem("nextStoryId");
+        const storyId = localStorage.getItem("storyId");
         if (!token) {
           console.error('AccessToken이 없습니다.');
           return;
         }
         setAccessToken(token);
     
-        fetchStory(3, token) //nextStoryId
+        fetchStory(nextStoryId, token) 
           .then((data) => {
             const initialMessages = data.data.map((message) => ({
               speaker: message.speaker,

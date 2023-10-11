@@ -58,6 +58,7 @@ export default function StoryBox() {
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
+    const storyId = localStorage.getItem('storyId');
     const nextStoryId = localStorage.getItem('nextStoryId');
     if (!token) {
       console.error('AccessToken이 없습니다.');
@@ -65,13 +66,14 @@ export default function StoryBox() {
     }
     setAccessToken(token);
 
-    fetchStory(2, token) //nextStoryId
+    fetchStory(nextStoryId, token)
       .then((data) => {
         const initialMessages = data.data.map((message) => ({
           speaker: message.speaker,
           text: message.text,
           currentStoryId: message.story.id,
           nextStoryId: message.story.nextId,
+          
         }));
 
         setMessages(initialMessages);
@@ -160,7 +162,7 @@ export default function StoryBox() {
                   src={airobot}
                   alt="AI Robot"
                   style={{
-                      alignSelf: 'center',
+                      // alignSelf: 'center',
                       width: '250px',
                       height: '250px',
                   }}
