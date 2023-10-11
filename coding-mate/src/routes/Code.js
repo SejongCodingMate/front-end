@@ -62,18 +62,58 @@ export default function Code() {
     const navigate = useNavigate();
     const [userInput, setUserInput] = useState('');
     const [messages, setMessages] = useState([]);
-    const [messageIndex, setMessageIndex] = useState(0);
+    let [messageIndex, setMessageIndex] = useState(0);
     const [accessToken, setAccessToken] = useState(null);
     const editor = useRef()
     const [code, setCode] = useState('')
     const [output, setOutput] = useState('');
     const [localInput, setLocalInput] = useState(false);
-    const [problemContent, setProblemContent] = useState('');
-    const [userMessage, setUserMessage] = useState('');
-    const [aiMessage, setAiMessage] = useState('');
 
-    const handleCodeSubmit = event => {
+    const handleCodeSubmit = async () => { 
+        messageIndex +=1;
 
+        if (messages[messageIndex].speaker === 'USER' && messages[messageIndex].text === '(사용자 입력)') {
+            const storyId = localStorage.getItem("currentStoryId");
+            
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", `Bearer ${accessToken}`);
+            myHeaders.append("Content-Type", "application/json");
+        
+            var raw = JSON.stringify({
+                "input": userInput,
+                "storyId": storyId
+            });
+            
+            const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+            };
+
+            fetch("http://3.37.164.99/api/code/execute", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    const codeInputResult = result.data;
+                    
+                    localStorage.setItem("codeResult", codeInputResult);
+                    console.log(localStorage.getItem("codeResult"));
+                    setOutput(localStorage.getItem("codeResult"));
+                })
+
+                
+                .catch(error => console.log('error', error));
+
+
+        }
+
+        if (messages[messageIndex].speaker === 'USER' && messages[messageIndex].text === '(코드 실행)') {
+            setOutput(localStorage.getItem("codeResult")); 
+            
+            
+        }
+
+        setMessageIndex(messageIndex);
     };
 
     const onUpdate = EditorView.updateListener.of((v) => {
@@ -135,7 +175,7 @@ export default function Code() {
         }
         setAccessToken(token);
     
-        fetchStory(3, token) // nextStoryId
+        fetchStory(3, token) //nextStoryId
           .then((data) => {
             const initialMessages = data.data.map((message) => ({
               speaker: message.speaker,
@@ -145,6 +185,7 @@ export default function Code() {
               code: message.code,
               codeResult: message.result,
               isInput: message.isInput,
+              flag:message.flag,
             }));
 
             setLocalInput(initialMessages[0].isInput); 
@@ -152,7 +193,6 @@ export default function Code() {
             localStorage.setItem("code", initialMessages[0].code);
             localStorage.setItem("codeResult", initialMessages[0].codeResult);
             localStorage.setItem("codeIsInput", initialMessages[0].isInput);
-            console.log(localStorage.getItem("codeResult"));
             setMessages(initialMessages);
           })
           .catch((error) => {
@@ -164,53 +204,6 @@ export default function Code() {
 
     const handleNextMessage = () => {
     if (messageIndex < messages.length - 1) { 
-        // setMessageIndex(messageIndex + 1);
-        if (messages[messageIndex].speaker === 'USER' && messages[messageIndex].text === '(사용자 입력)') {
-            const storyId = localStorage.getItem("currentStoryId");
-            
-            // code/execute API 연결 
-            var myHeaders = new Headers();
-            myHeaders.append("Authorization", `Bearer ${accessToken}`);
-            myHeaders.append("Content-Type", "application/json");
-        
-            var raw = JSON.stringify({
-                "input": userInput,
-                "storyId": storyId
-            });
-            
-            const requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-            };
-
-            fetch("http://3.37.164.99/api/code/execute", requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    const codeInputResult = result.data;
-                    
-                    localStorage.setItem("codeResult", codeInputResult);
-                    console.log(localStorage.getItem("codeResult"));
-                    setOutput(localStorage.getItem("codeResult"));
-                })
-
-                
-                .catch(error => console.log('error', error));
-
-                
-
-            setMessageIndex(messageIndex + 1);
-        }
-
-        // 코드 실행 문구 나오면 codeResult 띄우기
-        if (messages[messageIndex].speaker === 'USER' && messages[messageIndex].text === '(코드 실행)') {
-            setOutput(localStorage.getItem("codeResult"));
-        }
-
-
-
-
         setMessageIndex(messageIndex + 1);
     } else {
         const currentStoryId = messages[messageIndex]?.currentStoryId;
@@ -219,7 +212,7 @@ export default function Code() {
         localStorage.setItem("nextStoryId", nextStoryId);
 
         if (currentStoryId && nextStoryId) { 
-        fetchSave(nextStoryId, accessToken) //nextStoryId
+        fetchSave(nextStoryId, accessToken) 
             .then((data) => {
             var saveMessages = data.message;
             saveMessages = "자동저장 되었습니다.";
@@ -228,7 +221,17 @@ export default function Code() {
 
         fetchStory(nextStoryId, accessToken) 
             .then((data) => {
-                setMessageIndex(messageIndex + 1); // 추가 
+
+                const res = data.data[0].story.formatId;
+
+                if (res === 1) {
+                window.location.href = "/main";
+                }
+                if (res === 2) {
+                window.location.href = "/quiz";
+                }
+
+                setMessageIndex(messageIndex + 1); 
                 const newMessages = data.data.map((message) => ({
                     speaker: message.speaker,
                     text: message.text,
@@ -246,16 +249,9 @@ export default function Code() {
             localStorage.setItem("code", newMessages[0].code);
             localStorage.setItem("codeResult", newMessages[0].codeResult);
             setOutput(newMessages[0].codeResult);
-            console.log(localStorage.getItem("codeResult"));
             navigate('/code');
 
-            const formatId = newMessages[0].formatId;
-            if (formatId === 1) {
-                window.location.href = "/main";
-            }
-            if (formatId === 2) {
-                window.location.href = "/quiz";
-            }
+            
 
             setMessages([...messages, ...newMessages]);
             })
@@ -373,23 +369,42 @@ export default function Code() {
                             </div>
 
                    
+
                             {messages.length > 0 && (
+                            <div>
+                                {messages[messageIndex].speaker === 'AI' && (
                                 <div>
-                                <Typography variant="h4" style={{ textAlign: 'center', color: 'white', marginTop: '100px' }}>
-                                    {messages[messageIndex].speaker === 'AI' ? messages[messageIndex].speaker : ''}
-                                </Typography>
-                                <Typography variant="h5" style={{ textAlign: 'center', color: 'white', marginTop: '100px' }}>
-                                    {messages[messageIndex].speaker === 'AI' ? messages[messageIndex].text : ''}
-                                </Typography>
-                                
-                                <Typography variant="h4" style={{ textAlign: 'center', color: '#34C759', marginTop: '100px' }}>
-                                    {messages[messageIndex].speaker === 'USER' ? messages[messageIndex].speaker : ''}
-                                </Typography>
-                                <Typography variant="h5" style={{ textAlign: 'center', color: '#34C759', marginTop: '100px' }}>
-                                    {messages[messageIndex].speaker === 'USER' ? messages[messageIndex].text : ''}
-                                </Typography>
+                                    <Typography variant="h4" style={{ textAlign: 'center', color: 'white', marginTop: '100px' }}>
+                                    {messages[messageIndex].speaker}
+                                    </Typography>
+                                    <Typography variant="h5" style={{ textAlign: 'center', color: 'white', marginTop: '100px' }}>
+                                    {messages[messageIndex].text}
+                                    </Typography>
                                 </div>
+                                )}
+                                
+                                {messages[messageIndex].speaker === 'USER' && (
+                                <div>
+                                    {(messages[messageIndex].text !== "(코드 실행)" && messages[messageIndex].text !== "(사용자 입력)") && (
+                                    <div>
+                                        <Typography variant="h4" style={{ textAlign: 'center', color: '#34C759', marginTop: '100px' }}>
+                                        {messages[messageIndex].speaker}
+                                        </Typography>
+                                        <Typography variant="h5" style={{ textAlign: 'center', color: '#34C759', marginTop: '100px' }}>
+                                        {messages[messageIndex].text}
+                                        </Typography>
+                                    </div>
+                                    )}
+                                </div>
+                                )}
+                            </div>
                             )}
+
+
+
+
+
+
 
 
 
@@ -412,7 +427,8 @@ export default function Code() {
                                             color="primary"
                                             type="submit"
                                             variant="outlined"
-                                            onClick={(event) => handleCodeSubmit(event)}
+                                            // onClick={(event) => handleCodeSubmit(event)}
+                                            onClick={handleCodeSubmit}
                                             style={{ backgroundColor: 'black', color: '#34C759' }} 
                                             >
                                             코드 실행
