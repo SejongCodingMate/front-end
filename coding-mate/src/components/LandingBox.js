@@ -5,53 +5,95 @@ import Button from "@mui/material/Button";
 import Story from "../routes/Story";
 
 export default function CheckIdBox() {
-    const [storyId, setStoryId] = useState('')
-    const [accessToken, setAccessToken] = useState(null);
-    const handleNewGame = () => {
-        localStorage.getItem('storyId');
-        if (localStorage.getItem('storyId') != 1) {
-            
-        };
+  const [storyId, setStoryId] = useState('');
+  const [accessToken, setAccessToken] = useState(null);
+  const [showModal, setShowModal] = useState(false); // 모달 상태 추가
+
+  useEffect(() => {
+    const storedStoryId = localStorage.getItem("storyId");
+    if (storedStoryId) {
+      setStoryId(storedStoryId);
     }
-    useEffect(() => {
-        // 컴포넌트가 마운트될 때 localStorage에서 memberId 값을 읽어옵니다.
-        const storedStoryId = localStorage.getItem("storyId");
-        if (storedStoryId) {
-          setStoryId(storedStoryId);
+    setAccessToken(localStorage.getItem('accessToken'));
+  }, []);
+
+  const fetchSave = (nextStoryId, accessToken) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${accessToken}`);
+    myHeaders.append("Content-Type", "application/json");
+  
+    var raw = JSON.stringify({
+      "nextStoryId" : nextStoryId
+    });
+    
+    const requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+  
+    return fetch(`http://3.37.164.99/api/story/save`, requestOptions) 
+      .then((response) => response.json())
+      .then((data) => data)
+      .catch((error) => {
+        console.error('스토리 불러오기 오류:', error);
+        throw error;
+      });
+  };
+
+  const handleContinue = () => {
+    // 이전 handleContinue 코드 그대로 유지
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    };
+
+    fetch(`http://3.37.164.99/api/story/${storyId}`, requestOptions)
+      .then(response => response.json())
+      .then((data) => {
+        const res = data.data[0].story.formatId;
+
+        if (res === 3) {
+          window.location.href = "/code";
         }
-        setAccessToken(localStorage.getItem('accessToken'));
-      }, []);
+        if (res === 2) {
+          window.location.href = "/quiz";
+        }
+        if (res === 1) {
+          window.location.href = "/main";
+        }
+      })
+      .catch((error) => {
+        console.error('스토리 불러오기 오류:', error);
+        throw error;
+      });
+  };
 
-    const handleContinue = () => {
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-          },
-        };
-        
-        fetch(`http://3.37.164.99/api/story/${storyId}`, requestOptions)
-        .then(response => response.json())  
-        .then((data) => {
-            console.log(data);
-            const res = data.data[0].story.formatId;
-            console.log(res);
+  const handleStartNewGame = () => {
+    if (storyId === "1") { // storyId가 1인 경우 /main 페이지로 이동
+      window.location.href = "/main";
+    } else {
+      // storyId가 1이 아닌 경우 모달 표시
+      setShowModal(true);
+    }
+  };
 
-            if (res === 3) {
-              window.location.href = "/code";
-            }
-            if (res === 2) {
-              window.location.href = "/quiz";
-            }
-            if (res === 1) {
-                window.location.href = "/main";
-              }
-          })
-          .catch((error) => {
-            console.error('스토리 불러오기 오류:', error);
-            throw error;
-          });
-      };
+  const handleModalContinue = () => {
+    // 모달에서 계속 버튼을 누르면 storyId를 1로 바꾸고 모달을 숨김
+    setStoryId("1");
+    setShowModal(false);
+    fetchSave(1, accessToken);
+    window.location.href = "/main";
+  };
+
+  const handleModalClose = () => {
+    // 모달에서 닫기 버튼을 누르면 모달을 숨김
+    setShowModal(false);
+  };
+
   return (
     <Box
       sx={{
@@ -75,7 +117,6 @@ export default function CheckIdBox() {
         Hello world!<br />Welcome to ‘AI-escape’
       </Typography>
 
-      {/* 버튼 그룹 추가 */}
       <div
         style={{
           display: "flex",
@@ -97,8 +138,9 @@ export default function CheckIdBox() {
             borderTop: '5px solid #FF6860',
             borderLeft: '5px solid #FF6860'
           }}
+          onClick={handleStartNewGame}
         >
-            New Game
+          New Game
         </Button>
         <Button
           variant="contained"
@@ -114,7 +156,7 @@ export default function CheckIdBox() {
           }}
           onClick={handleContinue}
         >
-            Continue
+          Continue
         </Button>
         <Button
           variant="contained"
@@ -129,7 +171,7 @@ export default function CheckIdBox() {
             borderLeft: '5px solid #FFE044'
           }}
         >
-            Setting
+          Setting
         </Button>
         <Button
           variant="contained"
@@ -143,9 +185,24 @@ export default function CheckIdBox() {
             borderLeft: '5px solid #6AEE7E'
           }}
         >
-            About
+          About
         </Button>
       </div>
+
+      {showModal && (
+        // 모달 표시
+        <div style={{
+          background: '#FFF'
+        }}className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={handleModalClose}>
+              &times;
+            </span>
+            <p>진행 중이던 게임이 있습니다. 계속하시겠습니까?</p>
+            <button onClick={handleModalContinue}>계속</button>
+          </div>
+        </div>
+      )}
     </Box>
   );
 }

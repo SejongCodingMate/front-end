@@ -1,71 +1,57 @@
-import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 
-export default function CheckIdBox() {
-  const navigate = useNavigate();
-  const [memberId, setMemberId] = useState("");
-  const [email, setEmail] = useState("");
+export default function PwBox() {
+    const [memberId, setmemberId] = useState("");
+    const navigate = useNavigate();
 
-  const validateEmail = () => {
-    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    return emailPattern.test(email);
-  }
+    useEffect(() => {
+        // 컴포넌트가 마운트될 때 localStorage에서 memberId 값을 읽어옵니다.
+        const storedMemberId = localStorage.getItem("memberId");
+        console.log(storedMemberId);
+        if (storedMemberId) {
+          setmemberId(storedMemberId);
+        }
+      }, []); 
 
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      // Enter 키가 눌렸을 때 로그인 로직을 호출
-      handleLogin(event);
-    }
-  };
-
-  const apiUrl = `http://3.37.164.99/api/member/${email}`;
-
-  const handleLogin = async (event) => {
-    event.preventDefault();
-
-    if (!validateEmail(email)) {
-      window.alert('올바른 이메일 주소가 아닙니다.');
-      window.location.reload();
-      return;
-      // 이메일이 유효하면 memberId를 업데이트
-    }
-
-      fetch(apiUrl, 
-        {method: 'GET',
-         headers: {
-          'Content-Type': 'application/json',
-         }} )
-         .then(response => response.json())
-         .then(data => {
-           const responseData = data.data; // data.data를 변수에 저장
-           console.log(responseData);      // true
-           localStorage.setItem('memberId', email);
-           if (responseData) {
-            navigate("/login");
-          } else {
-            navigate("/signin");
-          }
-         })
-        .catch((error) => {
-          console.error("오류:", error);
+    const handleSendMail = () => {
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+    
+        var raw = JSON.stringify({
+          memberId: memberId,
         });
-  };
+    
+        console.log(memberId);
+        var requestOptions = {
+          method: "PATCH",
+          headers: myHeaders,
+          body: raw,
+          redirect: "follow",
+        };
+    
+        fetch("http://3.37.164.99/api/member/temporary", requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            if (result["message"] == '임시 비밀번호를 발급했습니다. 메일을 확인해주세요.') {
+              window.alert(result["message"]);
+              navigate('/login');
+            } else {
+                window.alert(result["message"]);
+                return;
+            }
+          })
+          .catch((error) => console.log("error", error));
+      };
 
-  const handleForgetPassword = () => {
-    if (!validateEmail(email)) {
-      window.alert('올바른 이메일 주소가 아닙니다.');
-      window.location.reload();
-      return;
-      // 이메일이 유효하면 memberId를 업데이트
-    }
-    localStorage.setItem('memberId', email);
-    navigate("/forgetpw");
-  };
+      const GoBack = () => {
+        navigate("/");
+      };
 
   return (
     <Box
@@ -127,8 +113,8 @@ export default function CheckIdBox() {
             name="memberId"
             id="memberId"
             autoComplete="memberId"
-            onChange={(e) => setEmail(e.target.value)}
             variant="standard"
+            value={memberId} // memberId 상태를 value로 설정하여 디폴트 값으로 사용
             sx={{
               mt: 1,
               border: "1px solid #FFF",
@@ -138,10 +124,8 @@ export default function CheckIdBox() {
               background: "#000", // 배경색을 #000으로 변경
               width: "70%", // 너비를 늘립니다.
             }}
-            onKeyPress={handleKeyPress} // Enter 키 이벤트 처리
           />
         </div>
-
         <div style={{ display: "flex", flexDirection: "row", width: "100%" }}>
           <Button
             type="button"
@@ -155,9 +139,9 @@ export default function CheckIdBox() {
                 backgroundColor: "#A9A9A9",
               },
             }}
-            onClick={handleForgetPassword}
+            onClick={GoBack}
           >
-            비밀번호 찾기
+            뒤로 가기
           </Button>
 
           <Button
@@ -173,9 +157,9 @@ export default function CheckIdBox() {
                 backgroundColor: "#0A84FF",
               },
             }}
-            onClick={handleLogin}
+            onClick={handleSendMail}
           >
-            로그인
+            메일 전송
           </Button>
         </div>
       </Box>

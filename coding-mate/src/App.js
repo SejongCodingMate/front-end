@@ -12,6 +12,7 @@ import Code from "./routes/Code";
 import Signin from "./routes/Signin";
 import "./App.css";
 import Landing from "./routes/Landing";
+import ForgetPw from "./routes/ForgetPw";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/signin" element={<Signin />} />
+          <Route path="/forgetpw" element={<ForgetPw />} />
           <Route path="/pwchange" element={<PwChange />} />
           <Route path="/landing" element={<Landing />} />
           <Route path="/main" element={<Story />} />
