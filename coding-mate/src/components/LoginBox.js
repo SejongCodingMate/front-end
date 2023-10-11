@@ -54,7 +54,7 @@ export default function LoginBox() {
         
         // JSON 데이터를 파싱하고 "data" 프로퍼티의 값을 localStorage에 저장
         return response.json().then((data) => {
-          localStorage.setItem("storyId", data.data.storyId);
+          localStorage.setItem("nextStoryId", data.data.storyId);
           localStorage.setItem("hasTemporaryPassword", data.data.hasTemporaryPassword);
           return accessToken;
         });
@@ -136,7 +136,7 @@ export default function LoginBox() {
               marginRight: "1%",
             }}
           >
-            ID >
+            ID 
           </InputLabel>
           <TextField
             margin="normal"
@@ -177,7 +177,7 @@ export default function LoginBox() {
               marginRight: "1%",
             }}
           >
-            PW >
+            PW 
           </InputLabel>
           <TextField
             margin="normal"
