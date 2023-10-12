@@ -162,33 +162,39 @@ export default function StoryBox() {
                   src={airobot}
                   alt="AI Robot"
                   style={{
-                      // alignSelf: 'center',
-                      width: '250px',
-                      height: '250px',
+                      
+                      width: '400px',
+                      height: '400px',
                   }}
               />
 
+            
 
             {messages.length > 0 && (
-                <div>
-                  <Typography variant="h4" style={{ textAlign: 'center', color: 'white', marginTop: '100px' }}>
-                    {messages[messageIndex].speaker === 'AI' ? messages[messageIndex].speaker : ''}
-                  </Typography>
-                  <Typography variant="h5" style={{ textAlign: 'center', color: 'white', marginTop: '100px' }}>
-                    {messages[messageIndex].speaker === 'AI' ? messages[messageIndex].text : ''}
-                  </Typography>
+              <div style={{
+                width: '100%',
+                textAlign: 'center',
+                background: `linear-gradient(to bottom, transparent 10%, #666,  #666, transparent 90% )`,
+                marginTop: '50px',
                 
-                  <Typography variant="h4" style={{ textAlign: 'center', color: '#34C759', marginTop: '100px' }}>
-                    {messages[messageIndex].speaker === 'USER' ? messages[messageIndex].speaker : ''}
-                  </Typography>
-                  <Typography variant="h5" style={{ textAlign: 'center', color: '#34C759', marginTop: '100px' }}>
-                    {messages[messageIndex].speaker === 'USER' ? messages[messageIndex].text : ''}
-                  </Typography>
-                </div>
+              }}>
+                <Typography variant="h3" style={{
+                  textAlign: 'center',
+                  color: messages[messageIndex].speaker === 'AI' ? '#34C759' : 'white',
+                  marginTop: '70px'
+                }}>
+                  {messages[messageIndex].speaker}
+                </Typography>
+                <Typography variant="h4" style={{
+                  textAlign: 'center',
+                  color: messages[messageIndex].speaker === 'AI' ? '#34C759' : 'white',
+                  marginTop: '10px',
+                  marginBottom: '70px'
+                }}>
+                  {messages[messageIndex].text}
+                </Typography>
+              </div>
             )}
-
-
-
 
 
               <Grid 

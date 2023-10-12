@@ -10,6 +10,8 @@ import Signin from "./routes/Signin";
 import "./App.css";
 import Landing from "./routes/Landing";
 import ForgetPw from "./routes/ForgetPw";
+import CodeInputO from "./routes/CodeInputO";
+import CodeInputX from "./routes/CodeInputX";
 
 export default function App() {
   return (
@@ -24,6 +26,8 @@ export default function App() {
           <Route path="/landing" element={<Landing />} />
           <Route path="/main" element={<Story />} />
           <Route path="/code" element={<Code />} />
+          <Route path="/inputtrue" element={<CodeInputO />} />
+          <Route path="/inputfalse" element={<CodeInputX />} />
           <Route path="/quiz" element={<Quiz />} />
           
         </Routes>
