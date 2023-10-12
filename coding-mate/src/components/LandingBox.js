@@ -108,6 +108,26 @@ export default function CheckIdBox() {
         flexDirection: "column",
       }}
     >
+
+{showModal && (
+  <div style={{
+    width: '80%',
+    height: '20%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }} className="modal">
+    <div className="modal-content" style={{ background: '#FFF', padding: '20px', borderRadius: '10px' }}>
+      <p>진행 중이던 게임이 있습니다. 계속하시겠습니까?</p>
+      <button onClick={handleModalClose} style={{ border: 'none', padding: '10px 20px', borderRadius: '5px', background: '#A9A9A9', cursor: 'pointer', margin: '1%' }}>
+        닫기
+      </button>
+      <button onClick={handleModalContinue} style={{ background: '#0A84FF', color: '#FFF', border: 'none', padding: '10px 20px', borderRadius: '5px', cursor: 'pointer' }}>
+        계속
+      </button>
+    </div>
+  </div>
+)}
       <Typography
         variant="h3"
         color="#FFFFFF"
@@ -191,20 +211,6 @@ export default function CheckIdBox() {
         </Button>
       </div>
 
-      {showModal && (
-        // 모달 표시
-        <div style={{
-          background: '#FFF'
-        }}className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={handleModalClose}>
-              &times;
-            </span>
-            <p>진행 중이던 게임이 있습니다. 계속하시겠습니까?</p>
-            <button onClick={handleModalContinue}>계속</button>
-          </div>
-        </div>
-      )}
     </Box>
   );
 }

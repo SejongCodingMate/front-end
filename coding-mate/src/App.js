@@ -29,7 +29,6 @@ export default function App() {
           <Route path="/inputtrue" element={<CodeInputO />} />
           <Route path="/inputfalse" element={<CodeInputX />} />
           <Route path="/quiz" element={<Quiz />} />
-          
         </Routes>
       </BrowserRouter>
     </div>
