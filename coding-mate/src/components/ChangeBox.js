@@ -128,7 +128,7 @@ export default function ChangeBox() {
               marginRight: "1%",
             }}
           >
-            PW >
+            PW 
           </InputLabel>
           <TextField
             margin="normal"

@@ -134,7 +134,7 @@ export default function SigninBox() {
               marginRight: "1%",
             }}
           >
-            ID >
+            ID 
           </InputLabel>
           <TextField
             margin="normal"
@@ -175,7 +175,7 @@ export default function SigninBox() {
               marginRight: "1%",
             }}
           >
-            PW >
+            PW
           </InputLabel>
           <TextField
             margin="normal"

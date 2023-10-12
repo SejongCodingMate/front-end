@@ -4,11 +4,39 @@ import { useNavigate } from 'react-router-dom';
 import './Font.css'
 import back from '../assets/back.png';
 
+const fetchSave = (nextStoryId, accessToken) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", `Bearer ${accessToken}`);
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    "nextStoryId" : nextStoryId
+  });
+  
+  const requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  return fetch(`http://3.37.164.99/api/story/save`, requestOptions) 
+    .then((response) => response.json())
+    .then((data) => data)
+    .catch((error) => {
+      console.error('스토리 불러오기 오류:', error);
+      throw error;
+    });
+};
+
+
 export default function BoxSx() {
   const [quizzes, setQuizzes] = useState([]);
   const [userAnswers, setUserAnswers] = useState([]);
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState([]);
+ 
+  
 
   useEffect(() => {
     // accessToken 가져오기
@@ -20,7 +48,8 @@ export default function BoxSx() {
       return;
     }
     // GET 요청을 보내서 데이터를 가져오는 로직을 작성
-    fetch('http://3.37.164.99/api/quiz/1', {
+    const nextStoryId = localStorage.getItem("nextStoryId");
+    fetch(`http://3.37.164.99/api/quiz/${nextStoryId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -68,8 +97,29 @@ export default function BoxSx() {
     navigate('/main');
   };
 
-  const handleNextButtonClick = () => {
-    navigate('/main');
+  const handleNextButtonClick = (correctAnswersCount) => { 
+    let nextStoryId = parseInt(localStorage.getItem('nextStoryId'));
+    const accessToken = localStorage.getItem('accessToken');
+
+    if (correctAnswersCount <2 ) {
+      nextStoryId+=1;
+      localStorage.setItem("nextStoryId", nextStoryId);
+      
+    } else {
+      nextStoryId+=2;
+      localStorage.setItem("nextStoryId", nextStoryId);
+      
+    }
+    console.log(nextStoryId);
+
+    fetchSave(nextStoryId, accessToken)
+    .then((data) => {
+      var saveMessages = data.message;
+      saveMessages = "자동저장 되었습니다.";
+      window.alert(saveMessages);
+    });
+
+    window.location.href='/main';
   };
 
   const quizStyle = {

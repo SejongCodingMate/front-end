@@ -18,6 +18,8 @@
     "@testing-library/user-event": "^13.5.0",
     "@uiw/codemirror-extensions-basic-setup": "^4.21.19",
     "@uiw/codemirror-theme-basic": "^4.21.19",
+    "@uiw/codemirror-theme-xcode": "^4.21.19",
+    "@uiw/codemirror-themes-all": "^4.21.19",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-modal": "^3.16.1",

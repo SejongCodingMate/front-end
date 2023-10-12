@@ -6,13 +6,15 @@ import Story from "../routes/Story";
 
 export default function CheckIdBox() {
   const [storyId, setStoryId] = useState('');
+  const [nextStoryId, setNextStoryId] = useState(0);
   const [accessToken, setAccessToken] = useState(null);
   const [showModal, setShowModal] = useState(false); // 모달 상태 추가
 
   useEffect(() => {
-    const storedStoryId = localStorage.getItem("storyId");
+    const storedStoryId = localStorage.getItem("nextStoryId");
     if (storedStoryId) {
-      setStoryId(storedStoryId);
+      
+      setNextStoryId(storedStoryId);
     }
     setAccessToken(localStorage.getItem('accessToken'));
   }, []);
@@ -51,7 +53,7 @@ export default function CheckIdBox() {
       },
     };
 
-    fetch(`http://3.37.164.99/api/story/${storyId}`, requestOptions)
+    fetch(`http://3.37.164.99/api/story/${nextStoryId}`, requestOptions)
       .then(response => response.json())
       .then((data) => {
         const res = data.data[0].story.formatId;
@@ -83,10 +85,10 @@ export default function CheckIdBox() {
 
   const handleModalContinue = () => {
     // 모달에서 계속 버튼을 누르면 storyId를 1로 바꾸고 모달을 숨김
-    setStoryId("1");
+    localStorage.setItem("nextStoryId",1);
     setShowModal(false);
     fetchSave(1, accessToken);
-    window.location.href = "/main";
+    window.location.href='/main';
   };
 
   const handleModalClose = () => {

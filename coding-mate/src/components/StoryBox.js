@@ -58,6 +58,7 @@ export default function StoryBox() {
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
+    const storyId = localStorage.getItem('storyId');
     const nextStoryId = localStorage.getItem('nextStoryId');
     if (!token) {
       console.error('AccessToken이 없습니다.');
@@ -65,13 +66,14 @@ export default function StoryBox() {
     }
     setAccessToken(token);
 
-    fetchStory(2, token) //nextStoryId
+    fetchStory(nextStoryId, token)
       .then((data) => {
         const initialMessages = data.data.map((message) => ({
           speaker: message.speaker,
           text: message.text,
           currentStoryId: message.story.id,
           nextStoryId: message.story.nextId,
+          
         }));
 
         setMessages(initialMessages);
@@ -160,33 +162,39 @@ export default function StoryBox() {
                   src={airobot}
                   alt="AI Robot"
                   style={{
-                      alignSelf: 'center',
-                      width: '250px',
-                      height: '250px',
+                      
+                      width: '400px',
+                      height: '400px',
                   }}
               />
 
+            
 
             {messages.length > 0 && (
-                <div>
-                  <Typography variant="h4" style={{ textAlign: 'center', color: 'white', marginTop: '100px' }}>
-                    {messages[messageIndex].speaker === 'AI' ? messages[messageIndex].speaker : ''}
-                  </Typography>
-                  <Typography variant="h5" style={{ textAlign: 'center', color: 'white', marginTop: '100px' }}>
-                    {messages[messageIndex].speaker === 'AI' ? messages[messageIndex].text : ''}
-                  </Typography>
+              <div style={{
+                width: '100%',
+                textAlign: 'center',
+                background: `linear-gradient(to bottom, transparent 10%, #666,  #666, transparent 90% )`,
+                marginTop: '50px',
                 
-                  <Typography variant="h4" style={{ textAlign: 'center', color: '#34C759', marginTop: '100px' }}>
-                    {messages[messageIndex].speaker === 'USER' ? messages[messageIndex].speaker : ''}
-                  </Typography>
-                  <Typography variant="h5" style={{ textAlign: 'center', color: '#34C759', marginTop: '100px' }}>
-                    {messages[messageIndex].speaker === 'USER' ? messages[messageIndex].text : ''}
-                  </Typography>
-                </div>
+              }}>
+                <Typography variant="h3" style={{
+                  textAlign: 'center',
+                  color: messages[messageIndex].speaker === 'AI' ? '#34C759' : 'white',
+                  marginTop: '70px'
+                }}>
+                  {messages[messageIndex].speaker}
+                </Typography>
+                <Typography variant="h4" style={{
+                  textAlign: 'center',
+                  color: messages[messageIndex].speaker === 'AI' ? '#34C759' : 'white',
+                  marginTop: '10px',
+                  marginBottom: '70px'
+                }}>
+                  {messages[messageIndex].text}
+                </Typography>
+              </div>
             )}
-
-
-
 
 
               <Grid 
