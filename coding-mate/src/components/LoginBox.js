@@ -71,7 +71,7 @@ export default function LoginBox() {
       if (localStorage.getItem("hasTemporaryPassword") == "true"){
         window.location.href = "/pwchange";
       } else {
-        window.location.href = "/landing";
+        window.location.href = "/main";
       }
     })
     .catch((error) => {
