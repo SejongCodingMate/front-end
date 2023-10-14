@@ -21,8 +21,8 @@ export default function App() {
           <Route path="/signin" element={<Signin />} />
           <Route path="/forgetpw" element={<ForgetPw />} />
           <Route path="/pwchange" element={<PwChange />} />
-          <Route path="/landing" element={<Landing />} />
-          <Route path="/main" element={<Story />} />
+          <Route path="/main" element={<Landing />} />
+          <Route path="/dialog" element={<Story />} />
           <Route path="/code" element={<Code />} />
           <Route path="/quiz" element={<Quiz />} />
         </Routes>
