@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -11,10 +11,14 @@ export default function CheckIdBox() {
   const [memberId, setMemberId] = useState("");
   const [email, setEmail] = useState("");
 
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
+
   const validateEmail = () => {
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     return emailPattern.test(email);
-  }
+  };
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
@@ -27,43 +31,44 @@ export default function CheckIdBox() {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-
     if (!validateEmail(email)) {
-      window.alert('올바른 이메일 주소가 아닙니다.');
+      window.alert("올바른 이메일 주소가 아닙니다.");
       window.location.reload();
       return;
       // 이메일이 유효하면 memberId를 업데이트
     }
 
-      fetch(apiUrl, 
-        {method: 'GET',
-         headers: {
-          'Content-Type': 'application/json',
-         }} )
-         .then(response => response.json())
-         .then(data => {
-           const responseData = data.data; // data.data를 변수에 저장
-           console.log(responseData);      // true
-           localStorage.setItem('memberId', email);
-           if (responseData) {
-            navigate("/login");
-          } else {
-            navigate("/signin");
-          }
-         })
-        .catch((error) => {
-          console.error("오류:", error);
-        });
+    fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const responseData = data.data; // data.data를 변수에 저장
+        console.log(responseData); // true
+        localStorage.setItem("memberId", email);
+        if (responseData) {
+          navigate("/login");
+        } else {
+          window.alert("회원이 없습니다, 새로 회원가입하겠습니다");
+          navigate("/signin");
+        }
+      })
+      .catch((error) => {
+        console.error("오류:", error);
+      });
   };
 
   const handleForgetPassword = () => {
     if (!validateEmail(email)) {
-      window.alert('올바른 이메일 주소가 아닙니다.');
+      window.alert("올바른 이메일 주소가 아닙니다.");
       window.location.reload();
       return;
       // 이메일이 유효하면 memberId를 업데이트
     }
-    localStorage.setItem('memberId', email);
+    localStorage.setItem("memberId", email);
     navigate("/forgetpw");
   };
 
@@ -85,18 +90,22 @@ export default function CheckIdBox() {
         fontSize="40px"
         fontWeight="400"
         fontFamily="D2Coding"
-        textAlign="center"
+        textAlign=" "
       >
-        Hello world!<br />welcome to ‘AI-escape’
+        Hello world!
+        <br />
+        welcome to ‘AI-escape’
       </Typography>
 
       <Box
         sx={{
           background: "#EEE",
           width: "38%",
+          height: "31%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          justifyContent: "space-between", // 버튼을 하단에 고정
           padding: "16px",
           mt: "2rem",
         }}
@@ -108,6 +117,7 @@ export default function CheckIdBox() {
             alignItems: "center",
             justifyContent: "center",
             width: "100%",
+            height: "100%",
             marginBottom: "1rem",
           }}
         >
@@ -119,7 +129,7 @@ export default function CheckIdBox() {
               marginRight: "1%",
             }}
           >
-            ID 
+            ID &gt;
           </InputLabel>
           <TextField
             margin="normal"
@@ -129,6 +139,7 @@ export default function CheckIdBox() {
             autoComplete="memberId"
             onChange={(e) => setEmail(e.target.value)}
             variant="standard"
+            placeholder="email@email.com" // 이 부분을 추가하여 가이드 라인을 설정
             sx={{
               mt: 1,
               border: "1px solid #FFF",
@@ -136,7 +147,7 @@ export default function CheckIdBox() {
                 color: "#FFF",
               },
               background: "#000", // 배경색을 #000으로 변경
-              width: "70%", // 너비를 늘립니다.
+              width: "85%", // 너비를 늘립니다.
             }}
             onKeyPress={handleKeyPress} // Enter 키 이벤트 처리
           />

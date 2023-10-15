@@ -12,6 +12,7 @@ import Landing from "./routes/Landing";
 import ForgetPw from "./routes/ForgetPw";
 import CodeInputO from "./routes/CodeInputO";
 import CodeInputX from "./routes/CodeInputX";
+import Problem from "./routes/Problem";
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/code" element={<Code />} />
           <Route path="/inputtrue" element={<CodeInputO />} />
           <Route path="/inputfalse" element={<CodeInputX />} />
+          <Route path="/problem" element={<Problem />} />
           <Route path="/quiz" element={<Quiz />} />
         </Routes>
       </BrowserRouter>
