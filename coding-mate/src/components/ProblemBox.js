@@ -110,7 +110,6 @@ export default function CodeInputOBox() {
 
           localStorage.setItem("codeResult", codeInputResult);
           console.log(localStorage.getItem("codeResult"));
-          setOutput(localStorage.getItem("codeResult"));
         })
 
         .catch((error) => console.log("error", error));
@@ -154,9 +153,7 @@ export default function CodeInputOBox() {
     const viewportMargin = 19;
 
     const startState = EditorState.create({
-      doc: `${localStorage.getItem(
-        "code"
-      )}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n`,
+      doc: "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
       extensions: extensions,
     });
 
@@ -207,17 +204,8 @@ export default function CodeInputOBox() {
         localStorage.setItem("codeIsInput", initialMessages[0].isInput);
         setMessages(initialMessages);
 
-        if (
-          localStorage.getItem("formatId") == 3 &&
-          localStorage.getItem("codeIsInput") == "false"
-        ) {
-          navigate("/inputfalse");
-        } else {
-          navigate("/inputtrue");
-        }
-
-        if (localStorage.getItem("formatId") == 1) navigate("/main");
-        if (localStorage.getItem("formatId") == 2) navigate("/quiz");
+        //if (localStorage.getItem("formatId") == 1) navigate("/main");
+        //if (localStorage.getItem("formatId") == 2) navigate("/quiz");
       })
       .catch((error) => {
         console.error("진행해야 할 스토리 불러오기 오류:", error);
@@ -244,12 +232,12 @@ export default function CodeInputOBox() {
           .then((data) => {
             const res = data.data[0].story.formatId;
 
-            if (res === 1) {
-              window.location.href = "/main";
-            }
-            if (res === 2) {
-              window.location.href = "/quiz";
-            }
+            // if (res === 1) {
+            //   window.location.href = "/main";
+            // }
+            // if (res === 2) {
+            //   window.location.href = "/quiz";
+            // }
 
             setMessageIndex(messageIndex + 1);
             const newMessages = data.data.map((message) => ({
@@ -345,7 +333,7 @@ export default function CodeInputOBox() {
                         color="primary"
                         type="submit"
                         variant="outlined"
-                        onClick={handleCodeSubmit}
+                        // onClick={handleCodeSubmit}
                         style={{ backgroundColor: "white", color: "#34C759" }}
                       >
                         RUN ▶️
@@ -395,7 +383,6 @@ export default function CodeInputOBox() {
 
                   <Grid style={{ paddingBottom: "10px" }}>
                     <TextField
-                      label="코드 실행 결과 확인"
                       variant="outlined"
                       fullWidth
                       multiline
@@ -409,61 +396,6 @@ export default function CodeInputOBox() {
                           paddingTop: "10px",
                           paddingBottom: "10px",
                         },
-                      }}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-
-              <Grid
-                justifyContent="space-between"
-                style={{ backgroundColor: "white" }}
-              >
-                <Grid container alignItems="center">
-                  <Grid
-                    item
-                    xs={1}
-                    style={{
-                      marginLeft: "10px",
-                      marginTop: "15px",
-                      marginBottom: "15px",
-                      marginRight: "10px",
-                    }}
-                  >
-                    <Typography variant="h5" style={{ color: "blue" }}>
-                      {" "}
-                      입력{">"}{" "}
-                    </Typography>
-                  </Grid>
-
-                  <Grid item xs={10} style={{ marginLeft: "5px" }}>
-                    <TextField
-                      label="입력"
-                      variant="outlined"
-                      fullWidth
-                      multiline
-                      rows={1}
-                      value={userInput}
-                      onChange={(e) => setUserInput(e.target.value)}
-                      InputProps={{
-                        style: {
-                          color: "white",
-                          paddingTop: "10px",
-                          paddingBottom: "10px",
-                          backgroundColor: "black",
-                        },
-                        endAdornment: (
-                          <InputAdornment position="start">
-                            <Tooltip
-                              title="컴퓨터에게 명령하고 싶으면 클릭하고 여기에 입력하면 돼!"
-                              arrow
-                            >
-                              <IconButton edge="end">
-                                <HelpOutlineIcon style={{ color: "white" }} />
-                              </IconButton>
-                            </Tooltip>
-                          </InputAdornment>
-                        ),
                       }}
                     />
                   </Grid>

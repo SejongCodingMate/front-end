@@ -8,7 +8,7 @@ import React, { useState, useEffect } from "react";
 
 export default function LoginBox() {
   const navigate = useNavigate();
-  
+
   const [memberId, setmemberId] = useState("");
   const [password, setpassword] = useState("");
   useEffect(() => {
@@ -18,7 +18,7 @@ export default function LoginBox() {
     if (storedMemberId) {
       setmemberId(storedMemberId);
     }
-  }, []); 
+  }, []);
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
@@ -47,37 +47,42 @@ export default function LoginBox() {
     };
 
     fetch("http://3.37.164.99/api/member/login", requestOptions)
-    .then((response) => {
-      const authHeader = response.headers.get("Authorization");
-      if (authHeader) {
-        const accessToken = authHeader.replace("Bearer ", "");
-        
-        // JSON 데이터를 파싱하고 "data" 프로퍼티의 값을 localStorage에 저장
-        return response.json().then((data) => {
-          localStorage.setItem("nextStoryId", data.data.storyId);
-          localStorage.setItem("hasTemporaryPassword", data.data.hasTemporaryPassword);
-          return accessToken;
-        });
-      } else {
-        throw new Error("access token을 받지 못했습니다.");
-      }
-    })
-    .then((accessToken) => {
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("password", password);
-      window.alert("로그인에 성공하였습니다.");
-      const TemporaryPassword = localStorage.getItem("hasTemporaryPassword");
-      console.log(TemporaryPassword);
-      if (localStorage.getItem("hasTemporaryPassword") == "true"){
-        window.location.href = "/pwchange";
-      } else {
-        window.location.href = "/main";
-      }
-    })
-    .catch((error) => {
-      console.error("로그인 오류:", error);
-      window.alert("회원이 없거나 비밀번호가 틀렸습니다.");
-    });  
+      .then((response) => {
+        const authHeader = response.headers.get("Authorization");
+        if (authHeader) {
+          const accessToken = authHeader.replace("Bearer ", "");
+
+          // JSON 데이터를 파싱하고 "data" 프로퍼티의 값을 localStorage에 저장
+          return response.json().then((data) => {
+            console.log(data);
+            localStorage.setItem("nextStoryId", data.data.storyId);
+            localStorage.setItem(
+              "hasTemporaryPassword",
+              data.data.hasTemporaryPassword
+            );
+            localStorage.setItem("name", data.data.name);
+            return accessToken;
+          });
+        } else {
+          throw new Error("access token을 받지 못했습니다.");
+        }
+      })
+      .then((accessToken) => {
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("password", password);
+        window.alert("로그인에 성공하였습니다.");
+        const TemporaryPassword = localStorage.getItem("hasTemporaryPassword");
+        console.log(TemporaryPassword);
+        if (localStorage.getItem("hasTemporaryPassword") == "true") {
+          window.location.href = "/pwchange";
+        } else {
+          window.location.href = "/main";
+        }
+      })
+      .catch((error) => {
+        console.error("로그인 오류:", error);
+        window.alert("회원이 없거나 비밀번호가 틀렸습니다.");
+      });
   };
 
   const handleForgetPassword = () => {
@@ -104,16 +109,20 @@ export default function LoginBox() {
         fontFamily="D2Coding"
         textAlign="center"
       >
-        Hello world!<br />welcome to ‘AI-escape’
+        Hello world!
+        <br />
+        welcome to ‘AI-escape’
       </Typography>
 
       <Box
         sx={{
           background: "#EEE",
           width: "38%",
+          height: "31%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          justifyContent: "space-between", // 버튼을 하단에 고정
           padding: "16px",
           mt: "2rem",
         }}
@@ -125,7 +134,7 @@ export default function LoginBox() {
             alignItems: "center",
             justifyContent: "center",
             width: "100%",
-            marginBottom: "1rem",
+            height: "100%",
           }}
         >
           <InputLabel
@@ -136,7 +145,7 @@ export default function LoginBox() {
               marginRight: "1%",
             }}
           >
-            ID 
+            ID &gt;
           </InputLabel>
           <TextField
             margin="normal"
@@ -154,7 +163,7 @@ export default function LoginBox() {
                 color: "#FFF",
               },
               background: "#000", // 배경색을 #000으로 변경
-              width: "70%", // 너비를 늘립니다.
+              width: "85%", // 너비를 늘립니다.
             }}
             onKeyPress={handleKeyPress} // Enter 키 이벤트 처리
           />
@@ -166,6 +175,7 @@ export default function LoginBox() {
             alignItems: "center",
             justifyContent: "center",
             width: "100%",
+            height: "100%",
             marginBottom: "1rem",
           }}
         >
@@ -177,7 +187,7 @@ export default function LoginBox() {
               marginRight: "1%",
             }}
           >
-            PW 
+            PW &gt;
           </InputLabel>
           <TextField
             margin="normal"
@@ -186,6 +196,7 @@ export default function LoginBox() {
             name="password"
             id="password"
             autoComplete="current-password"
+            placeholder="4자리 이상 입력하세요" // 이 부분을 추가하여 가이드 라인을 설정
             onChange={(e) => setpassword(e.target.value)}
             variant="standard"
             sx={{
@@ -195,7 +206,7 @@ export default function LoginBox() {
                 color: "#FFF",
               },
               background: "#000", // 배경색을 #000으로 변경
-              width: "70%", // 너비를 늘립니다.
+              width: "85%", // 너비를 늘립니다.
             }}
             onKeyPress={handleKeyPress}
           />

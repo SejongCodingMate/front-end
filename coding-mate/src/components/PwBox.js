@@ -7,51 +7,54 @@ import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 
 export default function PwBox() {
-    const [memberId, setmemberId] = useState("");
-    const navigate = useNavigate();
+  const [memberId, setmemberId] = useState("");
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        // 컴포넌트가 마운트될 때 localStorage에서 memberId 값을 읽어옵니다.
-        const storedMemberId = localStorage.getItem("memberId");
-        console.log(storedMemberId);
-        if (storedMemberId) {
-          setmemberId(storedMemberId);
+  useEffect(() => {
+    // 컴포넌트가 마운트될 때 localStorage에서 memberId 값을 읽어옵니다.
+    const storedMemberId = localStorage.getItem("memberId");
+    console.log(storedMemberId);
+    if (storedMemberId) {
+      setmemberId(storedMemberId);
+    }
+  }, []);
+
+  const handleSendMail = () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      memberId: memberId,
+    });
+
+    console.log(memberId);
+    var requestOptions = {
+      method: "PATCH",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch("http://3.37.164.99/api/member/temporary", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        if (
+          result["message"] ==
+          "임시 비밀번호를 발급했습니다. 메일을 확인해주세요."
+        ) {
+          window.alert(result["message"]);
+          navigate("/login");
+        } else {
+          window.alert(result["message"]);
+          return;
         }
-      }, []); 
+      })
+      .catch((error) => console.log("error", error));
+  };
 
-    const handleSendMail = () => {
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-    
-        var raw = JSON.stringify({
-          memberId: memberId,
-        });
-    
-        console.log(memberId);
-        var requestOptions = {
-          method: "PATCH",
-          headers: myHeaders,
-          body: raw,
-          redirect: "follow",
-        };
-    
-        fetch("http://3.37.164.99/api/member/temporary", requestOptions)
-          .then((response) => response.json())
-          .then((result) => {
-            if (result["message"] == '임시 비밀번호를 발급했습니다. 메일을 확인해주세요.') {
-              window.alert(result["message"]);
-              navigate('/login');
-            } else {
-                window.alert(result["message"]);
-                return;
-            }
-          })
-          .catch((error) => console.log("error", error));
-      };
-
-      const GoBack = () => {
-        navigate("/");
-      };
+  const GoBack = () => {
+    navigate("/");
+  };
 
   return (
     <Box
@@ -73,16 +76,20 @@ export default function PwBox() {
         fontFamily="D2Coding"
         textAlign="center"
       >
-        Hello world!<br />welcome to ‘AI-escape’
+        Hello world!
+        <br />
+        welcome to ‘AI-escape’
       </Typography>
 
       <Box
         sx={{
           background: "#EEE",
           width: "38%",
+          height: "31%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          justifyContent: "space-between", // 버튼을 하단에 고정
           padding: "16px",
           mt: "2rem",
         }}
@@ -94,6 +101,7 @@ export default function PwBox() {
             alignItems: "center",
             justifyContent: "center",
             width: "100%",
+            height: "100%",
             marginBottom: "1rem",
           }}
         >
@@ -105,7 +113,7 @@ export default function PwBox() {
               marginRight: "1%",
             }}
           >
-            ID 
+            ID &gt;
           </InputLabel>
           <TextField
             margin="normal"
@@ -122,7 +130,7 @@ export default function PwBox() {
                 color: "#FFF",
               },
               background: "#000", // 배경색을 #000으로 변경
-              width: "70%", // 너비를 늘립니다.
+              width: "85%", // 너비를 늘립니다.
             }}
           />
         </div>

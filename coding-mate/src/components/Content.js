@@ -1,13 +1,13 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel'; // InputLabel 추가
-import { BrowserRouter as Router, Link } from 'react-router-dom';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import InputLabel from "@mui/material/InputLabel"; // InputLabel 추가
+import { BrowserRouter as Router, Link } from "react-router-dom";
 
 export default function LoginBox() {
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       // Enter 키가 눌렸을 때 로그인 로직을 호출
       handleLogin();
     }
@@ -21,28 +21,30 @@ export default function LoginBox() {
   return (
     <Box
       sx={{
-        width: '100vw',
-        height: '100vh',
-        backgroundColor: '#000',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "#000",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
       }}
     >
-      <Typography 
-        variant='h3'
-        color="#FFFFFF" 
-        fontSize='40px'
+      <Typography
+        variant="h3"
+        color="#FFFFFF"
+        fontSize="40px"
         fontWeight="400"
         fontFamily="D2Coding"
         textAlign="center"
       >
-        Hello world!<br />welcome to ‘AI-escape’
+        Hello world!
+        <br />
+        welcome to ‘AI-escape’
       </Typography>
 
       {/* ID 입력 필드 */}
-      <InputLabel htmlFor="studentId" sx={{ color: '#FFD60A', width: '20vw' }}>
+      <InputLabel htmlFor="studentId" sx={{ color: "#FFD60A", width: "20vw" }}>
         ID
       </InputLabel>
       <TextField
@@ -52,20 +54,23 @@ export default function LoginBox() {
         id="studentId"
         autoComplete="studentId"
         variant="standard"
-        sx={{ 
+        sx={{
           mt: 1,
           border: "1px solid #FFF",
-          width: '20vw',
-          height: '6vh',
-          '& input': {
-            color: '#FFF', // 입력 텍스트 색상 변경
+          width: "20vw",
+          height: "6vh",
+          "& input": {
+            color: "#FFF", // 입력 텍스트 색상 변경
           },
-         }}
-         onKeyPress={handleKeyPress} // Enter 키 이벤트 처리
+        }}
+        onKeyPress={handleKeyPress} // Enter 키 이벤트 처리
       />
 
       {/* PW 입력 필드 */}
-      <InputLabel htmlFor="password" sx={{ color: '#FFD60A', width: '20vw', mt: 1 }}>
+      <InputLabel
+        htmlFor="password"
+        sx={{ color: "#FFD60A", width: "20vw", mt: 1 }}
+      >
         PW
       </InputLabel>
       <TextField
@@ -76,22 +81,39 @@ export default function LoginBox() {
         id="password"
         autoComplete="current-password"
         variant="standard"
-        sx={{ 
+        sx={{
           mt: 1,
           border: "1px solid #FFF",
-          width: '20vw',
-          height: '6vh',
-          '& input': {
-            color: '#FFF', // 입력 텍스트 색상 변경
+          width: "20vw",
+          height: "6vh",
+          "& input": {
+            color: "#FFF", // 입력 텍스트 색상 변경
           },
         }}
         onKeyPress={handleKeyPress} // Enter 키 이벤트 처리
       />
-      <div style={{ display: 'flex', flexDirection: 'row', marginTop: '1rem', gap: 50 }}>
-        <Link to="/register" style={{ textDecoration: 'none', color: '#FF9F0A', marginRight: '1rem' }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          marginTop: "1rem",
+          gap: 50,
+        }}
+      >
+        <Link
+          to="/register"
+          style={{
+            textDecoration: "none",
+            color: "#FF9F0A",
+            marginRight: "1rem",
+          }}
+        >
           회원가입
         </Link>
-        <Link to="/studentauth" style={{ textDecoration: 'none', color: '#FF9F0A' }}>
+        <Link
+          to="/studentauth"
+          style={{ textDecoration: "none", color: "#FF9F0A" }}
+        >
           ID/PW 찾기
         </Link>
       </div>
