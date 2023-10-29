@@ -68,7 +68,7 @@ export default function CheckIdBox() {
           window.location.href = "/quiz";
         }
         if (res === 1) {
-          window.location.href = "/dialog";
+          window.location.href = "/dialogue";
         }
       })
       .catch((error) => {

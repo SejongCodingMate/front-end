@@ -1,9 +1,9 @@
-import ChangeBox from "../components/ChangeBox";
+import PwChangeBox from "./components/PWChangeBox";
 
 function Login() {
   return (
     <div>
-      <ChangeBox />
+      <PwChangeBox />
     </div>
   );
 }

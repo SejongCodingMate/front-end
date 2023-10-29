@@ -2,17 +2,13 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./routes/Login";
 import CheckId from "./routes/CheckId";
-import PwChange from "./routes/PwChange";
-import Quiz from "./routes/Quiz";
+import PwChange from "./routes/PWChange";
 import Story from "./routes/Story";
-import Code from "./routes/Code";
 import Signin from "./routes/Signin";
 import "./App.css";
 import Landing from "./routes/Landing";
 import ForgetPw from "./routes/ForgetPw";
-import CodeInputO from "./routes/CodeInputO";
-import CodeInputX from "./routes/CodeInputX";
-import Problem from "./routes/Problem";
+import Dialogue from "./routes/dialogue";
 
 export default function App() {
   return (
@@ -26,11 +22,8 @@ export default function App() {
           <Route path="/pwchange" element={<PwChange />} />
           <Route path="/main" element={<Landing />} />
           <Route path="/dialog" element={<Story />} />
-          <Route path="/code" element={<Code />} />
-          <Route path="/inputtrue" element={<CodeInputO />} />
-          <Route path="/inputfalse" element={<CodeInputX />} />
-          <Route path="/problem" element={<Problem />} />
-          <Route path="/quiz" element={<Quiz />} />
+          <Route path="/dialogue" element={<Dialogue />} />
+
         </Routes>
       </BrowserRouter>
     </div>

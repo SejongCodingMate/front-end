@@ -60,13 +60,14 @@ const fetchSave = (nextStoryId, accessToken) => {
     });
 };
 
-export default function StoryBox() {
+export default function DialogueBox() {
   const [messages, setMessages] = useState([]);
   const [messageIndex, setMessageIndex] = useState(0);
   const [accessToken, setAccessToken] = useState(null);
   const [name, setName] = useState("");
   const [isImageVisible, setImageVisible] = useState(false);
   const [isShaking, setShaking] = useState(false);
+  let [chImage, setChImage] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -88,9 +89,17 @@ export default function StoryBox() {
           nextStoryId: message.story.nextId,
           screenEffect: message.screenEffect,
           soundEffect: message.soundEffect,
+          characterImage: message.characterImage,
         }));
+        console.log(initialMessages[0].characterImage);
 
         setMessages(initialMessages);
+
+        localStorage.setItem("characterImage",initialMessages[1].characterImage);
+        setChImage(localStorage.getItem("characterImage"));
+        console.log(localStorage.getItem("characterImage")); //null 
+        
+
       })
       .catch((error) => {
         console.error("초기 스토리 불러오기 오류:", error);
@@ -111,19 +120,34 @@ export default function StoryBox() {
           saveMessages = "자동저장 되었습니다.";
           window.alert(saveMessages);
         });
+        // fetchStory로 스토리 연결할 때 -> 메인 페이지로 넘어갈 때 chapterId를 저장해야
+        // 메인 페이지에서는 유저가 기존에 지나온 챕터를 다시 선택하거나, 
+        // 건너 뛸 수 없다 (메인 페이지로 유저가 처음 들어오면 로그인 시 이미 발급을 받음)
+
+        // 챕터의 마지막 스토리일 때 "nextStoryId가 이제 0"일 경우에 
+        // 해당 챕터에서 스토리가 다 끝났다는 뜻이므로 메인 페이지로 랜더링 
+        // 위에 거는 서버 응답 바로 받아오면 메인으로 랜더링 처리 시켜버리고
+        // if-else 할 필요 없이 랜더링이 안되면 fetchStory 바로 연결되도록 하면 됨 
+        // nextStoryId가 0이 아니면 바로 다음 스토링 아이디 api 연결하면 됨 
+
+        if(localStorage.getItem("nextStoryId")==0){
+            window.location.href = "/main";
+        }
+
+
 
         fetchStory(nextStoryId, accessToken)
           .then((data) => {
             const res = data.data[0].story.formatId;
             console.log(res);
-            if (res === 4) {
-              window.location.href = "/problem";
-            }
+            // if (res === 4) {
+            //   window.location.href = "/";
+            // }
             if (res === 3) {
-              window.location.href = "/code";
+              window.location.href = "/item";
             }
             if (res === 2) {
-              window.location.href = "/quiz";
+              window.location.href = "/selection";
             }
 
             const newMessages = data.data.map((message) => ({
@@ -134,21 +158,22 @@ export default function StoryBox() {
               formatId: message.story.formatId,
               screenEffect: message.screenEffect,
               soundEffect: message.soundEffect,
+              characterImage: message.characterImage,
             }));
 
-            newMessages.forEach((message) => {
-              if (message.screenEffect === 6) { // fade-in
-                setImageVisible(true);
-              } else if (message.screenEffect === 7) { // fade-out
-                setImageVisible(false); 
-              } else if (message.screenEffect === 1) { // 화면 흔들리는 효과
-                setShaking(true);
-              } else if (message.screenEffect === 2) { // 단어 zoom in
+            // newMessages.forEach((message) => {
+            //   if (message.screenEffect === 6) { // fade-in
+            //     setImageVisible(true);
+            //   } else if (message.screenEffect === 7) { // fade-out
+            //     setImageVisible(false); 
+            //   } else if (message.screenEffect === 1) { // 화면 흔들리는 효과
+            //     setShaking(true);
+            //   } else if (message.screenEffect === 2) { // 단어 zoom in
                 
-              } else if (message.screenEffect === 2) { // 화면 zoom in
+            //   } else if (message.screenEffect === 2) { // 화면 zoom in
                 
-              } 
-            });
+            //   } 
+            // });
 
             
             setMessages([...messages, ...newMessages]);
@@ -199,18 +224,20 @@ export default function StoryBox() {
             justifyContent: "center",
           }}
         >
-          <Fade in={isImageVisible} timeout={2000} >
-          <img
-            src={airobot}
-            alt="AI Robot"
-            style={{
-              width: "300px",
-              height: "300px",
-              marginTop: "2%",
-              marginBottom: "5%",
-            }}
-          />
-          </Fade>
+          {/* <Fade in={isImageVisible} timeout={2000} > */}
+          {messages.length > 0 ? (
+            <img
+                src={messages[messageIndex].characterImage}
+                alt="Character Image"
+                style={{
+                width: "300px",
+                height: "300px",
+                marginTop: "2%",
+                marginBottom: "5%",
+                }}
+            />
+            ) : null}
+          {/* </Fade> */}
 
           {messages.length > 0 && (
             <div
