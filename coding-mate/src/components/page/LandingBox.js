@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Story from "../routes/Story";
+import Story from "../../routes/page/Story";
 import "./Font.css";
 
 export default function CheckIdBox() {
