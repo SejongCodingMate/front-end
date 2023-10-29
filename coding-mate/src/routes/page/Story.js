@@ -1,4 +1,4 @@
-import StoryBox from "../components/StoryBox";
+import StoryBox from "../../components/page/StoryBox";
 
 
 export default function Story() {
