@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Story from "../routes/Story";
-import "./Font.css";
+import Story from "../../routes/page/Story";
+import "../../assets/fonts/Font.css";
 
-export default function CheckIdBox() {
+export default function LandingBox() {
   const [storyId, setStoryId] = useState("");
   const [nextStoryId, setNextStoryId] = useState(0);
   const [accessToken, setAccessToken] = useState(null);
@@ -68,7 +68,7 @@ export default function CheckIdBox() {
           window.location.href = "/quiz";
         }
         if (res === 1) {
-          window.location.href = "/dialog";
+          window.location.href = "/dialogue";
         }
       })
       .catch((error) => {

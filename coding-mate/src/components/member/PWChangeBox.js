@@ -6,7 +6,7 @@ import { Button } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function ChangeBox() {
+export default function PwChangeBox() {
   const [memberId, setmemberId] = useState("");
   const [password, setpassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
