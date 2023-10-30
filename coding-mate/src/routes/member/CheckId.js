@@ -1,4 +1,5 @@
-import CheckIdBox from "../components/CheckIdBox";
+import CheckIdBox from './../../components/member/CheckIdBox';
+import React from "react";
 
 function CheckId() {
   return (

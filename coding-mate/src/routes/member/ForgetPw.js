@@ -1,6 +1,7 @@
-import PwBox from "../components/PwBox";
+import PwBox from './../../components/member/PasswordBox';
+import React from "react";
 
-function Landing() {
+function ForgetPw() {
   return (
     <div>
         <PwBox/>
@@ -8,4 +9,4 @@ function Landing() {
   );
 }
 
-export default Landing;
+export default ForgetPw;

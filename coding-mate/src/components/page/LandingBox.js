@@ -3,9 +3,9 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Story from "../../routes/page/Story";
-import "./Font.css";
+import "../../assets/fonts/Font.css";
 
-export default function CheckIdBox() {
+export default function LandingBox() {
   const [storyId, setStoryId] = useState("");
   const [nextStoryId, setNextStoryId] = useState(0);
   const [accessToken, setAccessToken] = useState(null);
