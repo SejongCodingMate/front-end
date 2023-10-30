@@ -137,7 +137,7 @@ export default function MainBox() {
       </div>
 
       <img
-        src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/map.png"
+        src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/map.jpg"
         alt="Map Background"
         style={{
           width: "100%",
