@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import "./Font.css";
+import "../../assets/fonts/Font.css";
 
-export default function MainBack() {
+export default function MainBox() {
   const [imagePosition, setImagePosition] = useState("chapter1");
   const [firstId, setFirstId] = useState(0);
   const [lastId, setLastId] = useState(0);

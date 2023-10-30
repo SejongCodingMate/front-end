@@ -6,7 +6,7 @@ import Login from "./routes/member/Login";
 import Signin from "./routes/member/Signin";
 import ForgetPw from "./routes/member/ForgetPw";
 import Pwchange from "./routes/member/PwChange";
-import Landing from "./routes/page/Landing";
+import Main from "./routes/page/Main";
 import Story from "./routes/page/Story";
 import Dialogue from "./routes/page/Dialogue";
 
@@ -20,7 +20,7 @@ export default function App() {
           <Route path="/signin" element={<Signin />} />
           <Route path="/forgetpw" element={<ForgetPw />} />
           <Route path="/pwchange" element={<Pwchange />} />
-          <Route path="/main" element={<Landing />} />
+          <Route path="/main" element={<Main />} />
           <Route path="/dialog" element={<Story />} />
           <Route path="/dialogue" element={<Dialogue />} />
         </Routes>

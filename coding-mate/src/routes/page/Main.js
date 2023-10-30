@@ -1,9 +1,9 @@
-import Background from "../components/MainBack";
+import MainBox from "../../components/page/MainBox";
 
 function Main() {
   return (
     <div>
-      <Background />
+      <MainBox />
     </div>
   );
 }
