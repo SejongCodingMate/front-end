@@ -17,19 +17,28 @@ export default function MainBox() {
   const location = useLocation();
 
   const chapterButtons = [
-    { position: "chapter1", label: "Chapter 1", chapterId: 1 },
-    { position: "chapter2", label: "Chapter 2", chapterId: 2 },
-    { position: "chapter3", label: "Chapter 3", chapterId: 3 },
-    { position: "chapter4", label: "Chapter 4", chapterId: 4 },
+    {
+      position: "chapter1",
+      label: "Chapter 1",
+      chapterId: 1,
+      imgPosition: { top: "56%", left: "2%" },
+    },
+    {
+      position: "chapter2",
+      label: "Chapter 2",
+      chapterId: 2,
+      imgPosition: { top: "42%", left: "55%" },
+    },
+    {
+      position: "chapter3",
+      label: "Chapter 3",
+      chapterId: 3,
+      imgPosition: { top: "30%", left: "62%" },
+    },
   ];
 
   const accessToken = localStorage.getItem("accessToken");
   const userChapterId = localStorage.getItem("chapterId");
-
-  // const handleChapterButtonClick = (chapter) => {
-  //   localStorage.setItem("chapterId", chapter.chapterId);
-  //   navigate("/dialog");
-  // };
   useEffect(() => {
     const storedStoryId = localStorage.getItem("nextStoryId");
     if (storedStoryId) {
@@ -38,7 +47,6 @@ export default function MainBox() {
   }, []);
 
   const handleChapterButtonClick = () => {
-    // 이전 handleContinue 코드 그대로 유지
     const requestOptions = {
       method: "GET",
       headers: {
@@ -78,14 +86,7 @@ export default function MainBox() {
         .then((response) => response.json())
         .then((data) => {
           console.log("챕터 데이터:", data);
-
-          // data.data를 localStorage에 저장 (배열을 JSON 문자열로 변환)
-          localStorage.setItem("Data", JSON.stringify(data.data));
-
-          setFirstId({
-            ...firstId,
-            firstId: data.data.firstStoryId,
-          });
+          setFirstId(data.data.firstStoryId);
           setLastId(data.data.lastStoryId);
           setChapterTitle(data.data.title);
           setChapterUrl(data.data.url);
@@ -117,8 +118,8 @@ export default function MainBox() {
       <div
         style={{
           position: "absolute",
-          top: "10px",
-          left: "10px",
+          bottom: "5%",
+          left: "3%",
         }}
       >
         <Box
@@ -137,7 +138,7 @@ export default function MainBox() {
       </div>
 
       <img
-        src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/map.png"
+        src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/map.jpg"
         alt="Map Background"
         style={{
           width: "100%",
@@ -148,8 +149,8 @@ export default function MainBox() {
       <div
         style={{
           position: "absolute",
-          bottom: "10px",
-          right: "10px",
+          bottom: "5%",
+          right: "3%",
         }}
       >
         <Box
@@ -167,46 +168,65 @@ export default function MainBox() {
         </Box>
       </div>
 
-      <div
-        style={{
+      {chapterButtons.map((chapter, index) => {
+        let topPosition, leftPosition;
+
+        if (chapter.position === "chapter1") {
+          topPosition = "50%";
+          leftPosition = "10%";
+        } else if (chapter.position === "chapter2") {
+          topPosition = "42%";
+          leftPosition = "40%";
+        } else if (chapter.position === "chapter3") {
+          topPosition = "25%";
+          leftPosition = "47%";
+        }
+
+        const buttonStyles = {
+          width: "30vw",
+          height: "15vh",
           position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-        }}
-      >
-        {chapterButtons.map((chapter, index) => (
-          <div
-            key={index}
-            style={{
-              width: "30vw",
-              height: "15vh",
-            }}
-          >
-            <Button
-              variant="contained"
-              color="success"
-              style={{ margin: "10%" }}
-              onClick={() => handleChapterButtonClick(chapter)}
-              disabled={parseInt(userChapterId) !== chapter.chapterId}
-            >
-              {chapter.label}
-            </Button>
-            {imagePosition === chapter.position && (
-              <img
-                src={chapterUrl}
-                alt={`chapter ${chapter.position} Character`}
-                style={{
-                  position: "absolute",
-                  width: "100px",
-                  height: "100px",
-                  zIndex: 1,
-                }}
-              />
-            )}
-          </div>
-        ))}
-      </div>
+          top: topPosition,
+          left: leftPosition,
+        };
+
+        const imgStyles = {
+          position: "absolute",
+          width: "100px",
+          height: "100px",
+          zIndex: 1,
+          top: chapter.imgPosition.top,
+          left: chapter.imgPosition.left,
+        };
+
+        return (
+          <React.Fragment key={`fragment-${index}`}>
+            <div key={index} style={buttonStyles}>
+              <Button
+                variant="contained"
+                color="success"
+                style={{ margin: "10%" }}
+                onClick={() => handleChapterButtonClick(chapter)}
+                disabled={parseInt(userChapterId) !== chapter.chapterId}
+              >
+                {chapter.label}
+              </Button>
+            </div>
+            <div key={`img-${index}`} style={imgStyles}>
+              {imagePosition === chapter.position && (
+                <img
+                  src={chapterUrl}
+                  alt={`chapter ${chapter.position} Character`}
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                  }}
+                />
+              )}
+            </div>
+          </React.Fragment>
+        );
+      })}
     </Box>
   );
 }
