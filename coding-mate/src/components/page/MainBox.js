@@ -64,7 +64,7 @@ export default function MainBox() {
           window.location.href = "/mission";
         }
         if (res === 1 || res === 2 || res === 3) {
-          window.location.href = "/dialog";
+          window.location.href = "/dialogue";
         }
       })
       .catch((error) => {

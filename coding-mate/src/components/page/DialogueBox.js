@@ -1,23 +1,13 @@
-import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import "../../assets/animation/Shaking.css";
 import "../../assets/animation/Zoom.css";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import {
-  Container,
-  Paper,
-  Typography,
-  Button,
-  FormControlLabel,
-  Switch,
-  Fade,
-} from "@mui/material";
+import { Container, Typography, Button, Switch, Fade } from "@mui/material";
 import airobot from "../../assets/image/Character.png";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../../assets/fonts/Font.css";
 
+// 1. 스토리 갱신
 const fetchStory = (storyId, accessToken) => {
   const requestOptions = {
     method: "GET",
@@ -35,6 +25,7 @@ const fetchStory = (storyId, accessToken) => {
     });
 };
 
+// 2. 스토리 Save
 const fetchSave = (nextStoryId, accessToken) => {
   var myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${accessToken}`);
@@ -68,7 +59,10 @@ export default function DialogueBox() {
   const [isImageVisible, setImageVisible] = useState(false);
   const [isShaking, setShaking] = useState(false);
   let [chImage, setChImage] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const modalBackground = useRef();
 
+  // 1. 초기 랜더링
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     const nextStoryId = localStorage.getItem("nextStoryId");
@@ -95,61 +89,61 @@ export default function DialogueBox() {
 
         setMessages(initialMessages);
 
-        localStorage.setItem("characterImage",initialMessages[1].characterImage);
+        localStorage.setItem(
+          "characterImage",
+          initialMessages[1].characterImage
+        );
         setChImage(localStorage.getItem("characterImage"));
-        console.log(localStorage.getItem("characterImage")); //null 
-        
-
+        console.log(localStorage.getItem("characterImage")); //null
       })
       .catch((error) => {
         console.error("초기 스토리 불러오기 오류:", error);
       });
   }, []);
 
+  // 2. 모달 오픈
+  const openModal = () => {
+    setModalOpen(true);
+  };
+
+  // 3. 모달 닫힘
+  const handleModalClick = () => {
+    // 모달을 닫는 이벤트 처리
+    setModalOpen(false);
+  };
+
+  // 5. NextMessage 핸들링
   const handleNextMessage = () => {
+    // 1. 메세지 내용 출력
     if (messageIndex < messages.length - 1) {
       setMessageIndex(messageIndex + 1);
-    } else {
+    }
+    // 2. 만약 메세지가 다 출력이 되었다면
+    else {
+      // 2-1. 로컬스토리지 StoryID 갱신
       const currentStoryId = messages[messageIndex]?.currentStoryId;
       const nextStoryId = messages[messageIndex]?.nextStoryId;
       localStorage.setItem("nextStoryId", nextStoryId);
 
       if (currentStoryId && nextStoryId) {
+        // 2-1. 스토리 저장 API
         fetchSave(nextStoryId, accessToken).then((data) => {
           var saveMessages = data.message;
-          saveMessages = "자동저장 되었습니다.";
-          window.alert(saveMessages);
+          // saveMessages = "자동저장 되었습니다.";
+          // window.alert(saveMessages);
         });
-        // fetchStory로 스토리 연결할 때 -> 메인 페이지로 넘어갈 때 chapterId를 저장해야
-        // 메인 페이지에서는 유저가 기존에 지나온 챕터를 다시 선택하거나, 
-        // 건너 뛸 수 없다 (메인 페이지로 유저가 처음 들어오면 로그인 시 이미 발급을 받음)
 
-        // 챕터의 마지막 스토리일 때 "nextStoryId가 이제 0"일 경우에 
-        // 해당 챕터에서 스토리가 다 끝났다는 뜻이므로 메인 페이지로 랜더링 
-        // 위에 거는 서버 응답 바로 받아오면 메인으로 랜더링 처리 시켜버리고
-        // if-else 할 필요 없이 랜더링이 안되면 fetchStory 바로 연결되도록 하면 됨 
-        // nextStoryId가 0이 아니면 바로 다음 스토링 아이디 api 연결하면 됨 
-
-        if(localStorage.getItem("nextStoryId")==0){
-            window.location.href = "/main";
+        if (localStorage.getItem("nextStoryId") == 0) {
+          window.location.href = "/main";
         }
 
-
-
+        // 2-2. 스토리 로드 API
         fetchStory(nextStoryId, accessToken)
           .then((data) => {
             const res = data.data[0].story.formatId;
-            console.log(res);
-            // if (res === 4) {
-            //   window.location.href = "/";
-            // }
-            if (res === 3) {
-              window.location.href = "/item";
+            if (res === 3 || res === 2) {
+              openModal();
             }
-            if (res === 2) {
-              window.location.href = "/selection";
-            }
-
             const newMessages = data.data.map((message) => ({
               speaker: message.speaker,
               text: message.text,
@@ -160,22 +154,6 @@ export default function DialogueBox() {
               soundEffect: message.soundEffect,
               characterImage: message.characterImage,
             }));
-
-            // newMessages.forEach((message) => {
-            //   if (message.screenEffect === 6) { // fade-in
-            //     setImageVisible(true);
-            //   } else if (message.screenEffect === 7) { // fade-out
-            //     setImageVisible(false); 
-            //   } else if (message.screenEffect === 1) { // 화면 흔들리는 효과
-            //     setShaking(true);
-            //   } else if (message.screenEffect === 2) { // 단어 zoom in
-                
-            //   } else if (message.screenEffect === 2) { // 화면 zoom in
-                
-            //   } 
-            // });
-
-            
             setMessages([...messages, ...newMessages]);
           })
           .catch((error) => {
@@ -197,119 +175,203 @@ export default function DialogueBox() {
       }}
       onClick={handleNextMessage}
     >
-
       <Box
-        className={`shake ${isShaking ? 'animate' : ''}`}
+        className={`shake ${isShaking ? "animate" : ""}`}
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'column',
-          animation: isShaking ? 'shake 3s ease' : 'none',
-          width: '100%',
-          height: '100%',
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          animation: isShaking ? "shake 3s ease" : "none",
+          width: "100%",
+          height: "100%",
         }}
       >
-      <Container maxWidth="xl">
-        <Grid
-          container
-          justifyContent="center"
-          alignItems="center"
-          style={{
-            height: "100vh",
-            backgroundColor: "black",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {/* <Fade in={isImageVisible} timeout={2000} > */}
-          {messages.length > 0 ? (
-            <img
+        <Container maxWidth="xl">
+          <Grid
+            container
+            justifyContent="center"
+            alignItems="center"
+            style={{
+              height: "100vh",
+              backgroundColor: "black",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {/* <Fade in={isImageVisible} timeout={2000} > */}
+            {messages.length > 0 ? (
+              <img
                 src={messages[messageIndex].characterImage}
                 alt="Character Image"
                 style={{
-                width: "300px",
-                height: "300px",
-                marginTop: "2%",
-                marginBottom: "5%",
+                  width: "300px",
+                  height: "300px",
+                  marginTop: "2%",
+                  marginBottom: "5%",
                 }}
-            />
+              />
             ) : null}
-          {/* </Fade> */}
+            {/* </Fade> */}
+            {modalOpen && (
+              <div
+                className="modal-container"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  zIndex: 9998,
+                }}
+                onClick={handleModalClick}
+              >
+                {/* 모달 백그라운드 */}
+                <div
+                  className="modal-background"
+                  style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(0, 0, 0, 0.6)",
+                    zIndex: 9998,
+                  }}
+                ></div>
+                {/* 왼쪽 모달 */}
+                <div
+                  className="modal left"
+                  style={{
+                    margin: "-35px 250px",
+                    position: "fixed",
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: "25%",
+                    zIndex: 9999,
+                    background: "rgba(255, 255, 255, 0.95)",
+                    padding: "20px",
+                    borderRadius: "10px",
+                    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
+                    textAlign: "center",
+                    transition: "transform 0.3s ease", // 호버 효과를 위한 CSS transition 추가
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "scale(1.05)"; // 호버 시 확대 효과
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "scale(1)"; // 호버 종료 시 본래 크기로 복귀
+                  }}
+                >
+                  <div className="modal-content">
+                    <h1>도와준다</h1>
+                  </div>
+                </div>
+                {/* 오른쪽 모달 */}
+                <div
+                  className="modal right"
+                  style={{
+                    margin: "-35px 250px",
+                    position: "fixed",
+                    right: "50%",
+                    top: "50%",
+                    transform: "translate(50%, -50%)",
+                    width: "25%",
+                    zIndex: 9999,
+                    background: "rgba(255, 255, 255, 0.95)",
+                    padding: "20px",
+                    borderRadius: "10px",
+                    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
+                    textAlign: "center",
+                    transition: "transform 0.3s ease", // 호버 효과를 위한 CSS transition 추가
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "scale(1.05)"; // 호버 시 확대 효과
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "scale(1)"; // 호버 종료 시 본래 크기로 복귀
+                  }}
+                >
+                  <div className="modal-content">
+                    <h1>무시한다</h1>
+                  </div>
+                </div>
+              </div>
+            )}
 
-          {messages.length > 0 && (
-            <div
-              style={{
-                width: "100%",
-                height: "20%",
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "column",
-                position: "fixed" /* 요소를 고정시킴 */,
-                bottom: 0 /* 하단에 고정 */,
-                background: `
+            {messages.length > 0 && (
+              <div
+                style={{
+                  width: "100%",
+                  height: "20%",
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "column",
+                  position: "fixed" /* 요소를 고정시킴 */,
+                  bottom: 0 /* 하단에 고정 */,
+                  background: `
                   linear-gradient(180deg, rgba(0, 0, 0, 0.60) 0%, rgba(0, 0, 0, 0.12) 100%, #000 89.06%),
                   rgba(102, 102, 102, 0.3)
                 `,
-              }}
-            >
-              <Typography
-                variant="h3"
-                style={{
-                  textAlign: "center",
-                  color:
-                    messages[messageIndex].speaker === "AI"
-                      ? "white"
-                      : "#0A84FF",
-                  fontSize: "32px",
-                  fontFamily: "LINE Seed Sans KR",
-                  marginTop: "1%",
                 }}
               >
-                {messages[messageIndex].speaker === "AI" ? "AI" : name}
-              </Typography>
-              <Typography
-                variant="h4"
-                style={{
-                  textAlign: "center",
-                  color:
-                    messages[messageIndex].speaker === "AI" ? "white" : "white",
-                  transform:
-                    messages[messageIndex].speaker === "AI"
-                      ? "skewX(-20deg)"
-                      : "skewX(0deg)",
-                  marginTop: "2%",
-                  fontSize: "20px",
-                  fontFamily: "LINE Seed Sans KR",
-                }}
-              >
-                {messages[messageIndex].text}
-              </Typography>
-              <Grid
-                container
-                justifyContent="flex-end"
-                style={{
-                  position: "fixed",
-                  bottom: "20px",
-                  right: "60px",
-                }}
-              >
-                <Button
-                  color="primary"
-                  type="submit"
-                  variant="outlined"
-                  onClick={handleNextMessage}
-                  style={{ backgroundColor: "black", color: "#34C759" }}
+                <Typography
+                  variant="h3"
+                  style={{
+                    textAlign: "center",
+                    color:
+                      messages[messageIndex].speaker === "AI"
+                        ? "white"
+                        : "#0A84FF",
+                    fontSize: "32px",
+                    fontFamily: "LINE Seed Sans KR",
+                    marginTop: "1%",
+                  }}
                 >
-                  Next
-                </Button>
-              </Grid>
-            </div>
-          )}
-        </Grid>
-      </Container>
+                  {messages[messageIndex].speaker === "AI" ? "AI" : name}
+                </Typography>
+                <Typography
+                  variant="h4"
+                  style={{
+                    textAlign: "center",
+                    color:
+                      messages[messageIndex].speaker === "AI"
+                        ? "white"
+                        : "white",
+                    transform:
+                      messages[messageIndex].speaker === "AI"
+                        ? "skewX(-20deg)"
+                        : "skewX(0deg)",
+                    marginTop: "2%",
+                    fontSize: "20px",
+                    fontFamily: "LINE Seed Sans KR",
+                  }}
+                >
+                  {messages[messageIndex].text}
+                </Typography>
+                <Grid
+                  container
+                  justifyContent="flex-end"
+                  style={{
+                    position: "fixed",
+                    bottom: "20px",
+                    right: "60px",
+                  }}
+                >
+                  <Button
+                    color="primary"
+                    type="submit"
+                    variant="outlined"
+                    onClick={handleNextMessage}
+                    style={{ backgroundColor: "black", color: "#34C759" }}
+                  >
+                    Next
+                  </Button>
+                </Grid>
+              </div>
+            )}
+          </Grid>
+        </Container>
       </Box>
     </div>
   );
