@@ -13,6 +13,7 @@ import ForgetPw from "./routes/ForgetPw";
 import CodeInputO from "./routes/CodeInputO";
 import CodeInputX from "./routes/CodeInputX";
 import Problem from "./routes/Problem";
+import Main from "./routes/Main";
 
 export default function App() {
   return (
@@ -24,7 +25,7 @@ export default function App() {
           <Route path="/signin" element={<Signin />} />
           <Route path="/forgetpw" element={<ForgetPw />} />
           <Route path="/pwchange" element={<PwChange />} />
-          <Route path="/main" element={<Landing />} />
+          <Route path="/main" element={<Main />} />
           <Route path="/dialog" element={<Story />} />
           <Route path="/code" element={<Code />} />
           <Route path="/inputtrue" element={<CodeInputO />} />
