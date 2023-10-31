@@ -2,6 +2,9 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import "../../assets/animation/Shaking.css";
 import "../../assets/animation/Zoom.css";
+import "../../assets/animation/Blur.css";
+import leftModalStyle from "../../assets/animation/LeftModalStyle";
+import rightModalStyle from "../../assets/animation/RightModalStyle";
 import { Container, Typography, Button, Switch, Fade } from "@mui/material";
 import airobot from "../../assets/image/Character.png";
 import React, { useState, useEffect, useRef } from "react";
@@ -56,11 +59,49 @@ export default function DialogueBox() {
   const [messageIndex, setMessageIndex] = useState(0);
   const [accessToken, setAccessToken] = useState(null);
   const [name, setName] = useState("");
-  const [isImageVisible, setImageVisible] = useState(false);
+  const [isImageVisible, setImageVisible] = useState(true);
   const [isShaking, setShaking] = useState(false);
   let [chImage, setChImage] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const modalBackground = useRef();
+  const [message, setMessage] = useState('');
+  const [isAnimating, setAnimating] = useState(false);
+
+  function splitText(text) {
+    return text.split('');
+  }
+  
+  function showTextSequentially(text, setText, interval, callback) {
+    const characters = splitText(text);
+    let currentIndex = -1;
+  
+    function showNextCharacter() {
+      if (currentIndex < characters.length) {
+        setText((prevText) => prevText + characters[currentIndex]);
+        currentIndex++;
+        setTimeout(showNextCharacter, interval);
+      } 
+      else {
+        if (typeof callback === 'function') {
+          callback();
+        }
+      }
+    }
+  
+    showNextCharacter();
+  }
+
+  useEffect(() => {
+    if (messages[messageIndex]) {
+      setMessage('');
+      setAnimating(true);
+      showTextSequentially(messages[messageIndex].text, setMessage, 50, () => {
+        setAnimating(false);
+      });
+    }
+  }, [messageIndex]);
+  
+
 
   // 1. 초기 랜더링
   useEffect(() => {
@@ -77,6 +118,7 @@ export default function DialogueBox() {
     fetchStory(nextStoryId, token)
       .then((data) => {
         const initialMessages = data.data.map((message) => ({
+          formatId: message.story.formatId,
           speaker: message.speaker,
           text: message.text,
           currentStoryId: message.story.id,
@@ -84,17 +126,11 @@ export default function DialogueBox() {
           screenEffect: message.screenEffect,
           soundEffect: message.soundEffect,
           characterImage: message.characterImage,
+          backgroundImage: message.story.backgroundImage,
         }));
         console.log(initialMessages[0].characterImage);
 
         setMessages(initialMessages);
-
-        localStorage.setItem(
-          "characterImage",
-          initialMessages[1].characterImage
-        );
-        setChImage(localStorage.getItem("characterImage"));
-        console.log(localStorage.getItem("characterImage")); //null
       })
       .catch((error) => {
         console.error("초기 스토리 불러오기 오류:", error);
@@ -104,12 +140,38 @@ export default function DialogueBox() {
   // 2. 모달 오픈
   const openModal = () => {
     setModalOpen(true);
+    setImageVisible(false);
+    const nextStoryId = messages[messageIndex]?.nextStoryId + 1;
+    fetchStory(nextStoryId, accessToken)
+          .then((data) => {
+            const res = data.data[0].story.formatId;
+            if (res === 3 || res === 2) {
+              openModal();
+            }
+            const newMessages = data.data.map((message) => ({
+              speaker: message.speaker,
+              text: message.text,
+              currentStoryId: message.story.id,
+              nextStoryId: message.story.nextId,
+              formatId: message.story.formatId,
+              screenEffect: message.screenEffect,
+              soundEffect: message.soundEffect,
+              characterImage: message.characterImage,
+              backgroundImage: message.story.backgroundImage,
+            }));
+            setMessages([...messages, ...newMessages]);
+          })
+          .catch((error) => {
+            console.error("다음 스토리 불러오기 오류:", error);
+          });
   };
 
   // 3. 모달 닫힘
   const handleModalClick = () => {
     // 모달을 닫는 이벤트 처리
     setModalOpen(false);
+    setImageVisible(true);
+    setMessageIndex(messageIndex + 1);
   };
 
   // 5. NextMessage 핸들링
@@ -123,6 +185,7 @@ export default function DialogueBox() {
       // 2-1. 로컬스토리지 StoryID 갱신
       const currentStoryId = messages[messageIndex]?.currentStoryId;
       const nextStoryId = messages[messageIndex]?.nextStoryId;
+
       localStorage.setItem("nextStoryId", nextStoryId);
 
       if (currentStoryId && nextStoryId) {
@@ -152,7 +215,7 @@ export default function DialogueBox() {
               formatId: message.story.formatId,
               screenEffect: message.screenEffect,
               soundEffect: message.soundEffect,
-              characterImage: message.characterImage,
+              backgroundImage: message.story.backgroundImage,
             }));
             setMessages([...messages, ...newMessages]);
           })
@@ -163,19 +226,30 @@ export default function DialogueBox() {
     }
   };
 
+  
   return (
+    <div>
+    {messages.length > 0 ? (
     <div
       style={{
-        background: "black",
-        Height: "12 0vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
+        position: 'fixed', 
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: -1, 
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
       <Box
         className={`shake ${isShaking ? "animate" : ""}`}
+        style = {{
+          backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover", 
+        }}
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -184,23 +258,22 @@ export default function DialogueBox() {
           animation: isShaking ? "shake 3s ease" : "none",
           width: "100%",
           height: "100%",
+          backgroundColor: "transparent",
         }}
       >
-        <Container maxWidth="xl">
+        <Container maxWidth="xl"        >
           <Grid
             container
             justifyContent="center"
             alignItems="center"
             style={{
               height: "100vh",
-              backgroundColor: "black",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            {/* <Fade in={isImageVisible} timeout={2000} > */}
             {messages.length > 0 ? (
               <img
                 src={messages[messageIndex].characterImage}
@@ -210,10 +283,12 @@ export default function DialogueBox() {
                   height: "300px",
                   marginTop: "2%",
                   marginBottom: "5%",
+                  opacity: isImageVisible ? 1 : 0.3,
+                  transition: "opacity 2s",
                 }}
               />
             ) : null}
-            {/* </Fade> */}
+
             {modalOpen && (
               <div
                 className="modal-container"
@@ -224,37 +299,10 @@ export default function DialogueBox() {
                 }}
                 onClick={handleModalClick}
               >
-                {/* 모달 백그라운드 */}
-                <div
-                  className="modal-background"
-                  style={{
-                    position: "fixed",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "rgba(0, 0, 0, 0.6)",
-                    zIndex: 9998,
-                  }}
-                ></div>
                 {/* 왼쪽 모달 */}
                 <div
                   className="modal left"
-                  style={{
-                    margin: "-35px 250px",
-                    position: "fixed",
-                    left: "50%",
-                    top: "50%",
-                    transform: "translate(-50%, -50%)",
-                    width: "25%",
-                    zIndex: 9999,
-                    background: "rgba(255, 255, 255, 0.95)",
-                    padding: "20px",
-                    borderRadius: "10px",
-                    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
-                    textAlign: "center",
-                    transition: "transform 0.3s ease", // 호버 효과를 위한 CSS transition 추가
-                  }}
+                  style = {leftModalStyle}
                   onMouseEnter={(e) => {
                     e.target.style.transform = "scale(1.05)"; // 호버 시 확대 효과
                   }}
@@ -269,21 +317,7 @@ export default function DialogueBox() {
                 {/* 오른쪽 모달 */}
                 <div
                   className="modal right"
-                  style={{
-                    margin: "-35px 250px",
-                    position: "fixed",
-                    right: "50%",
-                    top: "50%",
-                    transform: "translate(50%, -50%)",
-                    width: "25%",
-                    zIndex: 9999,
-                    background: "rgba(255, 255, 255, 0.95)",
-                    padding: "20px",
-                    borderRadius: "10px",
-                    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
-                    textAlign: "center",
-                    transition: "transform 0.3s ease", // 호버 효과를 위한 CSS transition 추가
-                  }}
+                  style = {rightModalStyle}
                   onMouseEnter={(e) => {
                     e.target.style.transform = "scale(1.05)"; // 호버 시 확대 효과
                   }}
@@ -301,6 +335,8 @@ export default function DialogueBox() {
             {messages.length > 0 && (
               <div
                 style={{
+                  opacity: isImageVisible ? 1 : 0.3, 
+                  transition: "opacity 2s",
                   width: "100%",
                   height: "20%",
                   display: "flex",
@@ -309,8 +345,8 @@ export default function DialogueBox() {
                   position: "fixed" /* 요소를 고정시킴 */,
                   bottom: 0 /* 하단에 고정 */,
                   background: `
-                  linear-gradient(180deg, rgba(0, 0, 0, 0.60) 0%, rgba(0, 0, 0, 0.12) 100%, #000 89.06%),
-                  rgba(102, 102, 102, 0.3)
+                  linear-gradient(180deg, rgba(0, 0, 0, 0.60) 0%, rgba(0, 0, 0, 0.12) 100%, #000 89.06%), 
+                  rgba(102, 102, 102, 0.3), 
                 `,
                 }}
               >
@@ -327,7 +363,7 @@ export default function DialogueBox() {
                     marginTop: "1%",
                   }}
                 >
-                  {messages[messageIndex].speaker === "AI" ? "AI" : name}
+                  {messages[messageIndex].speaker}
                 </Typography>
                 <Typography
                   variant="h4"
@@ -346,7 +382,7 @@ export default function DialogueBox() {
                     fontFamily: "LINE Seed Sans KR",
                   }}
                 >
-                  {messages[messageIndex].text}
+                  {isAnimating ? message.replace(/undefined/g, "") : messages[messageIndex].text} { /*messages[messageIndex].text*/}
                 </Typography>
                 <Grid
                   container
@@ -369,9 +405,12 @@ export default function DialogueBox() {
                 </Grid>
               </div>
             )}
+
           </Grid>
         </Container>
       </Box>
     </div>
+    ) : null}
+</div>
   );
 }
