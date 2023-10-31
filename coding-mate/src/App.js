@@ -8,7 +8,6 @@ import ForgetPw from "./routes/member/ForgetPw";
 import Pwchange from "./routes/member/PwChange";
 import Story from './routes/page/Story';
 import Dialogue from './routes/page/Dialogue';
-import Test from "./routes/Test";
 import Main from './routes/page/Main';
 
 export default function App() {
@@ -24,7 +23,6 @@ export default function App() {
           <Route path="/main" element={<Main />} />
           <Route path="/dialog" element={<Story />} />
           <Route path="/dialogue" element={<Dialogue />} />
-          <Route path="/test" element={<Test />} />
 
         </Routes>
       </BrowserRouter>
