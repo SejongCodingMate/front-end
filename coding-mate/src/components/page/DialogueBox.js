@@ -143,7 +143,6 @@ export default function DialogueBox() {
             const res = data.data[0].story.formatId;
             if (res === 3 || res === 2) {
               openModal();
-              localStorage.setItem("nextStoryId", nextStoryId+1);
             }
             const newMessages = data.data.map((message) => ({
               speaker: message.speaker,
