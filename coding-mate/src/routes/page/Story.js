@@ -1,5 +1,5 @@
-import StoryBox from "../components/StoryBox";
-
+import StoryBox from "../../components/page/StoryBox";
+import React from "react";
 
 export default function Story() {
     return (
