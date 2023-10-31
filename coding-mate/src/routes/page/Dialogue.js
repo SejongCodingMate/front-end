@@ -1,5 +1,5 @@
-import DialogueBox from "../components/dialogueBox";
-
+import DialogueBox from './../../components/page/DialogueBox';
+import React from "react";
 
 export default function Dialogue() {
     return (

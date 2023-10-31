@@ -1,4 +1,5 @@
-import LandingBox from '../components/LandingBox'
+import LandingBox from "../../components/page/LandingBox";
+import React from "react";
 
 function Landing() {
   return (
