@@ -1,14 +1,14 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import CheckId from "./routes/member/CheckId";
-import Login from "./routes/member/Login";
-import Signin from "./routes/member/Signin";
+import CheckId from './routes/member/CheckId';
+import Login from './routes/member/Login';
+import Signin from './routes/member/Signin';
 import ForgetPw from "./routes/member/ForgetPw";
 import Pwchange from "./routes/member/PwChange";
-import Main from "./routes/page/Main";
-import Story from "./routes/page/Story";
-import Dialogue from "./routes/page/Dialogue";
+import Story from './routes/page/Story';
+import Dialogue from './routes/page/Dialogue';
+import Main from './routes/page/Main';
 
 export default function App() {
   return (
@@ -23,6 +23,7 @@ export default function App() {
           <Route path="/main" element={<Main />} />
           <Route path="/dialog" element={<Story />} />
           <Route path="/dialogue" element={<Dialogue />} />
+
         </Routes>
       </BrowserRouter>
     </div>
