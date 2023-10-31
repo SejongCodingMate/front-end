@@ -64,6 +64,38 @@ export default function DialogueBox() {
   let [chImage, setChImage] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const modalBackground = useRef();
+  const [message, setMessage] = useState('');
+  const [isAnimating, setAnimating] = useState(false);
+
+  function splitText(text) {
+    return text.split('');
+  }
+  
+  function showTextSequentially(text, setText, interval, callback) {
+    const characters = splitText(text);
+    let currentIndex = 0;
+  
+    function showNextCharacter() {
+      if (currentIndex < characters.length) {
+        setText((prevText) => prevText + characters[currentIndex]);
+        currentIndex++;
+        setTimeout(showNextCharacter, interval);
+      }
+    }
+  
+    showNextCharacter();
+  }
+
+  useEffect(() => {
+    if (messages[messageIndex]) {
+      setMessage('');
+      setAnimating(true);
+      showTextSequentially(messages[messageIndex].text, setMessage, 50, () => {
+        setAnimating(false);
+      });
+    }
+  }, [messageIndex]);
+  
 
 
   // 1. 초기 랜더링
@@ -321,7 +353,6 @@ export default function DialogueBox() {
                     marginTop: "1%",
                   }}
                 >
-                  {/* {messages[messageIndex].speaker === "AI" ? "AI" : name} */}
                   {messages[messageIndex].speaker}
                 </Typography>
                 <Typography
@@ -341,7 +372,7 @@ export default function DialogueBox() {
                     fontFamily: "LINE Seed Sans KR",
                   }}
                 >
-                  {messages[messageIndex].text}
+                  {isAnimating ? message.replace(/undefined/g, "") : messages[messageIndex].text} { /*messages[messageIndex].text*/}
                 </Typography>
                 <Grid
                   container
