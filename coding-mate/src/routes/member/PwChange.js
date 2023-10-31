@@ -1,6 +1,7 @@
-import PwChangeBox from "./components/PWChangeBox";
+import PwChangeBox from "../../components/member/PWChangeBox";
+import React from "react";
 
-function Login() {
+function Pwchange() {
   return (
     <div>
       <PwChangeBox />
@@ -8,4 +9,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Pwchange;

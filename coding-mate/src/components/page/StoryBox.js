@@ -2,8 +2,8 @@ import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import "./Shaking.css";
-import "./Zoom.css";
+import "../../assets/animation/Shaking.css";
+import "../../assets/animation/Zoom.css";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import {
   Container,
@@ -14,9 +14,9 @@ import {
   Switch,
   Fade,
 } from "@mui/material";
-import airobot from "../assets/Character.png";
+import airobot from "../../assets/image/Character.png";
 import React, { useState, useEffect } from "react";
-import "./Font.css";
+import "../../assets/fonts/Font.css";
 
 const fetchStory = (storyId, accessToken) => {
   const requestOptions = {

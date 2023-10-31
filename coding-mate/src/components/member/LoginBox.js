@@ -56,6 +56,7 @@ export default function LoginBox() {
           return response.json().then((data) => {
             console.log(data);
             localStorage.setItem("nextStoryId", data.data.storyId);
+            localStorage.setItem("chapterId", data.data.chapterId);
             localStorage.setItem(
               "hasTemporaryPassword",
               data.data.hasTemporaryPassword
