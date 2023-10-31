@@ -1,3 +1,4 @@
+import React from "react";
 import MainBox from "../../components/page/MainBox";
 
 function Main() {
