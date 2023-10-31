@@ -54,6 +54,32 @@ const fetchSave = (nextStoryId, accessToken) => {
     });
 };
 
+// 3. 챕터 Save
+const fetchChapterSave = (nextChapterId, accessToken) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", `Bearer ${accessToken}`);
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    nextChapterId: nextChapterId,
+  });
+
+  const requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  return fetch(`http://3.37.164.99/api/chapter/save`, requestOptions)
+    .then((response) => response.json())
+    .then((data) => data)
+    .catch((error) => {
+      console.error("챕터 불러오기 오류:", error);
+      throw error;
+    });
+};
+
 export default function DialogueBox() {
   const [messages, setMessages] = useState([]);
   const [messageIndex, setMessageIndex] = useState(0);
@@ -197,6 +223,10 @@ export default function DialogueBox() {
         });
 
         if (localStorage.getItem("nextStoryId") == 0) {
+          const userChapterId = localStorage.getItem("chapterId");
+          localStorage.setItem("chapterId", parseInt(userChapterId) + 1);
+          const renewalChapterId = localStorage.getItem("chapterId")
+          fetchChapterSave(renewalChapterId, accessToken);
           window.location.href = "/main";
         }
 
