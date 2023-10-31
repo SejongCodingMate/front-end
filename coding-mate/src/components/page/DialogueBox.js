@@ -321,7 +321,8 @@ export default function DialogueBox() {
                     marginTop: "1%",
                   }}
                 >
-                  {messages[messageIndex].speaker === "AI" ? "AI" : name}
+                  {/* {messages[messageIndex].speaker === "AI" ? "AI" : name} */}
+                  {messages[messageIndex].speaker}
                 </Typography>
                 <Typography
                   variant="h4"
