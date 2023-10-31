@@ -96,12 +96,7 @@ export default function DialogueBox() {
           initialMessages[1].characterImage
         );
 
-        // localStorage.setItem(
-        //   "formatId",
-        //   initialMessages[0].formatId
-        // );
         setChImage(localStorage.getItem("characterImage"));
-        console.log(localStorage.getItem("characterImage")); //null
       })
       .catch((error) => {
         console.error("초기 스토리 불러오기 오류:", error);
