@@ -73,13 +73,18 @@ export default function DialogueBox() {
   
   function showTextSequentially(text, setText, interval, callback) {
     const characters = splitText(text);
-    let currentIndex = 0;
+    let currentIndex = -1;
   
     function showNextCharacter() {
       if (currentIndex < characters.length) {
         setText((prevText) => prevText + characters[currentIndex]);
         currentIndex++;
         setTimeout(showNextCharacter, interval);
+      } 
+      else {
+        if (typeof callback === 'function') {
+          callback();
+        }
       }
     }
   
@@ -215,7 +220,7 @@ export default function DialogueBox() {
               formatId: message.story.formatId,
               screenEffect: message.screenEffect,
               soundEffect: message.soundEffect,
-              characterImage: message.characterImage,
+              backgroundImage: message.story.backgroundImage,
             }));
             setMessages([...messages, ...newMessages]);
           })
@@ -225,8 +230,8 @@ export default function DialogueBox() {
       }
     }
   };
-  
 
+  
   return (
     <div
       style={{
