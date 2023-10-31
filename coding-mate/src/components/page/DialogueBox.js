@@ -126,17 +126,11 @@ export default function DialogueBox() {
           screenEffect: message.screenEffect,
           soundEffect: message.soundEffect,
           characterImage: message.characterImage,
+          backgroundImage: message.story.backgroundImage,
         }));
         console.log(initialMessages[0].characterImage);
 
         setMessages(initialMessages);
-
-        localStorage.setItem(
-          "characterImage",
-          initialMessages[1].characterImage
-        );
-
-        setChImage(localStorage.getItem("characterImage"));
       })
       .catch((error) => {
         console.error("초기 스토리 불러오기 오류:", error);
@@ -163,6 +157,7 @@ export default function DialogueBox() {
               screenEffect: message.screenEffect,
               soundEffect: message.soundEffect,
               characterImage: message.characterImage,
+              backgroundImage: message.story.backgroundImage,
             }));
             setMessages([...messages, ...newMessages]);
           })
@@ -233,18 +228,28 @@ export default function DialogueBox() {
 
   
   return (
+    <div>
+    {messages.length > 0 ? (
     <div
       style={{
-        background: "black",
-        Height: "12 0vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
+        position: 'fixed', 
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: -1, 
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
       <Box
         className={`shake ${isShaking ? "animate" : ""}`}
+        style = {{
+          backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover", 
+        }}
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -253,16 +258,16 @@ export default function DialogueBox() {
           animation: isShaking ? "shake 3s ease" : "none",
           width: "100%",
           height: "100%",
+          backgroundColor: "transparent",
         }}
       >
-        <Container maxWidth="xl">
+        <Container maxWidth="xl"        >
           <Grid
             container
             justifyContent="center"
             alignItems="center"
             style={{
               height: "100vh",
-              backgroundColor: "black",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -405,5 +410,7 @@ export default function DialogueBox() {
         </Container>
       </Box>
     </div>
+    ) : null}
+</div>
   );
 }
