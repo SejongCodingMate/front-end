@@ -448,8 +448,21 @@ export default function DialogueBox() {
                     fontFamily: "LINE Seed Sans KR",
                   }}
                 >
-                  {isAnimating ? message.replace(/undefined/g, "") : messages[messageIndex].text} { /*messages[messageIndex].text*/}
-                </Typography>
+                  {isAnimating
+                      ? message.replace(/undefined/g, "")
+                               .replace(/\*/g, "") 
+                      : messages[messageIndex].text.split('*').map((part, index) => {
+                          if (index % 2 === 0) {
+                            return part; 
+                          } else {
+                            return (
+                              <span key={index} style={{ fontWeight: "bold", fontSize: "30px" }}>
+                                {part}
+                              </span>
+                            ); 
+                          }
+                  })}                
+                  </Typography>
                 <Grid
                   container
                   justifyContent="flex-end"
