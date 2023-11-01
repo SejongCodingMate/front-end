@@ -3,10 +3,11 @@ import Box from "@mui/material/Box";
 import "../../assets/animation/Shaking.css";
 import "../../assets/animation/Zoom.css";
 import "../../assets/animation/Blur.css";
+import back from "../../assets/image/back.png";
 import leftModalStyle from "../../assets/animation/LeftModalStyle";
 import rightModalStyle from "../../assets/animation/RightModalStyle";
 import { Container, Typography, Button, Switch, Fade } from "@mui/material";
-import airobot from "../../assets/image/Character.png";
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import "../../assets/fonts/Font.css";
 
@@ -92,6 +93,11 @@ export default function DialogueBox() {
   const modalBackground = useRef();
   const [message, setMessage] = useState('');
   const [isAnimating, setAnimating] = useState(false);
+  const navigate = useNavigate();
+
+  const handleBackButtonClick = () => {
+    navigate("/main");
+  };
 
   function splitText(text) {
     return text.split('');
@@ -273,6 +279,36 @@ export default function DialogueBox() {
         backgroundRepeat: 'no-repeat',
       }}
     >
+
+      <button
+        onClick={handleBackButtonClick}
+        style={{
+          position: "absolute",
+          width: "7%",
+          height: "8%",
+          top: "20px",
+          left: "0px",
+          backgroundColor: "#242424",
+          color: "#FFF",
+          border: "1px solid #FFF",
+          cursor: "pointer",
+          borderTop: "5px solid #3D3D3D",
+          borderLeft: "5px solid #3D3D3D",
+          borderBottom: "none",
+          borderRight: "none",
+        }}
+      >
+        <img
+          style={{
+            width: "35px",
+            height: "35px",
+            float: "right",
+          }}
+          src={back}
+          alt="뒤로 가기"
+        />
+      </button>
+
       <Box
         className={`shake ${isShaking ? "animate" : ""}`}
         style = {{
