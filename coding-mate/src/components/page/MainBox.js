@@ -113,63 +113,77 @@ export default function MainBox() {
         .catch((error) => {
           console.error("챕터 데이터를 가져오는 중 오류 발생", error);
         });
-      
     } else {
       window.alert("로그인 과정에서 오류가 발생했습니다. 다시 로그인 해주세요");
       navigate("/login");
     }
-
   }, [accessToken, userChapterId]);
 
   // 2. 애니메이션 메서드
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    const chapterId = parseInt(userChapterId-1);
+    const chapterId = parseInt(userChapterId - 1);
     const nextStoryId = localStorage.getItem("nextStoryId");
     const browserWidth = window.innerWidth;
     const browserHeight = window.innerHeight;
 
-    if ((chapterId > 0 && chapterId < 3) && parseInt(nextStoryId) === 0) {
+    if (chapterId > 0 && chapterId < 3 && parseInt(nextStoryId) === 0) {
       const fromImagePositions = chapterButtons.map(() => ({
-        top: parseInt(chapterButtons[chapterId - 1].imgPosition.top, 10) * browserHeight / 100,
-        left: parseInt(chapterButtons[chapterId - 1].imgPosition.left, 10) * browserWidth / 100
+        top:
+          (parseInt(chapterButtons[chapterId - 1].imgPosition.top, 10) *
+            browserHeight) /
+          100,
+        left:
+          (parseInt(chapterButtons[chapterId - 1].imgPosition.left, 10) *
+            browserWidth) /
+          100,
       }));
-  
+
       const toImagePositions = chapterButtons.map(() => ({
-        top: parseInt(chapterButtons[chapterId].imgPosition.top, 10) * browserHeight / 100,
-        left: parseInt(chapterButtons[chapterId].imgPosition.left, 10) * browserWidth / 100
+        top:
+          (parseInt(chapterButtons[chapterId].imgPosition.top, 10) *
+            browserHeight) /
+          100,
+        left:
+          (parseInt(chapterButtons[chapterId].imgPosition.left, 10) *
+            browserWidth) /
+          100,
       }));
 
       canvas.width = browserWidth;
       canvas.height = browserHeight;
-      
+
       const image = new Image();
       image.src = animationUrl;
 
       image.onload = () => {
         const animationDuration = 3000;
         const startTime = Date.now();
-        
+
         const animate = () => {
           // 현재 시간 계산
           const currentTime = Date.now() - startTime;
-          
+
           // Canvas를 지우고 새로 그리기
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
+
           chapterButtons.forEach((button, index) => {
             const { left, top } = fromImagePositions[index];
             // 이미지를 현재 위치로 그리기
-            const deltaX = (toImagePositions[index].left - left) / animationDuration * currentTime;
-            const deltaY = (toImagePositions[index].top - top) / animationDuration * currentTime;
-            const leftInPixels = (left + deltaX);
-            const topInPixels = (top + deltaY);
-  
+            const deltaX =
+              ((toImagePositions[index].left - left) / animationDuration) *
+              currentTime;
+            const deltaY =
+              ((toImagePositions[index].top - top) / animationDuration) *
+              currentTime;
+            const leftInPixels = left + deltaX;
+            const topInPixels = top + deltaY;
+
             // 이미지 그리기
             ctx.drawImage(image, leftInPixels, topInPixels, 100, 100);
           });
-  
+
           // 애니메이션 종료 조건 설정
           if (currentTime < animationDuration) {
             requestAnimationFrame(animate);
@@ -179,7 +193,7 @@ export default function MainBox() {
             setAnimationEnd(true);
           }
         };
-  
+
         animate();
         localStorage.setItem("nextStoryId", firstId);
         fetchStorySave(firstId, accessToken);
@@ -189,7 +203,6 @@ export default function MainBox() {
       setChapterUrl(animationUrl);
       setAnimationEnd(true);
     }
-    
   }, [animationUrl]);
 
   // 3. Button 활성화 메서드
@@ -209,7 +222,6 @@ export default function MainBox() {
 
       fetchStorySave(firstId, accessToken);
       return firstId;
-
     } else if (parseInt(nextStoryId) > lastId) {
       localStorage.setItem("chapterId", parseInt(userChapterId) + 1);
 
@@ -235,7 +247,7 @@ export default function MainBox() {
           Authorization: `Bearer ${accessToken}`,
         },
       };
-  
+
       fetch(`http://3.37.164.99/api/story/${nextStoryId}`, requestOptions)
         .then((response) => response.json())
         .then((data) => {
@@ -252,8 +264,8 @@ export default function MainBox() {
           console.error("스토리 불러오기 오류:", error);
           throw error;
         });
-      };
-    } 
+    }
+  };
 
   return (
     <Box
@@ -289,7 +301,7 @@ export default function MainBox() {
         </Box>
       </div>
       <img
-        src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/map.jpg"
+        src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/mpa3.png"
         alt="Map Background"
         style={{
           width: "100%",
@@ -345,7 +357,7 @@ export default function MainBox() {
           zIndex: 2,
           top: chapter.imgPosition.top,
           left: chapter.imgPosition.left,
-          display: animationEnd ? 'block' : 'none'
+          display: animationEnd ? "block" : "none",
         };
         return (
           <React.Fragment key={`fragment-${index}`}>
@@ -361,10 +373,10 @@ export default function MainBox() {
               </Button>
             </div>
             <div key={`img-${index}`} style={imgStyles}>
-              {imagePosition === chapter.position &&(
+              {imagePosition === chapter.position && (
                 <img
                   src={chapterUrl}
-                  alt = ""
+                  alt=""
                   //alt={`chapter ${chapter.position} Character`}
                   style={{
                     width: "100px",
@@ -390,4 +402,3 @@ export default function MainBox() {
     </Box>
   );
 }
-
