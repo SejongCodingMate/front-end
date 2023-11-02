@@ -91,51 +91,53 @@ export default function DialogueBox() {
   let [chImage, setChImage] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const modalBackground = useRef();
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [isAnimating, setAnimating] = useState(false);
+  const [select, setSelect] = useState();
   const navigate = useNavigate();
 
+  // 1. 뒤로가기
   const handleBackButtonClick = () => {
     navigate("/main");
   };
 
+  // 2. 글자 스플릿하는 함수
   function splitText(text) {
-    return text.split('');
+    return text.split("");
   }
-  
+
+  // 3. 대사 애니메이션
   function showTextSequentially(text, setText, interval, callback) {
     const characters = splitText(text);
     let currentIndex = -1;
-  
+
     function showNextCharacter() {
       if (currentIndex < characters.length) {
         setText((prevText) => prevText + characters[currentIndex]);
         currentIndex++;
         setTimeout(showNextCharacter, interval);
-      } 
-      else {
-        if (typeof callback === 'function') {
+      } else {
+        if (typeof callback === "function") {
           callback();
         }
       }
     }
-  
+
     showNextCharacter();
   }
 
+  // 4. 애니메이션 UseEFfect
   useEffect(() => {
     if (messages[messageIndex]) {
-      setMessage('');
+      setMessage("");
       setAnimating(true);
-      showTextSequentially(messages[messageIndex].text, setMessage, 50, () => {
+      showTextSequentially(messages[messageIndex].text, setMessage, 30, () => {
         setAnimating(false);
       });
     }
   }, [messageIndex]);
-  
 
-
-  // 1. 초기 랜더링
+  // . 초기 랜더링
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     const nextStoryId = localStorage.getItem("nextStoryId");
@@ -173,29 +175,27 @@ export default function DialogueBox() {
   const openModal = () => {
     setModalOpen(true);
     setImageVisible(false);
+
     const nextStoryId = messages[messageIndex]?.nextStoryId + 1;
     fetchStory(nextStoryId, accessToken)
-          .then((data) => {
-            const res = data.data[0].story.formatId;
-            if (res === 3 || res === 2) {
-              openModal();
-            }
-            const newMessages = data.data.map((message) => ({
-              speaker: message.speaker,
-              text: message.text,
-              currentStoryId: message.story.id,
-              nextStoryId: message.story.nextId,
-              formatId: message.story.formatId,
-              screenEffect: message.screenEffect,
-              soundEffect: message.soundEffect,
-              characterImage: message.characterImage,
-              backgroundImage: message.story.backgroundImage,
-            }));
-            setMessages([...messages, ...newMessages]);
-          })
-          .catch((error) => {
-            console.error("다음 스토리 불러오기 오류:", error);
-          });
+      .then((data) => {
+        const res = data.data[0].story.formatId;
+        const newMessages = data.data.map((message) => ({
+          speaker: message.speaker,
+          text: message.text,
+          currentStoryId: message.story.id,
+          nextStoryId: message.story.nextId,
+          formatId: message.story.formatId,
+          screenEffect: message.screenEffect,
+          soundEffect: message.soundEffect,
+          characterImage: message.characterImage,
+          backgroundImage: message.story.backgroundImage,
+        }));
+        setMessages([...messages, ...newMessages]);
+      })
+      .catch((error) => {
+        console.error("다음 스토리 불러오기 오류:", error);
+      });
   };
 
   // 3. 모달 닫힘
@@ -231,7 +231,7 @@ export default function DialogueBox() {
         if (localStorage.getItem("nextStoryId") == 0) {
           const userChapterId = localStorage.getItem("chapterId");
           localStorage.setItem("chapterId", parseInt(userChapterId) + 1);
-          const renewalChapterId = localStorage.getItem("chapterId")
+          const renewalChapterId = localStorage.getItem("chapterId");
           fetchChapterSave(renewalChapterId, accessToken);
           window.location.href = "/main";
         }
@@ -239,8 +239,8 @@ export default function DialogueBox() {
         // 2-2. 스토리 로드 API
         fetchStory(nextStoryId, accessToken)
           .then((data) => {
-            const res = data.data[0].story.formatId;
-            if (res === 3 || res === 2) {
+            const formatId = data.data[0].story.formatId;
+            if (formatId === 3 || formatId === 2) {
               openModal();
             }
             const newMessages = data.data.map((message) => ({
@@ -262,234 +262,237 @@ export default function DialogueBox() {
     }
   };
 
-  
   return (
     <div>
-    {messages.length > 0 ? (
-    <div
-      style={{
-        position: 'fixed', 
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: -1, 
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }}
-    >
-
-      <button
-        onClick={handleBackButtonClick}
-        style={{
-          position: "absolute",
-          width: "7%",
-          height: "8%",
-          top: "20px",
-          left: "0px",
-          backgroundColor: "#242424",
-          color: "#FFF",
-          border: "1px solid #FFF",
-          cursor: "pointer",
-          borderTop: "5px solid #3D3D3D",
-          borderLeft: "5px solid #3D3D3D",
-          borderBottom: "none",
-          borderRight: "none",
-        }}
-      >
-        <img
+      {messages.length > 0 ? (
+        <div
           style={{
-            width: "35px",
-            height: "35px",
-            float: "right",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: -1,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
           }}
-          src={back}
-          alt="뒤로 가기"
-        />
-      </button>
-
-      <Box
-        className={`shake ${isShaking ? "animate" : ""}`}
-        style = {{
-          backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover", 
-        }}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          animation: isShaking ? "shake 3s ease" : "none",
-          width: "100%",
-          height: "100%",
-          backgroundColor: "transparent",
-        }}
-      >
-        <Container maxWidth="xl"        >
-          <Grid
-            container
-            justifyContent="center"
-            alignItems="center"
+        >
+          <button
+            onClick={handleBackButtonClick}
             style={{
-              height: "100vh",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
+              position: "absolute",
+              width: "7%",
+              height: "8%",
+              top: "20px",
+              left: "0px",
+              backgroundColor: "#242424",
+              color: "#FFF",
+              border: "1px solid #FFF",
+              cursor: "pointer",
+              borderTop: "5px solid #3D3D3D",
+              borderLeft: "5px solid #3D3D3D",
+              borderBottom: "none",
+              borderRight: "none",
             }}
           >
-            {messages.length > 0 ? (
-              <img
-                src={messages[messageIndex].characterImage}
-                alt="Character Image"
-                style={{
-                  width: "300px",
-                  height: "300px",
-                  marginTop: "2%",
-                  marginBottom: "5%",
-                  opacity: isImageVisible ? 1 : 0.3,
-                  transition: "opacity 2s",
-                }}
-              />
-            ) : null}
+            <img
+              style={{
+                width: "35px",
+                height: "35px",
+                float: "right",
+              }}
+              src={back}
+              alt="뒤로 가기"
+            />
+          </button>
 
-            {modalOpen && (
-              <div
-                className="modal-container"
+          <Box
+            className={`shake ${isShaking ? "animate" : ""}`}
+            style={{
+              backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+            }}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+              animation: isShaking ? "shake 3s ease" : "none",
+              width: "100%",
+              height: "100%",
+              backgroundColor: "transparent",
+            }}
+          >
+            <Container maxWidth="xl">
+              <Grid
+                container
+                justifyContent="center"
+                alignItems="center"
                 style={{
+                  height: "100vh",
                   display: "flex",
-                  justifyContent: "space-between",
-                  zIndex: 9998,
-                }}
-                onClick={handleModalClick}
-              >
-                {/* 왼쪽 모달 */}
-                <div
-                  className="modal left"
-                  style = {leftModalStyle}
-                  onMouseEnter={(e) => {
-                    e.target.style.transform = "scale(1.05)"; // 호버 시 확대 효과
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.transform = "scale(1)"; // 호버 종료 시 본래 크기로 복귀
-                  }}
-                >
-                  <div className="modal-content">
-                    <h1>도와준다</h1>
-                  </div>
-                </div>
-                {/* 오른쪽 모달 */}
-                <div
-                  className="modal right"
-                  style = {rightModalStyle}
-                  onMouseEnter={(e) => {
-                    e.target.style.transform = "scale(1.05)"; // 호버 시 확대 효과
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.transform = "scale(1)"; // 호버 종료 시 본래 크기로 복귀
-                  }}
-                >
-                  <div className="modal-content">
-                    <h1>무시한다</h1>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {messages.length > 0 && (
-              <div
-                style={{
-                  opacity: isImageVisible ? 1 : 0.3, 
-                  transition: "opacity 2s",
-                  width: "100%",
-                  height: "20%",
-                  display: "flex",
-                  alignItems: "center",
                   flexDirection: "column",
-                  position: "fixed" /* 요소를 고정시킴 */,
-                  bottom: 0 /* 하단에 고정 */,
-                  background: `
-                  linear-gradient(180deg, rgba(0, 0, 0, 0.60) 0%, rgba(0, 0, 0, 0.12) 100%, #000 89.06%), 
-                  rgba(102, 102, 102, 0.3), 
-                `,
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                <Typography
-                  variant="h3"
-                  style={{
-                    textAlign: "center",
-                    color:
-                      messages[messageIndex].speaker === "AI"
-                        ? "white"
-                        : "#0A84FF",
-                    fontSize: "32px",
-                    fontFamily: "LINE Seed Sans KR",
-                    marginTop: "1%",
-                  }}
-                >
-                  {messages[messageIndex].speaker}
-                </Typography>
-                <Typography
-                  variant="h4"
-                  style={{
-                    textAlign: "center",
-                    color:
-                      messages[messageIndex].speaker === "AI"
-                        ? "white"
-                        : "white",
-                    transform:
-                      messages[messageIndex].speaker === "AI"
-                        ? "skewX(-20deg)"
-                        : "skewX(0deg)",
-                    marginTop: "2%",
-                    fontSize: "20px",
-                    fontFamily: "LINE Seed Sans KR",
-                  }}
-                >
-                  {isAnimating
-                      ? message.replace(/undefined/g, "")
-                               .replace(/\*/g, "") 
-                      : messages[messageIndex].text.split('*').map((part, index) => {
-                          if (index % 2 === 0) {
-                            return part; 
-                          } else {
-                            return (
-                              <span key={index} style={{ fontWeight: "bold", fontSize: "30px" }}>
-                                {part}
-                              </span>
-                            ); 
-                          }
-                  })}                
-                  </Typography>
-                <Grid
-                  container
-                  justifyContent="flex-end"
-                  style={{
-                    position: "fixed",
-                    bottom: "20px",
-                    right: "60px",
-                  }}
-                >
-                  <Button
-                    color="primary"
-                    type="submit"
-                    variant="outlined"
-                    onClick={handleNextMessage}
-                    style={{ backgroundColor: "black", color: "#34C759" }}
-                  >
-                    Next
-                  </Button>
-                </Grid>
-              </div>
-            )}
+                {messages.length > 0 ? (
+                  <img
+                    src={messages[messageIndex].characterImage}
+                    alt="Character Image"
+                    style={{
+                      width: "600px",
+                      height: "1000px",
+                      marginTop: "2%",
+                      marginBottom: "5%",
+                      opacity: isImageVisible ? 1 : 0.3,
+                      transition: "opacity 2s",
+                    }}
+                  />
+                ) : null}
 
-          </Grid>
-        </Container>
-      </Box>
+                {modalOpen && (
+                  <div
+                    className="modal-container"
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      zIndex: 9998,
+                    }}
+                    onClick={handleModalClick}
+                  >
+                    {/* 왼쪽 모달 */}
+                    <div
+                      className="modal left"
+                      style={leftModalStyle}
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = "scale(1.05)"; // 호버 시 확대 효과
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = "scale(1)"; // 호버 종료 시 본래 크기로 복귀
+                      }}
+                    >
+                      <div className="modal-content">
+                        <h1 style={{ color: "white" }}>도와준다</h1>
+                      </div>
+                    </div>
+                    {/* 오른쪽 모달 */}
+                    <div
+                      className="modal right"
+                      style={rightModalStyle}
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = "scale(1.05)"; // 호버 시 확대 효과
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = "scale(1)"; // 호버 종료 시 본래 크기로 복귀
+                      }}
+                    >
+                      <div className="modal-content">
+                        <h1 style={{ color: "white" }}>무시한다</h1>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {messages.length > 0 && (
+                  <div
+                    style={{
+                      opacity: isImageVisible ? 1 : 0.3,
+                      transition: "opacity 2s",
+                      width: "100%",
+                      height: "20%",
+                      display: "flex",
+                      alignItems: "center",
+                      flexDirection: "column",
+                      position: "fixed" /* 요소를 고정시킴 */,
+                      bottom: 0 /* 하단에 고정 */,
+                      background:
+                        "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.62) 8.67%, #000 89.06%)",
+                    }}
+                  >
+                    <Typography
+                      variant="h3"
+                      style={{
+                        textAlign: "center",
+                        color:
+                          messages[messageIndex].speaker === "AI"
+                            ? "white"
+                            : "#0A84FF",
+                        fontSize: "40px",
+                        fontFamily: "LINE Seed Sans KR",
+                        marginTop: "1%",
+                      }}
+                    >
+                      {messages[messageIndex].speaker}
+                    </Typography>
+                    <Typography
+                      variant="h4"
+                      style={{
+                        textAlign: "center",
+                        color:
+                          messages[messageIndex].speaker === "AI"
+                            ? "white"
+                            : "white",
+                        transform:
+                          messages[messageIndex].speaker === "AI"
+                            ? "skewX(-20deg)"
+                            : "skewX(0deg)",
+                        marginTop: "2%",
+                        fontSize: "30px",
+                        fontFamily: "LINE Seed Sans KR",
+                      }}
+                    >
+                      {isAnimating
+                        ? message.replace(/undefined/g, "").replace(/\*/g, "")
+                        : messages[messageIndex].text
+                            .split("*")
+                            .map((part, index) => {
+                              if (index % 2 === 0) {
+                                return part;
+                              } else {
+                                return (
+                                  <span
+                                    key={index}
+                                    style={{
+                                      color: "red",
+                                      fontWeight: "bold",
+                                      fontSize: "30px",
+                                    }}
+                                  >
+                                    {part}
+                                  </span>
+                                );
+                              }
+                            })}
+                    </Typography>
+                    <Grid
+                      container
+                      justifyContent="flex-end"
+                      style={{
+                        position: "fixed",
+                        bottom: "20px",
+                        right: "60px",
+                      }}
+                    >
+                      <Button
+                        color="primary"
+                        type="submit"
+                        variant="outlined"
+                        onClick={handleNextMessage}
+                        style={{ backgroundColor: "black", color: "#34C759" }}
+                      >
+                        Next
+                      </Button>
+                    </Grid>
+                  </div>
+                )}
+              </Grid>
+            </Container>
+          </Box>
+        </div>
+      ) : null}
     </div>
-    ) : null}
-</div>
   );
 }
