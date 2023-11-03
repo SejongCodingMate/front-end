@@ -86,7 +86,7 @@ export default function ItemBox() {
   const [messageIndex, setMessageIndex] = useState(1);
   const [accessToken, setAccessToken] = useState(null);
   const [name, setName] = useState("");
-  const [isCharacterImageVisible, setCharacterImageVisible] = useState(true);
+  const [isCharacterImageVisible, setCharacterImageVisible] = useState(false);
   const [isItemImageVisible, setItemImageVisible] = useState(true);
   const [isShaking, setShaking] = useState(false);
   let [chImage, setChImage] = useState(null);
@@ -171,6 +171,17 @@ export default function ItemBox() {
         console.error("초기 스토리 불러오기 오류:", error);
       });
   }, []);
+
+    useEffect(() => {
+        const timerId = setTimeout(() => {
+            setCharacterImageVisible(true);
+            setItemImageVisible(true);
+        }, 500);
+
+        return () => {
+        clearTimeout(timerId);
+        };
+    }, []);
 
   // 2. 모달 오픈
   const openModal = () => {

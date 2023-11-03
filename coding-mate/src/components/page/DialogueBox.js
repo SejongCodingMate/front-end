@@ -244,7 +244,7 @@ export default function DialogueBox() {
               openModal();
             }
             if (formatId === 3) {
-              window.location.href = '/item';
+              navigate('/item');
             }
             const newMessages = data.data.map((message) => ({
               speaker: message.speaker,
