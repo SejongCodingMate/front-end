@@ -253,7 +253,7 @@ export default function DialogueBox() {
           .then((data) => {
             const formatId = data.data[0].story.formatId;
             if (formatId === 3) {
-              window.location.href = "/item";
+              window.location.href = '/item';
             }
             const newMessages = data.data.map((message) => ({
               speaker: message.speaker,
