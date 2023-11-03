@@ -7,6 +7,7 @@ import Signin from "./routes/member/Signin";
 import ForgetPw from "./routes/member/ForgetPw";
 import Pwchange from "./routes/member/PwChange";
 import Dialogue from "./routes/page/Dialogue";
+import Item from "./routes/page/Item";
 import Main from "./routes/page/Main";
 import Mission from "./routes/page/Mission";
 
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/pwchange" element={<Pwchange />} />
           <Route path="/main" element={<Main />} />
           <Route path="/dialogue" element={<Dialogue />} />
+          <Route path="/Item" element={<Item />} />
           <Route path="/mission" element={<Mission />} />
         </Routes>
       </BrowserRouter>
