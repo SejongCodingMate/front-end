@@ -87,7 +87,7 @@ export default function ItemBox() {
   const [accessToken, setAccessToken] = useState(null);
   const [name, setName] = useState("");
   const [isCharacterImageVisible, setCharacterImageVisible] = useState(false);
-  const [isItemImageVisible, setItemImageVisible] = useState(true);
+  const [isItemImageVisible, setItemImageVisible] = useState(false);
   const [isShaking, setShaking] = useState(false);
   let [chImage, setChImage] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
