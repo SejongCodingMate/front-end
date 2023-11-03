@@ -93,7 +93,8 @@ export default function DialogueBox() {
   const modalBackground = useRef();
   const [message, setMessage] = useState("");
   const [isAnimating, setAnimating] = useState(false);
-  const [select, setSelect] = useState();
+  const [leftModalMessage, setLeftModalMessage] = useState("");
+  const [rightModalMessage, setRightModalMessage] = useState("");
   const navigate = useNavigate();
 
   // 1. 뒤로가기
@@ -137,7 +138,7 @@ export default function DialogueBox() {
     }
   }, [messageIndex]);
 
-  // . 초기 랜더링
+  // 5. 초기 랜더링
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     const nextStoryId = localStorage.getItem("nextStoryId");
@@ -171,10 +172,19 @@ export default function DialogueBox() {
       });
   }, []);
 
-  // 2. 모달 오픈
-  const openModal = () => {
+  // 7. 모달 오픈
+  const openModal = (newMessages) => {
     setModalOpen(true);
     setImageVisible(false);
+
+    const currentMessage1 = newMessages[0].text;
+    const currentMessage2 = newMessages[1].text;
+
+    const leftModalText = currentMessage1;
+    const rightModalText = currentMessage2;
+
+    setLeftModalMessage(leftModalText);
+    setRightModalMessage(rightModalText);
 
     const nextStoryId = messages[messageIndex]?.nextStoryId + 1;
     fetchStory(nextStoryId, accessToken)
@@ -191,6 +201,8 @@ export default function DialogueBox() {
           characterImage: message.characterImage,
           backgroundImage: message.story.backgroundImage,
         }));
+
+        // setMessages 완료 후에 messageIndex 업데이트
         setMessages([...messages, ...newMessages]);
       })
       .catch((error) => {
@@ -198,7 +210,7 @@ export default function DialogueBox() {
       });
   };
 
-  // 3. 모달 닫힘
+  // 8. 모달 닫힘
   const handleModalClick = () => {
     // 모달을 닫는 이벤트 처리
     setModalOpen(false);
@@ -206,7 +218,7 @@ export default function DialogueBox() {
     setMessageIndex(messageIndex + 1);
   };
 
-  // 5. NextMessage 핸들링
+  // 9. NextMessage 핸들링
   const handleNextMessage = () => {
     // 1. 메세지 내용 출력
     if (messageIndex < messages.length - 1) {
@@ -240,11 +252,8 @@ export default function DialogueBox() {
         fetchStory(nextStoryId, accessToken)
           .then((data) => {
             const formatId = data.data[0].story.formatId;
-            if (formatId === 2) {
-              openModal();
-            }
             if (formatId === 3) {
-              navigate('/item');
+              window.location.href = '/item';
             }
             const newMessages = data.data.map((message) => ({
               speaker: message.speaker,
@@ -256,6 +265,9 @@ export default function DialogueBox() {
               soundEffect: message.soundEffect,
               backgroundImage: message.story.backgroundImage,
             }));
+            if (formatId === 2) {
+              openModal(newMessages);
+            }
             setMessages([...messages, ...newMessages]);
           })
           .catch((error) => {
@@ -377,8 +389,11 @@ export default function DialogueBox() {
                         e.target.style.transform = "scale(1)"; // 호버 종료 시 본래 크기로 복귀
                       }}
                     >
-                      <div className="modal-content">
-                        <h1 style={{ color: "white" }}>도와준다</h1>
+                      <div
+                        className="modal-content"
+                        style={{ marginTop: "60px" }}
+                      >
+                        <h1 style={{ color: "white" }}>{leftModalMessage}</h1>
                       </div>
                     </div>
                     {/* 오른쪽 모달 */}
@@ -392,8 +407,11 @@ export default function DialogueBox() {
                         e.target.style.transform = "scale(1)"; // 호버 종료 시 본래 크기로 복귀
                       }}
                     >
-                      <div className="modal-content">
-                        <h1 style={{ color: "white" }}>무시한다</h1>
+                      <div
+                        className="modal-content"
+                        style={{ marginTop: "60px" }}
+                      >
+                        <h1 style={{ color: "white" }}>{rightModalMessage}</h1>
                       </div>
                     </div>
                   </div>
