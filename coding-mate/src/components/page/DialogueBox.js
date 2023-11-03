@@ -240,8 +240,11 @@ export default function DialogueBox() {
         fetchStory(nextStoryId, accessToken)
           .then((data) => {
             const formatId = data.data[0].story.formatId;
-            if (formatId === 3 || formatId === 2) {
+            if (formatId === 2) {
               openModal();
+            }
+            if (formatId === 3) {
+              window.location.href = '/item';
             }
             const newMessages = data.data.map((message) => ({
               speaker: message.speaker,
