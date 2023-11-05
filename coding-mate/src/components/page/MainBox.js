@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import "../../assets/fonts/Font.css";
-
+import ChapterButton from "../../assets/image/ChapterStone.png";
 const fetchChapterSave = (nextChapterId, accessToken) => {
   var myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${accessToken}`);
@@ -63,7 +63,6 @@ export default function MainBox() {
   const [animationUrl, setAnimationUrl] = useState("");
   const [animationEnd, setAnimationEnd] = useState(false);
   const [animatioIindex, setAnimatioIindex] = useState(3);
-  const title = "AI : ESCAPE";
   const navigate = useNavigate();
   const canvasRef = useRef(null);
 
@@ -72,19 +71,25 @@ export default function MainBox() {
       position: "chapter1",
       label: "Chapter 1",
       chapterId: 1,
-      imgPosition: { top: "56%", left: "2%" },
+      imgPosition: { top: "70%", left: "14%" },
     },
     {
       position: "chapter2",
       label: "Chapter 2",
       chapterId: 2,
-      imgPosition: { top: "42%", left: "55%" },
+      imgPosition: { top: "62%", left: "43%" },
     },
     {
       position: "chapter3",
       label: "Chapter 3",
       chapterId: 3,
-      imgPosition: { top: "30%", left: "62%" },
+      imgPosition: { top: "40%", left: "83%" },
+    },
+    {
+      position: "chapter4",
+      label: "Chapter 4",
+      chapterId: 4,
+      imgPosition: { top: "28%", left: "53%" },
     },
   ];
 
@@ -281,8 +286,8 @@ export default function MainBox() {
       <div
         style={{
           position: "absolute",
-          bottom: "5%",
-          left: "3%",
+          top: "2%",
+          left: "1%",
           zIndex: 1,
         }}
       >
@@ -293,15 +298,25 @@ export default function MainBox() {
             padding: "10px",
             fontSize: "24px",
             width: "20vw",
-            height: "10vh",
-            textAlign: "center",
+            height: "15vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: "20px",
           }}
         >
-          {title}
+          <img
+            src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%EC%A0%9C%EB%AA%A9.png"
+            alt="Game title"
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+          />
         </Box>
       </div>
       <img
-        src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/mpa3.png"
+        src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%EB%A9%94%EC%9D%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%EB%B0%B0%EA%B2%BD_%ED%99%94%EC%A7%88%EC%97%85.png"
         alt="Map Background"
         style={{
           width: "100%",
@@ -322,25 +337,38 @@ export default function MainBox() {
             color: "#FFF",
             padding: "10px",
             fontSize: "18px",
-            width: "40vw",
-            height: "30vh",
-            textAlign: "center",
+            width: "35vw",
+            height: "14vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: "20px",
           }}
         >
-          {chapterTitle}
+          <img
+            src={chapterTitle}
+            alt="Chapter title"
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+          />
         </Box>
       </div>
       {chapterButtons.map((chapter, index) => {
         let topPosition, leftPosition;
         if (chapter.position === "chapter1") {
-          topPosition = "50%";
-          leftPosition = "10%";
+          topPosition = "75%";
+          leftPosition = "11%";
         } else if (chapter.position === "chapter2") {
-          topPosition = "42%";
+          topPosition = "67%";
           leftPosition = "40%";
         } else if (chapter.position === "chapter3") {
-          topPosition = "25%";
-          leftPosition = "47%";
+          topPosition = "46%";
+          leftPosition = "80%";
+        } else {
+          topPosition = "34%";
+          leftPosition = "50%";
         }
         const buttonStyles = {
           width: "30vw",
@@ -361,16 +389,25 @@ export default function MainBox() {
         };
         return (
           <React.Fragment key={`fragment-${index}`}>
-            <div key={index} style={buttonStyles}>
-              <Button
-                variant="contained"
-                color="success"
-                style={{ margin: "10%" }}
+            <div
+              key={index}
+              style={{
+                ...buttonStyles,
+                width: "5%",
+              }}
+            >
+              <button
                 onClick={() => handleChapterButtonClick(chapter)}
                 disabled={parseInt(userChapterId) !== chapter.chapterId}
+                style={{
+                  background: "none",
+                  border: "none",
+                  outline: "none",
+                  cursor: "pointer",
+                }}
               >
-                {chapter.label}
-              </Button>
+                <img src={ChapterButton} alt="chapter Button" />
+              </button>
             </div>
             <div key={`img-${index}`} style={imgStyles}>
               {imagePosition === chapter.position && (
