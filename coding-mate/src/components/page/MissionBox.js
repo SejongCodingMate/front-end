@@ -89,19 +89,16 @@ export default function DialogueBox() {
   const [isImageVisible, setImageVisible] = useState(true);
   const [isShaking, setShaking] = useState(false);
   let [chImage, setChImage] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
   const modalBackground = useRef();
   const [message, setMessage] = useState("");
   const [isAnimating, setAnimating] = useState(false);
-  const [characterImage, setCharacterImage] = useState(null);
   const [codeAnswer, setCodeAnswer] = useState(null);
   const navigate = useNavigate();
   const [userInput, setUserInput] = useState(null);
   const [missionBackgroundImage, setMissionBackgroundImage] = useState(null);
   const [missionTitle, setMissionTitle] = useState(null);
   const [missionHint, setMissionHint] = useState(null);
-
-  const [isCorrect, setIsCorrect] = useState(false); 
+  const [isCorrect, setIsCorrect] = useState(false);
   const canvasRef = useRef(null);
   const [animatioIindex, setAnimatioIindex] = useState(-1);
 
@@ -144,7 +141,7 @@ export default function DialogueBox() {
           setAnimating(false);
         });
       }
-     
+
     }
   }, [messageIndex]);
 
@@ -217,7 +214,7 @@ export default function DialogueBox() {
             const formatId = data.data[0].story.formatId;
             localStorage.setItem("forematId", formatId);
             console.log(localStorage.getItem("formatId"));
-            if (formatId === 1 ) {
+            if (formatId === 1) {
               window.location.href = 'dialogue';
             }
             else if (formatId === 3) {
@@ -250,15 +247,15 @@ export default function DialogueBox() {
                 itemImage: message.itemImage,
                 input: message.input,
               })
-            
-            );
-            setMissionHint(newMessages.hint);
-            setCodeAnswer(newMessages.code);
-            setMissionBackgroundImage(newMessages[0].backgroundImage);
-            setMissionTitle(newMessages[0].backgroundImage);
-            setMessages([...messages, ...newMessages]);
+
+              );
+              setMissionHint(newMessages.hint);
+              setCodeAnswer(newMessages.code);
+              setMissionBackgroundImage(newMessages[0].backgroundImage);
+              setMissionTitle(newMessages[0].backgroundImage);
+              setMessages([...messages, ...newMessages]);
             }
-            
+
           })
           .catch((error) => {
             console.error("다음 스토리 불러오기 오류:", error);
@@ -282,7 +279,7 @@ export default function DialogueBox() {
   }
 
   // 8. 코드 실행 함수
-  useEffect (() => { 
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext("2d");
@@ -308,14 +305,14 @@ export default function DialogueBox() {
       canvas.height = browserHeight;
 
       const image = new Image();
-      image.src = messages[messageIndex].itemImage; 
+      image.src = messages[messageIndex].itemImage;
 
       console.log(messages[messageIndex].itemImage);
 
       image.onload = () => {
         const animationDuration = 3000;
         const startTime = Date.now();
-        
+
         const animate = () => {
           // 현재 시간 계산
           const currentTime = Date.now() - startTime;
@@ -328,7 +325,7 @@ export default function DialogueBox() {
 
           // 이미지 그리기
           ctx.drawImage(image, topLeftX, deltaY, 200, 200);
-          
+
 
           // 애니메이션 종료 조건 설정
           if (currentTime < animationDuration) {
@@ -339,7 +336,7 @@ export default function DialogueBox() {
         };
         animate();
       };
-    } 
+    }
   }, [isCorrect]);
 
   return (
@@ -389,184 +386,173 @@ export default function DialogueBox() {
 
           {messages.length > 0 && (
 
-          
-          <Box
-            className={`shake ${isShaking ? "animate" : ""}`}
-            style={{
-              backgroundImage: `url(${messages[messageIndex].backgroundImage})`,//`url(${missionBackgroundImage})`, 
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-            }}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-              animation: isShaking ? "shake 3s ease" : "none",
-              width: "100%",
-              height: "100%",
-              backgroundColor: "transparent",
-            }}
-          >
-            <Container maxWidth="xl" style={{ textAlign: 'center' }}>
-              
-                { messages[messageIndex].formatId == 5 && (
-                    //   <img
-                    //   src={messages[messageIndex].title}//{missionTitle}
-                    //   alt="Title Image"
-                    //   style={{
-                    //     width: "450px",
-                    //     height: "100px",
-                    //     marginTop: "10%",
-                    //   }}
-                    // />
 
-                    <TextField
-                      // onChange={(e) => setUserInput(e.target.value)}
-                      // label="여기에 코드를 입력해주세요."
-                      style={{
-                        width: "450px",
-                        height: "100px",
-                        marginTop: "10%",
-                      }}
-                      InputProps={{
-                        style:{
-                          backgroundImage: `url(${codehintBackground})`,
-                          backgroundSize: '100% 100%', 
-                          height: "150px",
-                          color: "white",
-                        }
-                      }}
-                      defaultValue={messages[messageIndex].hint}
-                      multiline
-                      rowsMax={10}
-                    />
+            <Box
+              className={`shake ${isShaking ? "animate" : ""}`}
+              style={{
+                backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+              }}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+                animation: isShaking ? "shake 3s ease" : "none",
+                width: "100%",
+                height: "100%",
+                backgroundColor: "transparent",
+              }}
+            >
+              <Container maxWidth="xl" style={{ textAlign: 'center' }}>
 
-                    )}
-                
-              <Grid
-                container
-                justifyContent="center"
-                alignItems="center"
-                style={{
-                  height: "100vh",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
+                {messages[messageIndex].formatId == 5 && (
 
-                <div 
-                  style={{ 
-                    display: 'flex' ,
-                  }}>
+                  <TextField
+                    style={{
+                      width: "450px",
+                      height: "100px",
+                      marginTop: "10%",
+                    }}
+                    InputProps={{
+                      style: {
+                        backgroundImage: `url(${codehintBackground})`,
+                        backgroundSize: '100% 100%',
+                        height: "150px",
+                        color: "white",
+                      }
+                    }}
+                    defaultValue={messages[messageIndex].hint}
+                    multiline
+                    rowsMax={10}
+                  />
 
-                  <Box
-                    style = {{
-                      width: '650px',
-                      marginTop: "5%",
-                      marginRight: '200px',
-                    }}  
-                  >
-                    <Button
-                      color="primary"
-                      type="submit"
-                      variant="outlined"
-                      onClick={handleCodeExecute}
-                      style={{ backgroundColor: "black", color: "#34C759" }}
-                    >
-                      코드 실행
-                    </Button>
-                    
-                    <TextField
-                      onChange={(e) => setUserInput(e.target.value)}
-                      label="여기에 코드를 입력해주세요."
-                      style={{
-                        width: "650px",
-                        marginTop: "2%",
-                        marginBottom: "5%",
-                      }}
-                      InputProps={{
-                        style:{
-                          backgroundImage: `url(${codemirrorBackground})`,
-                          backgroundSize: '100% 100%', 
-                          height: "800px",
-                        }
-                      }}
-                      defaultValue="print()"
-                    />
+                )}
 
-                  </Box>
-                  
-                  {messages.length > 0 ? (
-                    <img
-                      src={messages[messageIndex].characterImage}
-                      alt="Character Image"
-                      style={{
-                        width: "600px",
-                        height: "1000px",
-                        marginTop: "2%",
-                        marginBottom: "5%",
-                        opacity: isImageVisible ? 1 : 0.3,
-                        transition: "opacity 2s",
-                      }}
-                    />
-                  ) : null}
+                <Grid
+                  container
+                  justifyContent="center"
+                  alignItems="center"
+                  style={{
+                    height: "100vh",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
 
-                </div>
-
-                {messages.length > 0 && messages[messageIndex].formatId !==5 && (
                   <div
                     style={{
-                      opacity: isImageVisible ? 1 : 0.3,
-                      transition: "opacity 2s",
-                      width: "100%",
-                      height: "20%",
-                      display: "flex",
-                      alignItems: "center",
-                      flexDirection: "column",
-                      position: "fixed" /* 요소를 고정시킴 */,
-                      bottom: 0 /* 하단에 고정 */,
-                      background:
-                        "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.62) 8.67%, #000 89.06%)",
-                    }}
-                  >
-                    <Typography
-                      variant="h3"
+                      display: 'flex',
+                    }}>
+
+                    <Box
                       style={{
-                        textAlign: "center",
-                        color:
-                          messages[messageIndex].speaker === "AI"
-                            ? "white"
-                            : "#0A84FF",
-                        fontSize: "40px",
-                        fontFamily: "LINE Seed Sans KR",
-                        marginTop: "1%",
+                        width: '650px',
+                        marginTop: "5%",
+                        marginRight: '200px',
                       }}
                     >
-                      {messages[messageIndex].speaker}
-                    </Typography>
-                    <Typography
-                      variant="h4"
+                      <Button
+                        color="primary"
+                        type="submit"
+                        variant="outlined"
+                        onClick={handleCodeExecute}
+                        style={{ backgroundColor: "black", color: "#34C759" }}
+                      >
+                        코드 실행
+                      </Button>
+
+                      <TextField
+                        onChange={(e) => setUserInput(e.target.value)}
+                        label="여기에 코드를 입력해주세요."
+                        style={{
+                          width: "650px",
+                          marginTop: "2%",
+                          marginBottom: "5%",
+                        }}
+                        InputProps={{
+                          style: {
+                            backgroundImage: `url(${codemirrorBackground})`,
+                            backgroundSize: '100% 100%',
+                            height: "800px",
+                          }
+                        }}
+                        defaultValue="print()"
+                      />
+
+                    </Box>
+
+                    {messages.length > 0 ? (
+                      <img
+                        src={messages[messageIndex].characterImage}
+                        alt="Character Image"
+                        style={{
+                          width: "600px",
+                          height: "1000px",
+                          marginTop: "2%",
+                          marginBottom: "5%",
+                          opacity: isImageVisible ? 1 : 0.3,
+                          transition: "opacity 2s",
+                        }}
+                      />
+                    ) : null}
+
+                  </div>
+
+                  {messages.length > 0 && messages[messageIndex].formatId !== 5 && (
+                    <div
                       style={{
-                        textAlign: "center",
-                        color:
-                          messages[messageIndex].speaker === "AI"
-                            ? "white"
-                            : "white",
-                        transform:
-                          messages[messageIndex].speaker === "AI"
-                            ? "skewX(-20deg)"
-                            : "skewX(0deg)",
-                        marginTop: "2%",
-                        fontSize: "30px",
-                        fontFamily: "LINE Seed Sans KR",
+                        opacity: isImageVisible ? 1 : 0.3,
+                        transition: "opacity 2s",
+                        width: "100%",
+                        height: "20%",
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "column",
+                        position: "fixed" /* 요소를 고정시킴 */,
+                        bottom: 0 /* 하단에 고정 */,
+                        background:
+                          "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.62) 8.67%, #000 89.06%)",
                       }}
                     >
-                      {isAnimating
-                        ? message.replace(/undefined/g, "").replace(/\*/g, "")
-                        : messages[messageIndex].text
+                      <Typography
+                        variant="h3"
+                        style={{
+                          textAlign: "center",
+                          color:
+                            messages[messageIndex].speaker === "AI"
+                              ? "white"
+                              : "#0A84FF",
+                          fontSize: "40px",
+                          fontFamily: "LINE Seed Sans KR",
+                          marginTop: "1%",
+                        }}
+                      >
+                        {messages[messageIndex].speaker}
+                      </Typography>
+                      <Typography
+                        variant="h4"
+                        style={{
+                          textAlign: "center",
+                          color:
+                            messages[messageIndex].speaker === "AI"
+                              ? "white"
+                              : "white",
+                          transform:
+                            messages[messageIndex].speaker === "AI"
+                              ? "skewX(-20deg)"
+                              : "skewX(0deg)",
+                          marginTop: "2%",
+                          fontSize: "30px",
+                          fontFamily: "LINE Seed Sans KR",
+                        }}
+                      >
+                        {isAnimating
+                          ? message.replace(/undefined/g, "").replace(/\*/g, "")
+                          : messages[messageIndex].text
                             .split("*")
                             .map((part, index) => {
                               if (index % 2 === 0) {
@@ -586,40 +572,38 @@ export default function DialogueBox() {
                                 );
                               }
                             })}
-                    </Typography>
+                      </Typography>
 
-                    <Grid
-                  container
-                  justifyContent="flex-end"
-                  style={{
-                    position: "fixed",
-                    bottom: "20px",
-                    right: "60px",
-                  }}
-                >
-                    <Button
-                      color="primary"
-                      type="submit"
-                      variant="outlined"
-                      onClick={handleNextMessage}
-                      style={{ backgroundColor: "black", color: "#34C759" }}
-                    >
-                      Next
-                    </Button>
-                  </Grid>
+                      <Grid
+                        container
+                        justifyContent="flex-end"
+                        style={{
+                          position: "fixed",
+                          bottom: "20px",
+                          right: "60px",
+                        }}
+                      >
+                        <Button
+                          color="primary"
+                          type="submit"
+                          variant="outlined"
+                          onClick={handleNextMessage}
+                          style={{ backgroundColor: "black", color: "#34C759" }}
+                        >
+                          Next
+                        </Button>
+                      </Grid>
 
-                  </div>
-                )}
-              
+                    </div>
+                  )}
 
-              </Grid>
-            </Container>
-          </Box>
+
+                </Grid>
+              </Container>
+            </Box>
 
           )}
 
-          
-          
           <canvas
             ref={canvasRef}
             style={{
@@ -632,15 +616,11 @@ export default function DialogueBox() {
             }}
           >
           </canvas>
-          
-          
 
-          
-          
         </div>
       ) : null}
 
-          
+
     </div>
   );
 }
