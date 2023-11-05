@@ -423,10 +423,10 @@ export default function ItemBox() {
                 src = {itemImage}
                 alt="Item Image"
                 style={{
-                  width: "300px",
+                  width: "550px",
                   height: "300px",
                   margin: "2% 0 5% 100px",
-                  marginTop: "45%",
+                  marginTop: "40%",
                   marginBottom: "5%",
                   opacity: isItemImageVisible ? 1 : 0.3,
                   transition: "opacity 2s",
