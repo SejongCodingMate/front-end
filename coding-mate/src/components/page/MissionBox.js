@@ -5,6 +5,7 @@ import "../../assets/animation/Zoom.css";
 import "../../assets/animation/Blur.css";
 import back from "../../assets/image/back.png";
 import codemirrorBackground from "../../assets/image/code_background.png";
+import codehintBackground from "../../assets/image/hint_background.png";
 import { Container, Paper, Typography, Button, Switch, Fade, Input, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
@@ -92,9 +93,18 @@ export default function DialogueBox() {
   const modalBackground = useRef();
   const [message, setMessage] = useState("");
   const [isAnimating, setAnimating] = useState(false);
+  const [characterImage, setCharacterImage] = useState(null);
+  const [codeAnswer, setCodeAnswer] = useState(null);
   const navigate = useNavigate();
+  const [userInput, setUserInput] = useState(null);
+  const [missionBackgroundImage, setMissionBackgroundImage] = useState(null);
+  const [missionTitle, setMissionTitle] = useState(null);
+  const [missionHint, setMissionHint] = useState(null);
 
-  // 1. 뒤로가기
+  const [isCorrect, setIsCorrect] = useState(false); 
+  const canvasRef = useRef(null);
+  const [animatioIindex, setAnimatioIindex] = useState(-1);
+
   const handleBackButtonClick = () => {
     navigate("/main");
   };
@@ -158,13 +168,16 @@ export default function DialogueBox() {
           text: message.text,
           currentStoryId: message.story.id,
           nextStoryId: message.story.nextId,
-          screenEffect: message.screenEffect,
-          soundEffect: message.soundEffect,
           characterImage: message.characterImage,
           backgroundImage: message.story.backgroundImage,
           title: message.story.chapter.title,
+          code: message.code,
         }));
         setMessages(initialMessages);
+        setCodeAnswer(initialMessages[0].code);
+        setMissionTitle(initialMessages[0].title);
+        setMissionBackgroundImage(initialMessages[0].backgroundImage);
+        localStorage.setItem("codeAnswer", codeAnswer);
       })
       .catch((error) => {
         console.error("초기 스토리 불러오기 오류:", error);
@@ -202,28 +215,50 @@ export default function DialogueBox() {
         fetchStory(nextStoryId, accessToken)
           .then((data) => {
             const formatId = data.data[0].story.formatId;
-            if (formatId === 3) {
+            localStorage.setItem("forematId", formatId);
+            console.log(localStorage.getItem("formatId"));
+            if (formatId === 1 ) {
+              window.location.href = 'dialogue';
+            }
+            else if (formatId === 3) {
               window.location.href = '/item';
             }
-            if (formatId === 4) {
-              window.location.href = '/mission';
+            else if (formatId === 4) {
+              const newMessages = data.data.map((message) => ({
+                speaker: message.speaker,
+                text: message.text,
+                currentStoryId: message.story.id,
+                nextStoryId: message.story.nextId,
+                formatId: message.story.formatId,
+                characterImage: message.characterImage,
+                backgroundImage: message.story.backgroundImage,
+                title: message.story.chapter.title,
+              }));
+              setMissionBackgroundImage(newMessages[0].backgroundImage);
+              setMissionTitle(newMessages[0].title);
+              setMessages([...messages, ...newMessages]);
             }
-            const newMessages = data.data.map((message) => ({
-              speaker: message.speaker,
-              text: message.text,
-              currentStoryId: message.story.id,
-              nextStoryId: message.story.nextId,
-              formatId: message.story.formatId,
-              screenEffect: message.screenEffect,
-              soundEffect: message.soundEffect,
-              characterImage: message.characterImage,
-              backgroundImage: message.story.backgroundImage,
-              title: message.story.chapter.title,
-            }));
-            if (formatId === 1) {
-                window.location.href='dialogue';
-            }
+            else if (formatId === 5) {
+              const newMessages = data.data.map((message) => ({
+                currentStoryId: message.story.id,
+                nextStoryId: message.story.nextId,
+                formatId: message.story.formatId,
+                characterImage: message.characterImage,
+                backgroundImage: message.story.backgroundImage,
+                code: message.code,
+                hint: message.hint,
+                itemImage: message.itemImage,
+                input: message.input,
+              })
+            
+            );
+            setMissionHint(newMessages.hint);
+            setCodeAnswer(newMessages.code);
+            setMissionBackgroundImage(newMessages[0].backgroundImage);
+            setMissionTitle(newMessages[0].backgroundImage);
             setMessages([...messages, ...newMessages]);
+            }
+            
           })
           .catch((error) => {
             console.error("다음 스토리 불러오기 오류:", error);
@@ -231,6 +266,81 @@ export default function DialogueBox() {
       }
     }
   };
+
+
+  // 7. 코드 실행 함수
+  const handleCodeExecute = () => {
+    console.log(messages[messageIndex].code);
+    if (userInput == messages[messageIndex].code) {
+      console.log("정답");
+      console.log(messages[messageIndex].hint);
+      setAnimatioIindex(10);
+      setIsCorrect(true);
+    } else {
+      window.alert = "코드를 다시 입력해주세요."
+    }
+  }
+
+  // 8. 코드 실행 함수
+  useEffect (() => { 
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      const browserWidth = window.innerWidth;
+      const browserHeight = window.innerHeight;
+
+      const imageAlt = "Character Image";
+      const imageList = document.querySelectorAll("img");
+
+      let target = null;
+      imageList.forEach(image => {
+        if (image.alt === imageAlt) {
+          target = image;
+        }
+      });
+
+      const imageRect = target.getBoundingClientRect();
+      const topLeftX = imageRect.left + 250;
+      const topLeftY = imageRect.top;
+      const bottomLeftY = imageRect.top + imageRect.height;
+
+      canvas.width = browserWidth;
+      canvas.height = browserHeight;
+
+      const image = new Image();
+      image.src = messages[messageIndex].itemImage; 
+
+      console.log(messages[messageIndex].itemImage);
+
+      image.onload = () => {
+        const animationDuration = 3000;
+        const startTime = Date.now();
+        
+        const animate = () => {
+          // 현재 시간 계산
+          const currentTime = Date.now() - startTime;
+          console.log(currentTime);
+          // Canvas를 지우고 새로 그리기
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // 이미지를 현재 위치로 그리기
+          const deltaY = topLeftY + ((bottomLeftY - topLeftY) / animationDuration * currentTime);
+
+          // 이미지 그리기
+          ctx.drawImage(image, topLeftX, deltaY, 200, 200);
+          
+
+          // 애니메이션 종료 조건 설정
+          if (currentTime < animationDuration) {
+            requestAnimationFrame(animate);
+          } else {
+            handleNextMessage();
+          }
+        };
+        animate();
+      };
+    } 
+  }, [isCorrect]);
 
   return (
     <div>
@@ -277,10 +387,13 @@ export default function DialogueBox() {
             />
           </button>
 
+          {messages.length > 0 && (
+
+          
           <Box
             className={`shake ${isShaking ? "animate" : ""}`}
             style={{
-              backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
+              backgroundImage: `url(${messages[messageIndex].backgroundImage})`,//`url(${missionBackgroundImage})`, 
               backgroundRepeat: "no-repeat",
               backgroundSize: "cover",
             }}
@@ -297,16 +410,38 @@ export default function DialogueBox() {
           >
             <Container maxWidth="xl" style={{ textAlign: 'center' }}>
               
-                {messages.length > 0 && (
-                      <img
-                      src={messages[messageIndex].title}
-                      alt="Title Image"
+                { messages[messageIndex].formatId == 5 && (
+                    //   <img
+                    //   src={messages[messageIndex].title}//{missionTitle}
+                    //   alt="Title Image"
+                    //   style={{
+                    //     width: "450px",
+                    //     height: "100px",
+                    //     marginTop: "10%",
+                    //   }}
+                    // />
+
+                    <TextField
+                      // onChange={(e) => setUserInput(e.target.value)}
+                      // label="여기에 코드를 입력해주세요."
                       style={{
                         width: "450px",
                         height: "100px",
                         marginTop: "10%",
                       }}
+                      InputProps={{
+                        style:{
+                          backgroundImage: `url(${codehintBackground})`,
+                          backgroundSize: '100% 100%', 
+                          height: "150px",
+                          color: "white",
+                        }
+                      }}
+                      defaultValue={messages[messageIndex].hint}
+                      multiline
+                      rowsMax={10}
                     />
+
                     )}
                 
               <Grid
@@ -334,8 +469,18 @@ export default function DialogueBox() {
                       marginRight: '200px',
                     }}  
                   >
+                    <Button
+                      color="primary"
+                      type="submit"
+                      variant="outlined"
+                      onClick={handleCodeExecute}
+                      style={{ backgroundColor: "black", color: "#34C759" }}
+                    >
+                      코드 실행
+                    </Button>
                     
                     <TextField
+                      onChange={(e) => setUserInput(e.target.value)}
                       label="여기에 코드를 입력해주세요."
                       style={{
                         width: "650px",
@@ -442,9 +587,8 @@ export default function DialogueBox() {
                               }
                             })}
                     </Typography>
-                  </div>
-                )}
-                <Grid
+
+                    <Grid
                   container
                   justifyContent="flex-end"
                   style={{
@@ -453,21 +597,50 @@ export default function DialogueBox() {
                     right: "60px",
                   }}
                 >
-                  <Button
-                    color="primary"
-                    type="submit"
-                    variant="outlined"
-                    onClick={handleNextMessage}
-                    style={{ backgroundColor: "black", color: "#34C759" }}
-                  >
-                    Next
-                  </Button>
-                </Grid>
+                    <Button
+                      color="primary"
+                      type="submit"
+                      variant="outlined"
+                      onClick={handleNextMessage}
+                      style={{ backgroundColor: "black", color: "#34C759" }}
+                    >
+                      Next
+                    </Button>
+                  </Grid>
+
+                  </div>
+                )}
+              
+
               </Grid>
             </Container>
           </Box>
+
+          )}
+
+          
+          
+          <canvas
+            ref={canvasRef}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: window.innerWidth,
+              height: window.innerHeight,
+              zIndex: animatioIindex,
+            }}
+          >
+          </canvas>
+          
+          
+
+          
+          
         </div>
       ) : null}
+
+          
     </div>
   );
 }
