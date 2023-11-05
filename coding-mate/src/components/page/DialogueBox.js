@@ -226,6 +226,14 @@ export default function DialogueBox() {
     }
     // 2. 만약 메세지가 다 출력이 되었다면
     else {
+      if (localStorage.getItem("nextStoryId") == 0) {
+        const userChapterId = localStorage.getItem("chapterId");
+        localStorage.setItem("chapterId", parseInt(userChapterId) + 1);
+        const renewalChapterId = localStorage.getItem("chapterId");
+        fetchChapterSave(renewalChapterId, accessToken);
+        localStorage.setItem("nextStoryId",parseInt(localStorage.getItem("nextStoryId"))+1);
+        window.location.href = "/main";
+      }
       // 2-1. 로컬스토리지 StoryID 갱신
       const currentStoryId = messages[messageIndex]?.currentStoryId;
       const nextStoryId = messages[messageIndex]?.nextStoryId;
@@ -239,14 +247,6 @@ export default function DialogueBox() {
           // saveMessages = "자동저장 되었습니다.";
           // window.alert(saveMessages);
         });
-
-        if (localStorage.getItem("nextStoryId") == 0) {
-          const userChapterId = localStorage.getItem("chapterId");
-          localStorage.setItem("chapterId", parseInt(userChapterId) + 1);
-          const renewalChapterId = localStorage.getItem("chapterId");
-          fetchChapterSave(renewalChapterId, accessToken);
-          window.location.href = "/main";
-        }
 
         // 2-2. 스토리 로드 API
         fetchStory(nextStoryId, accessToken)
