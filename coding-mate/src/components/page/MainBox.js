@@ -71,7 +71,7 @@ export default function MainBox() {
       position: "chapter1",
       label: "Chapter 1",
       chapterId: 1,
-      imgPosition: { top: "70%", left: "14%" },
+      imgPosition: { top: "55%", left: "12%" },
     },
     {
       position: "chapter2",
@@ -286,34 +286,23 @@ export default function MainBox() {
       <div
         style={{
           position: "absolute",
-          top: "2%",
-          left: "1%",
+          top: "3%",
+          left: "2%",
           zIndex: 1,
         }}
       >
         <Box
           sx={{
-            backgroundColor: "#000",
-            color: "#FFF",
-            padding: "10px",
-            fontSize: "24px",
             width: "20vw",
-            height: "15vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            height: "13vh",
             borderRadius: "20px",
+            background: "transparent", // 배경색을 투명으로 설정
+            backgroundImage: `url("https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%EC%A0%9C%EB%AA%A9.png")`,
+            backgroundSize: "100% 100%", // 배경 이미지 크기 설정  padding: "20px",
+            backgroundPosition: "1px 1px", // 가로로 10px, 세로로 20px 이동
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
           }}
-        >
-          <img
-            src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%EC%A0%9C%EB%AA%A9.png"
-            alt="Game title"
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        </Box>
+        ></Box>
       </div>
       <img
         src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%EB%A9%94%EC%9D%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%EB%B0%B0%EA%B2%BD_%ED%99%94%EC%A7%88%EC%97%85.png"
@@ -333,27 +322,15 @@ export default function MainBox() {
       >
         <Box
           sx={{
-            backgroundColor: "#000",
-            color: "#FFF",
-            padding: "10px",
-            fontSize: "18px",
-            width: "35vw",
-            height: "14vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            width: "30vw",
+            height: "12vh",
             borderRadius: "20px",
+            backgroundImage: `url(${chapterTitle})`, // chapterTitle은 이미지의 URL
+            backgroundSize: "102% 110%", // 배경 이미지 크기 설정  padding: "20px",
+            backgroundPosition: "-4px -17px", // 가로로 10px, 세로로 20px 이동
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
           }}
-        >
-          <img
-            src={chapterTitle}
-            alt="Chapter title"
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        </Box>
+        ></Box>
       </div>
       {chapterButtons.map((chapter, index) => {
         let topPosition, leftPosition;
@@ -416,8 +393,8 @@ export default function MainBox() {
                   alt=""
                   //alt={`chapter ${chapter.position} Character`}
                   style={{
-                    width: "100px",
-                    height: "100px",
+                    width: "153px",
+                    height: "257px",
                   }}
                 />
               )}
