@@ -534,6 +534,119 @@ export default function DialogueBox() {
                           "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.62) 8.67%, #000 89.06%)",
                       }}
                     >
+              <Container maxWidth="xl" style={{ textAlign: 'center' }}>
+
+                {messages[messageIndex].formatId == 5 && (
+
+                  <TextField
+                    style={{
+                      width: "450px",
+                      height: "100px",
+                      marginTop: "10%",
+                    }}
+                    InputProps={{
+                      style: {
+                        backgroundImage: `url(${codehintBackground})`,
+                        backgroundSize: '100% 100%',
+                        height: "150px",
+                        color: "white",
+                      }
+                    }}
+                    defaultValue={messages[messageIndex].hint}
+                    multiline
+                    rowsMax={10}
+                  />
+
+                )}
+
+                <Grid
+                  container
+                  justifyContent="center"
+                  alignItems="center"
+                  style={{
+                    height: "100vh",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+
+                  <div
+                    style={{
+                      display: 'flex',
+                    }}>
+
+                    <Box
+                      style={{
+                        width: '650px',
+                        marginTop: "5%",
+                        marginRight: '200px',
+                      }}
+                    >
+                      <Button
+                        color="primary"
+                        type="submit"
+                        variant="outlined"
+                        onClick={handleCodeExecute}
+                        style={{ backgroundColor: "black", color: "#34C759" }}
+                      >
+                        코드 실행
+                      </Button>
+
+                      <TextField
+                        onChange={(e) => setUserInput(e.target.value)}
+                        label="여기에 코드를 입력해주세요."
+                        style={{
+                          width: "650px",
+                          marginTop: "2%",
+                          marginBottom: "5%",
+                        }}
+                        InputProps={{
+                          style: {
+                            backgroundImage: `url(${codemirrorBackground})`,
+                            backgroundSize: '100% 100%',
+                            height: "800px",
+                          }
+                        }}
+                        defaultValue="print()"
+                      />
+
+                    </Box>
+
+                    {messages.length > 0 ? (
+                      <img
+                        src={messages[messageIndex].characterImage}
+                        alt="Character Image"
+                        style={{
+                          width: "600px",
+                          height: "1000px",
+                          marginTop: "2%",
+                          marginBottom: "5%",
+                          opacity: isImageVisible ? 1 : 0.3,
+                          transition: "opacity 2s",
+                        }}
+                      />
+                    ) : null}
+
+                  </div>
+
+                  {messages.length > 0 && messages[messageIndex].formatId !== 5 && (
+                    <div
+                      style={{
+                        opacity: isImageVisible ? 1 : 0.3,
+                        transition: "opacity 2s",
+                        width: "100%",
+                        height: "20%",
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "column",
+                        position: "fixed" /* 요소를 고정시킴 */,
+                        bottom: 0 /* 하단에 고정 */,
+                        background:
+                          "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.62) 8.67%, #000 89.06%)",
+                      }}
+                    >
                       <Typography
                         variant="h3"
                         style={{
