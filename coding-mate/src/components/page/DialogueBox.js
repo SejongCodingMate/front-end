@@ -96,6 +96,12 @@ export default function DialogueBox() {
   const [leftModalMessage, setLeftModalMessage] = useState("");
   const [rightModalMessage, setRightModalMessage] = useState("");
   const navigate = useNavigate();
+  const [audioError, setAudioError] = useState(false);
+
+  const handleAudioError = () => {
+    console.error("오디오 파일을 로드하는 동안 오류가 발생했습니다.");
+    setAudioError(true);
+  };
 
   // 1. 뒤로가기
   const handleBackButtonClick = () => {
@@ -215,6 +221,8 @@ export default function DialogueBox() {
     // 모달을 닫는 이벤트 처리
     setModalOpen(false);
     setImageVisible(true);
+    const audio = new Audio("/hover.mp3");
+    audio.play();
     setMessageIndex(messageIndex + 1);
   };
 
@@ -223,15 +231,28 @@ export default function DialogueBox() {
     // 1. 메세지 내용 출력
     if (messageIndex < messages.length - 1) {
       setMessageIndex(messageIndex + 1);
+      const audio = new Audio("/NextButton2.wav");
+      audio.play();
     }
     // 2. 만약 메세지가 다 출력이 되었다면
     else {
+
+      const audio = new Audio("/NextButton2.wav");
+      audio.play();
+
       if (localStorage.getItem("nextStoryId") == 0) {
         const userChapterId = localStorage.getItem("chapterId");
         localStorage.setItem("chapterId", parseInt(userChapterId) + 1);
         const renewalChapterId = localStorage.getItem("chapterId");
         fetchChapterSave(renewalChapterId, accessToken);
+
         localStorage.setItem("nextStoryId",parseInt(localStorage.getItem("nextStoryId"))+1);
+
+        localStorage.setItem(
+          "nextStoryId",
+          parseInt(localStorage.getItem("nextStoryId")) + 1
+        );
+
         window.location.href = "/main";
       }
       // 2-1. 로컬스토리지 StoryID 갱신
@@ -253,7 +274,10 @@ export default function DialogueBox() {
           .then((data) => {
             const formatId = data.data[0].story.formatId;
             if (formatId === 3) {
-              window.location.href = '/item';
+              window.location.href = "/item";
+            }
+            if (formatId === 4) {
+              window.location.href = "/mission";
             }
             if (formatId === 4) {
               window.location.href = '/mission';
