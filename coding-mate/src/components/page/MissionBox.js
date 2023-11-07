@@ -355,166 +355,52 @@ export default function DialogueBox() {
             backgroundRepeat: "no-repeat",
           }}
         >
-          <button
-            onClick={handleBackButtonClick}
+          <Box
+            className={`shake ${isShaking ? "animate" : ""}`}
             style={{
-              position: "absolute",
-              width: "7%",
-              height: "8%",
-              top: "20px",
-              left: "0px",
-              backgroundColor: "#242424",
-              color: "#FFF",
-              border: "1px solid #FFF",
-              cursor: "pointer",
-              borderTop: "5px solid #3D3D3D",
-              borderLeft: "5px solid #3D3D3D",
-              borderBottom: "none",
-              borderRight: "none",
+              backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+            }}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+              animation: isShaking ? "shake 3s ease" : "none",
+              width: "100%",
+              height: "100%",
+              backgroundColor: "transparent",
             }}
           >
-            <img
-              style={{
-                width: "35px",
-                height: "35px",
-                float: "right",
-              }}
-              src={back}
-              alt="뒤로 가기"
-            />
-          </button>
-
-          {messages.length > 0 && (
-
-
-            <Box
-              className={`shake ${isShaking ? "animate" : ""}`}
-              style={{
-                backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "cover",
-              }}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-                animation: isShaking ? "shake 3s ease" : "none",
-                width: "100%",
-                height: "100%",
-                backgroundColor: "transparent",
-              }}
-            >
-              <Container 
-                maxWidth="xl" 
-                style={{ 
-                  textAlign: 'center', 
-                  justifyContent: 'center', 
-                  alignItems: 'center',
-                  minHeight: '100vh'
+            <Container maxWidth="xl">
+              <Grid
+                container
+                justifyContent="center"
+                alignItems="center"
+                style={{
+                  height: "100vh",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-
-                {messages[messageIndex].formatId == 5 && (
-
-                  <Box
+                {messages.length > 0 ? (
+                  <img
+                    src={messages[messageIndex].characterImage}
+                    alt="Character Image"
                     style={{
-                      width: "450px",
-                      height: "150px",
-                      marginTop: "2%",
-                      marginLeft: "40%",
-                      textAlign: "center",
-                      backgroundImage: `url(${codehintBackground})`,
-                      backgroundSize: '100% 100%',
-                      color: "white",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
+                      width: "300px",
+                      height: "300px",
+                      marginTop: "50%",
+                      marginBottom: "5%",
+                      marginRight: "80%",
+                      opacity: isImageVisible ? 1 : 0.3,
+                      transition: "opacity 2s",
                     }}
-                  >
-                    <Typography 
-                      variant="body1"
-                      marginTop= "10%"
-                      marginLeft="20px"
-                      marginRight="20px"
-                    >
-                      {messages[messageIndex].hint}
-                    </Typography>
-                  </Box>
-
-                )}
-
-                <Grid
-                  container
-                  justifyContent="center"
-                  alignItems="center"
-                  style={{
-                    height: "100vh",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-
-                  <div
-                    style={{
-                      display: 'flex',
-                    }}>
-
-                    <Box
-                      style={{
-                        width: '650px',
-                        marginTop: "5%",
-                        marginRight: '200px',
-                      }}
-                    >
-                      <Button
-                        color="primary"
-                        type="submit"
-                        variant="outlined"
-                        onClick={handleCodeExecute}
-                        style={{ backgroundColor: "black", color: "#34C759" }}
-                      >
-                        코드 실행
-                      </Button>
-
-                      <TextField
-                        onChange={(e) => setUserInput(e.target.value)}
-                        label="여기에 코드를 입력해주세요."
-                        style={{
-                          width: "650px",
-                          marginTop: "2%",
-                          marginBottom: "5%",
-                        }}
-                        InputProps={{
-                          style: {
-                            backgroundImage: `url(${codemirrorBackground})`,
-                            backgroundSize: '100% 100%',
-                            height: "800px",
-                            fontSize: "30px",
-                          }
-                        }}
-                        defaultValue="print()"
-                      />
-
-                    </Box>
-
-                    {messages.length > 0 ? (
-                      <img
-                        src={messages[messageIndex].characterImage}
-                        alt="Character Image"
-                        style={{
-                          width: "600px",
-                          height: "1000px",
-                          marginTop: "2%",
-                          marginBottom: "5%",
-                          opacity: isImageVisible ? 1 : 0.3,
-                          transition: "opacity 2s",
-                        }}
-                      />
-                    ) : null}
+                  />
+                ) : null}
 
                   </div>
 
