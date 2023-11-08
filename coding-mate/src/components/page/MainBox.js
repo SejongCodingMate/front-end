@@ -170,7 +170,7 @@ export default function MainBox() {
       image.src = animationUrl;
 
       image.onload = () => {
-        const animationDuration = 3000;
+        const animationDuration = 4000;
         const startTime = Date.now();
 
         const animate = () => {
@@ -193,7 +193,7 @@ export default function MainBox() {
             const topInPixels = top + deltaY;
 
             // 이미지 그리기
-            ctx.drawImage(image, leftInPixels, topInPixels, 100, 100);
+            ctx.drawImage(image, leftInPixels, topInPixels, 153, 257);
           });
 
           // 애니메이션 종료 조건 설정
