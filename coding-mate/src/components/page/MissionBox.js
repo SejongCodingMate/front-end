@@ -6,6 +6,7 @@ import "../../assets/animation/Blur.css";
 import back from "../../assets/image/back.png";
 import codemirrorBackground from "../../assets/image/code_background.png";
 import codehintBackground from "../../assets/image/hint_background.png";
+import nextButton from "../../assets/image/next.png"
 import {
   Container,
   Paper,
@@ -123,11 +124,13 @@ export default function DialogueBox() {
   // 3. 대사 애니메이션
   function showTextSequentially(text, setText, interval, callback) {
     const characters = splitText(text);
-    let currentIndex = -1;
+    let currentIndex = 0;
+    let currentText = '';
 
     function showNextCharacter() {
       if (currentIndex < characters.length) {
-        setText((prevText) => prevText + characters[currentIndex]);
+        currentText += characters[currentIndex];
+        setText(currentText);
         currentIndex++;
         setTimeout(showNextCharacter, interval);
       } else {
@@ -146,14 +149,9 @@ export default function DialogueBox() {
       setMessage("");
       setAnimating(true);
       if (messages[messageIndex].text) {
-        showTextSequentially(
-          messages[messageIndex].text,
-          setMessage,
-          30,
-          () => {
-            setAnimating(false);
-          }
-        );
+        showTextSequentially(messages[messageIndex].text, setMessage, 35, () => {
+          setAnimating(false);
+        });
       }
     }
   }, [messageIndex]);
@@ -279,7 +277,7 @@ export default function DialogueBox() {
       setAnimatioIindex(10);
       setIsCorrect(true);
     } else {
-      window.alert = "코드를 다시 입력해주세요.";
+      window.alert("코드를 다시 입력해주세요.")
     }
   };
 
@@ -302,7 +300,7 @@ export default function DialogueBox() {
       });
 
       const imageRect = target.getBoundingClientRect();
-      const topLeftX = imageRect.left + 250;
+      const topLeftX = imageRect.left;
       const topLeftY = imageRect.top;
       const bottomLeftY = imageRect.top + imageRect.height;
 
@@ -331,7 +329,7 @@ export default function DialogueBox() {
             ((bottomLeftY - topLeftY) / animationDuration) * currentTime;
 
           // 이미지 그리기
-          ctx.drawImage(image, topLeftX, deltaY, 200, 200);
+          ctx.drawImage(image, topLeftX, deltaY, 438, 302);
 
           // 애니메이션 종료 조건 설정
           if (currentTime < animationDuration) {
@@ -409,26 +407,47 @@ export default function DialogueBox() {
                 backgroundColor: "transparent",
               }}
             >
-              <Container maxWidth="xl" style={{ textAlign: "center" }}>
+              <Container 
+                maxWidth="xl" 
+                style={{ 
+                  textAlign: 'center', 
+                  justifyContent: 'center', 
+                  alignItems: 'center',
+                  minHeight: '100vh'
+                }}
+              >
+
                 {messages[messageIndex].formatId == 5 && (
-                  <TextField
+                  
+                  <Box
                     style={{
                       width: "450px",
-                      height: "100px",
-                      marginTop: "10%",
+                      height: "150px",
+                      marginTop: "2%",
+                      marginLeft: "40%",
+                      textAlign: "center",
+                      backgroundImage: `url(${codehintBackground})`,
+                      backgroundSize: '100% 100%',
+                      color: "white",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
-                    InputProps={{
-                      style: {
-                        backgroundImage: `url(${codehintBackground})`,
-                        backgroundSize: "100% 100%",
-                        height: "150px",
-                        color: "white",
-                      },
-                    }}
-                    defaultValue={messages[messageIndex].hint}
-                    multiline
-                    rowsMax={10}
-                  />
+                  >
+                    <Typography 
+                      variant="body1"
+                      style={{
+                        marginTop: "10%",
+                        marginLeft: "20px",
+                        marginRight: "20px",
+                        whiteSpace: "pre-line"  // 줄 바꿈을 허용하는 스타일
+                      }}
+                    >
+                      {messages[messageIndex].hint}
+                    </Typography>
+                  </Box>
+
                 )}
 
                 <Grid
@@ -478,7 +497,8 @@ export default function DialogueBox() {
                             backgroundImage: `url(${codemirrorBackground})`,
                             backgroundSize: "100% 100%",
                             height: "800px",
-                          },
+                            fontSize: "30px",
+                          }
                         }}
                         defaultValue="print()"
                       />
@@ -489,7 +509,7 @@ export default function DialogueBox() {
                         src={messages[messageIndex].characterImage}
                         alt="Character Image"
                         style={{
-                          width: "600px",
+                          width: "700px",
                           height: "1000px",
                           marginTop: "2%",
                           marginBottom: "5%",
@@ -500,88 +520,79 @@ export default function DialogueBox() {
                     ) : null}
                   </div>
 
-                  {messages.length > 0 &&
-                    messages[messageIndex].formatId !== 5 && (
-                      <div
+                  {messages.length > 0 && messages[messageIndex].formatId !== 5 && (
+                    <div
+                      style={{
+                        opacity: isImageVisible ? 1 : 0.3,
+                        transition: "opacity 2s",
+                        width: "100%",
+                        height: "45%",
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "column",
+                        position: "fixed" /* 요소를 고정시킴 */,
+                        bottom: 0 /* 하단에 고정 */,
+                        background: "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
+                      }}
+                    >
+                      <Typography
+                        variant="h3"
                         style={{
-                          opacity: isImageVisible ? 1 : 0.3,
-                          transition: "opacity 2s",
-                          width: "100%",
-                          height: "20%",
-                          display: "flex",
-                          alignItems: "center",
-                          flexDirection: "column",
-                          position: "fixed" /* 요소를 고정시킴 */,
-                          bottom: 0 /* 하단에 고정 */,
-                          background:
-                            "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.62) 8.67%, #000 89.06%)",
+                          textAlign: "center",
+                          color: "white",
+                          fontSize: "40px",
+                          fontFamily: "LINE Seed Sans KR",
+                          fontWeight: "bold",
+                          marginTop: "10%", // 대사 위치
                         }}
                       >
-                        <Typography
-                          variant="h3"
-                          style={{
-                            textAlign: "center",
-                            color:
-                              messages[messageIndex].speaker === "AI"
-                                ? "white"
-                                : "#0A84FF",
-                            fontSize: "40px",
-                            fontFamily: "LINE Seed Sans KR",
-                            marginTop: "1%",
-                          }}
-                        >
-                          {messages[messageIndex].speaker}
-                        </Typography>
-                        <Typography
-                          variant="h4"
-                          style={{
-                            textAlign: "center",
-                            color:
-                              messages[messageIndex].speaker === "AI"
-                                ? "white"
-                                : "white",
-                            transform:
-                              messages[messageIndex].speaker === "AI"
-                                ? "skewX(-20deg)"
-                                : "skewX(0deg)",
-                            marginTop: "2%",
-                            fontSize: "30px",
-                            fontFamily: "LINE Seed Sans KR",
-                          }}
-                        >
-                          {isAnimating
-                            ? message
-                                .replace(/undefined/g, "")
-                                .replace(/\*/g, "")
-                            : messages[messageIndex].text
-                                .split("*")
-                                .map((part, index) => {
-                                  if (index % 2 === 0) {
-                                    return part;
-                                  } else {
-                                    return (
-                                      <span
-                                        key={index}
-                                        style={{
-                                          color: "red",
-                                          fontWeight: "bold",
-                                          fontSize: "30px",
-                                        }}
-                                      >
-                                        {part}
-                                      </span>
-                                    );
-                                  }
-                                })}
-                        </Typography>
+                        {messages[messageIndex].speaker}
+                      </Typography>
+                      <Typography
+                        variant="h4"
+                        style={{
+                          textAlign: "center",
+                          color: "white",
+                          transform:
+                            messages[messageIndex].speaker === "AI"
+                              ? "skewX(-20deg)"
+                              : "skewX(0deg)",
+                          marginTop: "3%",
+                          fontSize: "30px",
+                          fontFamily: "LINE Seed Sans KR",
+                        }}
+                      >
+                        {isAnimating
+                          ? message.replace(/undefined/g, "").replace(/\*/g, "")
+                          : messages[messageIndex].text
+                            .split("*")
+                            .map((part, index) => {
+                              if (index % 2 === 0) {
+                                return part;
+                              } else {
+                                return (
+                                  <span
+                                    key={index}
+                                    style={{
+                                      color: "red",
+                                      fontWeight: "bold",
+                                      fontSize: "30px",
+                                    }}
+                                  >
+                                    {part}
+                                  </span>
+                                );
+                              }
+                            })}
+                      </Typography>
 
                         <Grid
                           container
                           justifyContent="flex-end"
                           style={{
                             position: "fixed",
-                            bottom: "20px",
-                            right: "60px",
+                            bottom: "50px",
+                            right: "100px",
                           }}
                         >
                           <Button
@@ -590,11 +601,24 @@ export default function DialogueBox() {
                             variant="outlined"
                             onClick={handleNextMessage}
                             style={{
-                              backgroundColor: "black",
-                              color: "#34C759",
+                              backgroundImage: `url(${nextButton})`,
+                              backgroundSize: 'cover', 
+                              backgroundPosition: 'center',
+                              backgroundRepeat: 'no-repeat',
+                              width: "100px",
+                              height: "50px",
+                              border: 'none',
+                              transition: 'transform 0.3s ease', // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.filter = "brightness(1.05)"; // 밝기 증가
+                              e.target.style.transform = "scale(1.05)"; // 크기 확대
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.filter = "brightness(1)"; // 밝기 복원
+                              e.target.style.transform = "scale(1)"; // 크기 복원
                             }}
                           >
-                            Next
                           </Button>
                         </Grid>
                       </div>
