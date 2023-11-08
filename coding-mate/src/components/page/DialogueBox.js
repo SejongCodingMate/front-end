@@ -236,17 +236,23 @@ export default function DialogueBox() {
     }
     // 2. 만약 메세지가 다 출력이 되었다면
     else {
+
       const audio = new Audio("/NextButton2.wav");
       audio.play();
+
       if (localStorage.getItem("nextStoryId") == 0) {
         const userChapterId = localStorage.getItem("chapterId");
         localStorage.setItem("chapterId", parseInt(userChapterId) + 1);
         const renewalChapterId = localStorage.getItem("chapterId");
         fetchChapterSave(renewalChapterId, accessToken);
+
+        localStorage.setItem("nextStoryId",parseInt(localStorage.getItem("nextStoryId"))+1);
+
         localStorage.setItem(
           "nextStoryId",
           parseInt(localStorage.getItem("nextStoryId")) + 1
         );
+
         window.location.href = "/main";
       }
       // 2-1. 로컬스토리지 StoryID 갱신
@@ -272,6 +278,9 @@ export default function DialogueBox() {
             }
             if (formatId === 4) {
               window.location.href = "/mission";
+            }
+            if (formatId === 4) {
+              window.location.href = '/mission';
             }
             const newMessages = data.data.map((message) => ({
               speaker: message.speaker,
