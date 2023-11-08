@@ -71,25 +71,25 @@ export default function MainBox() {
       position: "chapter1",
       label: "Chapter 1",
       chapterId: 1,
-      imgPosition: { top: "55%", left: "12%" },
+      imgPosition: { top: "50%", left: "14.5%" },
     },
     {
       position: "chapter2",
       label: "Chapter 2",
       chapterId: 2,
-      imgPosition: { top: "62%", left: "43%" },
+      imgPosition: { top: "40%", left: "42%" },
     },
     {
       position: "chapter3",
       label: "Chapter 3",
       chapterId: 3,
-      imgPosition: { top: "40%", left: "83%" },
+      imgPosition: { top: "18%", left: "80%" },
     },
     {
       position: "chapter4",
       label: "Chapter 4",
       chapterId: 4,
-      imgPosition: { top: "28%", left: "53%" },
+      imgPosition: { top: "8%", left: "48.5%" },
     },
   ];
 
@@ -340,28 +340,37 @@ export default function MainBox() {
         ></Box>
       </div>
       {chapterButtons.map((chapter, index) => {
-        let topPosition, leftPosition;
+        let topPosition, leftPosition, buttonWidth, buttonHeight;
         if (chapter.position === "chapter1") {
           topPosition = "75%";
           leftPosition = "11%";
+          buttonWidth = "220px";
+          buttonHeight = "150px";
         } else if (chapter.position === "chapter2") {
           topPosition = "67%";
           leftPosition = "40%";
+          buttonWidth = "180px";
+          buttonHeight = "130px";
         } else if (chapter.position === "chapter3") {
           topPosition = "46%";
           leftPosition = "80%";
+          buttonWidth = "140px";
+          buttonHeight = "110px";
         } else {
-          topPosition = "34%";
+          topPosition = "37%";
           leftPosition = "50%";
+          buttonWidth = "100px";
+          buttonHeight = "90px";
         }
         const buttonStyles = {
-          width: "30vw",
-          height: "15vh",
+          width: buttonWidth,
+          height: buttonHeight,
           position: "absolute",
           top: topPosition,
           left: leftPosition,
           zIndex: 2,
         };
+
         const imgStyles = {
           position: "absolute",
           width: "100px",
@@ -373,13 +382,7 @@ export default function MainBox() {
         };
         return (
           <React.Fragment key={`fragment-${index}`}>
-            <div
-              key={index}
-              style={{
-                ...buttonStyles,
-                width: "5%",
-              }}
-            >
+            <div key={index} style={buttonStyles}>
               <button
                 onClick={() => handleChapterButtonClick(chapter)}
                 disabled={parseInt(userChapterId) !== chapter.chapterId}
@@ -390,7 +393,23 @@ export default function MainBox() {
                   cursor: "pointer",
                 }}
               >
-                <img src={ChapterButton} alt="chapter Button" />
+                <img
+                  src={ChapterButton}
+                  alt="chapter Button"
+                  style={{
+                    width: buttonWidth,
+                    height: buttonHeight,
+                    transition: "filter 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.filter = "brightness(1.3)";
+                    e.target.style.transform = "scale(1.1)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.filter = "brightness(1)";
+                    e.target.style.transform = "scale(1)";
+                  }}
+                />
               </button>
             </div>
             <div key={`img-${index}`} style={imgStyles}>
@@ -398,7 +417,6 @@ export default function MainBox() {
                 <img
                   src={chapterUrl}
                   alt=""
-                  //alt={`chapter ${chapter.position} Character`}
                   style={{
                     width: "153px",
                     height: "257px",
