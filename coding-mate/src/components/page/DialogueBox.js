@@ -274,7 +274,7 @@ export default function DialogueBox() {
             if (formatId === 4) {
               window.location.href = "/mission";
             }
-            if (formatId === 4) {
+            if (formatId === 6) {
               window.location.href = '/mission';
             }
             const newMessages = data.data.map((message) => ({

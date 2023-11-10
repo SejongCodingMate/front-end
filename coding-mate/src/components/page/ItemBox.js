@@ -262,6 +262,9 @@ export default function ItemBox() {
             if (res === 1 || res === 2) {
                 window.location.href = '/dialogue';
             }
+            if (res === 6 ) {
+              window.location.href = '/mission';
+            }
             const newMessages = data.data.map((message) => ({
               speaker: message.speaker,
               text: message.text,

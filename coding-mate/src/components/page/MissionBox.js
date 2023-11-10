@@ -557,43 +557,46 @@ export default function DialogueBox() {
                       >
                         {messages[messageIndex].speaker}
                       </Typography>
-                      <Typography
-                        variant="h4"
-                        style={{
-                          textAlign: "center",
-                          color: "white",
-                          transform:
-                            messages[messageIndex].speaker === "AI"
-                              ? "skewX(-20deg)"
-                              : "skewX(0deg)",
-                          marginTop: "3%",
-                          fontSize: "30px",
-                          fontFamily: "LINE Seed Sans KR",
-                        }}
-                      >
-                        {isAnimating
-                          ? message.replace(/undefined/g, "").replace(/\*/g, "")
-                          : messages[messageIndex].text
-                            .split("*")
-                            .map((part, index) => {
-                              if (index % 2 === 0) {
-                                return part;
-                              } else {
-                                return (
-                                  <span
-                                    key={index}
-                                    style={{
-                                      color: "red",
-                                      fontWeight: "bold",
-                                      fontSize: "30px",
-                                    }}
-                                  >
-                                    {part}
-                                  </span>
-                                );
-                              }
-                            })}
-                      </Typography>
+
+                      {messages[messageIndex].text ? (
+                        <Typography
+                          variant="h4"
+                          style={{
+                            textAlign: "center",
+                            color: "white",
+                            transform:
+                              messages[messageIndex].speaker === "AI"
+                                ? "skewX(-20deg)"
+                                : "skewX(0deg)",
+                            marginTop: "3%",
+                            fontSize: "30px",
+                            fontFamily: "LINE Seed Sans KR",
+                          }}
+                        >
+                          {isAnimating
+                            ? message.replace(/undefined/g, "").replace(/\*/g, "")
+                            : messages[messageIndex].text
+                              .split("*")
+                              .map((part, index) => {
+                                if (index % 2 === 0) {
+                                  return part;
+                                } else {
+                                  return (
+                                    <span
+                                      key={index}
+                                      style={{
+                                        color: "red",
+                                        fontWeight: "bold",
+                                        fontSize: "30px",
+                                      }}
+                                    >
+                                      {part}
+                                    </span>
+                                  );
+                                }
+                              })}
+                        </Typography>
+                      ) : null}
 
                         <Grid
                           container
