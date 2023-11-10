@@ -474,16 +474,20 @@ export default function DialogueBox() {
                         marginRight: "200px",
                       }}
                     >
-                      <Button
-                        color="primary"
-                        type="submit"
-                        variant="outlined"
-                        onClick={handleCodeExecute}
-                        style={{ backgroundColor: "black", color: "#34C759" }}
-                      >
-                        코드 실행
-                      </Button>
-
+                        <Button
+                            color="primary"
+                            type="submit"
+                            variant="outlined"
+                            onClick={handleCodeExecute}
+                            style={{ 
+                              backgroundColor: 'white', 
+                              color: '#34C759', 
+                              float: 'right', 
+                              bottom: 0,      
+                            }}
+                        >
+                            RUN ▶️
+                        </Button>
                       <TextField
                         onChange={(e) => setUserInput(e.target.value)}
                         label="여기에 코드를 입력해주세요."
