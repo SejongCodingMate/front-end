@@ -474,7 +474,8 @@ export default function DialogueBox() {
                         marginRight: "200px",
                       }}
                     >
-                        <Button
+                      {messages[messageIndex].formatId !== 4 ? (
+                          <Button
                             color="primary"
                             type="submit"
                             variant="outlined"
@@ -488,6 +489,10 @@ export default function DialogueBox() {
                         >
                             RUN ▶️
                         </Button>
+                      ) : (
+                        <div style={{ visibility: 'hidden', height: '100px' }}></div>
+                      )}
+
                       <TextField
                         onChange={(e) => setUserInput(e.target.value)}
                         label="여기에 코드를 입력해주세요."
