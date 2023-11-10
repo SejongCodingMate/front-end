@@ -6,7 +6,17 @@ import "../../assets/animation/Blur.css";
 import back from "../../assets/image/back.png";
 import codemirrorBackground from "../../assets/image/code_background.png";
 import codehintBackground from "../../assets/image/hint_background.png";
-import { Container, Paper, Typography, Button, Switch, Fade, Input, TextField } from "@mui/material";
+import nextButton from "../../assets/image/next.png"
+import {
+  Container,
+  Paper,
+  Typography,
+  Button,
+  Switch,
+  Fade,
+  Input,
+  TextField,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import "../../assets/fonts/Font.css";
@@ -114,11 +124,13 @@ export default function DialogueBox() {
   // 3. 대사 애니메이션
   function showTextSequentially(text, setText, interval, callback) {
     const characters = splitText(text);
-    let currentIndex = -1;
+    let currentIndex = 0;
+    let currentText = '';
 
     function showNextCharacter() {
       if (currentIndex < characters.length) {
-        setText((prevText) => prevText + characters[currentIndex]);
+        currentText += characters[currentIndex];
+        setText(currentText);
         currentIndex++;
         setTimeout(showNextCharacter, interval);
       } else {
@@ -137,11 +149,10 @@ export default function DialogueBox() {
       setMessage("");
       setAnimating(true);
       if (messages[messageIndex].text) {
-        showTextSequentially(messages[messageIndex].text, setMessage, 30, () => {
+        showTextSequentially(messages[messageIndex].text, setMessage, 35, () => {
           setAnimating(false);
         });
       }
-
     }
   }, [messageIndex]);
 
@@ -181,7 +192,6 @@ export default function DialogueBox() {
       });
   }, []);
 
-
   // 6. NextMessage 핸들링
   const handleNextMessage = () => {
     // 1. 메세지 내용 출력
@@ -198,7 +208,7 @@ export default function DialogueBox() {
 
       if (currentStoryId && nextStoryId) {
         // 2-1. 스토리 저장 API
-        fetchSave(nextStoryId, accessToken)
+        fetchSave(nextStoryId, accessToken);
 
         if (localStorage.getItem("nextStoryId") == 0) {
           const userChapterId = localStorage.getItem("chapterId");
@@ -215,12 +225,10 @@ export default function DialogueBox() {
             localStorage.setItem("forematId", formatId);
             console.log(localStorage.getItem("formatId"));
             if (formatId === 1) {
-              window.location.href = 'dialogue';
-            }
-            else if (formatId === 3) {
-              window.location.href = '/item';
-            }
-            else if (formatId === 4) {
+              window.location.href = "dialogue";
+            } else if (formatId === 3) {
+              window.location.href = "/item";
+            } else if (formatId === 4) {
               const newMessages = data.data.map((message) => ({
                 speaker: message.speaker,
                 text: message.text,
@@ -234,8 +242,7 @@ export default function DialogueBox() {
               setMissionBackgroundImage(newMessages[0].backgroundImage);
               setMissionTitle(newMessages[0].title);
               setMessages([...messages, ...newMessages]);
-            }
-            else if (formatId === 5) {
+            } else if (formatId === 5) {
               const newMessages = data.data.map((message) => ({
                 currentStoryId: message.story.id,
                 nextStoryId: message.story.nextId,
@@ -246,16 +253,13 @@ export default function DialogueBox() {
                 hint: message.hint,
                 itemImage: message.itemImage,
                 input: message.input,
-              })
-
-              );
+              }));
               setMissionHint(newMessages.hint);
               setCodeAnswer(newMessages.code);
               setMissionBackgroundImage(newMessages[0].backgroundImage);
               setMissionTitle(newMessages[0].backgroundImage);
               setMessages([...messages, ...newMessages]);
             }
-
           })
           .catch((error) => {
             console.error("다음 스토리 불러오기 오류:", error);
@@ -263,7 +267,6 @@ export default function DialogueBox() {
       }
     }
   };
-
 
   // 7. 코드 실행 함수
   const handleCodeExecute = () => {
@@ -274,9 +277,9 @@ export default function DialogueBox() {
       setAnimatioIindex(10);
       setIsCorrect(true);
     } else {
-      window.alert = "코드를 다시 입력해주세요."
+      window.alert("코드를 다시 입력해주세요.")
     }
-  }
+  };
 
   // 8. 코드 실행 함수
   useEffect(() => {
@@ -290,14 +293,14 @@ export default function DialogueBox() {
       const imageList = document.querySelectorAll("img");
 
       let target = null;
-      imageList.forEach(image => {
+      imageList.forEach((image) => {
         if (image.alt === imageAlt) {
           target = image;
         }
       });
 
       const imageRect = target.getBoundingClientRect();
-      const topLeftX = imageRect.left + 250;
+      const topLeftX = imageRect.left;
       const topLeftY = imageRect.top;
       const bottomLeftY = imageRect.top + imageRect.height;
 
@@ -321,11 +324,12 @@ export default function DialogueBox() {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
           // 이미지를 현재 위치로 그리기
-          const deltaY = topLeftY + ((bottomLeftY - topLeftY) / animationDuration * currentTime);
+          const deltaY =
+            topLeftY +
+            ((bottomLeftY - topLeftY) / animationDuration) * currentTime;
 
           // 이미지 그리기
-          ctx.drawImage(image, topLeftX, deltaY, 200, 200);
-
+          ctx.drawImage(image, topLeftX, deltaY, 438, 302);
 
           // 애니메이션 종료 조건 설정
           if (currentTime < animationDuration) {
@@ -385,8 +389,6 @@ export default function DialogueBox() {
           </button>
 
           {messages.length > 0 && (
-
-
             <Box
               className={`shake ${isShaking ? "animate" : ""}`}
               style={{
@@ -405,35 +407,36 @@ export default function DialogueBox() {
                 backgroundColor: "transparent",
               }}
             >
-              <Container maxWidth="xl" style={{ textAlign: 'center' }}>
+              <Container 
+                maxWidth="xl" 
+                style={{ 
+                  textAlign: 'center', 
+                  justifyContent: 'center', 
+                  alignItems: 'center',
+                  minHeight: '100vh'
+                }}
+              >
 
                 {messages[messageIndex].formatId == 5 && (
 
-                  <Box
+                  <TextField
                     style={{
                       width: "450px",
-                      height: "150px",
-                      marginTop: "2%",
-                      marginLeft: "40%",
-                      textAlign: "center",
-                      backgroundImage: `url(${codehintBackground})`,
-                      backgroundSize: '100% 100%',
-                      color: "white",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                  }}
-                  >
-                  <Typography 
-                    variant="body1"
-                    marginTop= "10%"
-                    marginLeft="20px"
-                    marginRight="20px"
-                  >
-                    {messages[messageIndex].hint}
-                  </Typography>
-                  </Box>
+                      height: "100px",
+                      marginTop: "10%",
+                    }}
+                    InputProps={{
+                      style: {
+                        backgroundImage: `url(${codehintBackground})`,
+                        backgroundSize: '100% 100%',
+                        height: "150px",
+                        color: "white",
+                      }
+                    }}
+                    defaultValue={messages[messageIndex].hint}
+                    multiline
+                    rowsMax={10}
+                  />
 
                 )}
 
@@ -449,17 +452,16 @@ export default function DialogueBox() {
                     justifyContent: "center",
                   }}
                 >
-
                   <div
                     style={{
-                      display: 'flex',
-                    }}>
-
+                      display: "flex",
+                    }}
+                  >
                     <Box
                       style={{
-                        width: '650px',
+                        width: "650px",
                         marginTop: "5%",
-                        marginRight: '200px',
+                        marginRight: "200px",
                       }}
                     >
                       <Button
@@ -483,13 +485,13 @@ export default function DialogueBox() {
                         InputProps={{
                           style: {
                             backgroundImage: `url(${codemirrorBackground})`,
-                            backgroundSize: '100% 100%',
+                            backgroundSize: "100% 100%",
                             height: "800px",
+                            fontSize: "30px",
                           }
                         }}
                         defaultValue="print()"
                       />
-
                     </Box>
 
                     {messages.length > 0 ? (
@@ -497,7 +499,7 @@ export default function DialogueBox() {
                         src={messages[messageIndex].characterImage}
                         alt="Character Image"
                         style={{
-                          width: "600px",
+                          width: "700px",
                           height: "1000px",
                           marginTop: "2%",
                           marginBottom: "5%",
@@ -506,7 +508,6 @@ export default function DialogueBox() {
                         }}
                       />
                     ) : null}
-
                   </div>
 
                   {messages.length > 0 && messages[messageIndex].formatId !== 5 && (
@@ -515,27 +516,24 @@ export default function DialogueBox() {
                         opacity: isImageVisible ? 1 : 0.3,
                         transition: "opacity 2s",
                         width: "100%",
-                        height: "20%",
+                        height: "45%",
                         display: "flex",
                         alignItems: "center",
                         flexDirection: "column",
                         position: "fixed" /* 요소를 고정시킴 */,
                         bottom: 0 /* 하단에 고정 */,
-                        background:
-                          "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.62) 8.67%, #000 89.06%)",
+                        background: "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
                       }}
                     >
                       <Typography
                         variant="h3"
                         style={{
                           textAlign: "center",
-                          color:
-                            messages[messageIndex].speaker === "AI"
-                              ? "white"
-                              : "#0A84FF",
+                          color: "white",
                           fontSize: "40px",
                           fontFamily: "LINE Seed Sans KR",
-                          marginTop: "1%",
+                          fontWeight: "bold",
+                          marginTop: "10%", // 대사 위치
                         }}
                       >
                         {messages[messageIndex].speaker}
@@ -544,15 +542,12 @@ export default function DialogueBox() {
                         variant="h4"
                         style={{
                           textAlign: "center",
-                          color:
-                            messages[messageIndex].speaker === "AI"
-                              ? "white"
-                              : "white",
+                          color: "white",
                           transform:
                             messages[messageIndex].speaker === "AI"
                               ? "skewX(-20deg)"
                               : "skewX(0deg)",
-                          marginTop: "2%",
+                          marginTop: "3%",
                           fontSize: "30px",
                           fontFamily: "LINE Seed Sans KR",
                         }}
@@ -581,34 +576,46 @@ export default function DialogueBox() {
                             })}
                       </Typography>
 
-                      <Grid
-                        container
-                        justifyContent="flex-end"
-                        style={{
-                          position: "fixed",
-                          bottom: "20px",
-                          right: "60px",
-                        }}
-                      >
-                        <Button
-                          color="primary"
-                          type="submit"
-                          variant="outlined"
-                          onClick={handleNextMessage}
-                          style={{ backgroundColor: "black", color: "#34C759" }}
+                        <Grid
+                          container
+                          justifyContent="flex-end"
+                          style={{
+                            position: "fixed",
+                            bottom: "50px",
+                            right: "100px",
+                          }}
                         >
-                          Next
-                        </Button>
-                      </Grid>
-
-                    </div>
-                  )}
-
-
+                          <Button
+                            color="primary"
+                            type="submit"
+                            variant="outlined"
+                            onClick={handleNextMessage}
+                            style={{
+                              backgroundImage: `url(${nextButton})`,
+                              backgroundSize: 'cover', 
+                              backgroundPosition: 'center',
+                              backgroundRepeat: 'no-repeat',
+                              width: "100px",
+                              height: "50px",
+                              border: 'none',
+                              transition: 'transform 0.3s ease', // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.filter = "brightness(1.05)"; // 밝기 증가
+                              e.target.style.transform = "scale(1.05)"; // 크기 확대
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.filter = "brightness(1)"; // 밝기 복원
+                              e.target.style.transform = "scale(1)"; // 크기 복원
+                            }}
+                          >
+                          </Button>
+                        </Grid>
+                      </div>
+                    )}
                 </Grid>
               </Container>
             </Box>
-
           )}
 
           <canvas
@@ -621,13 +628,9 @@ export default function DialogueBox() {
               height: window.innerHeight,
               zIndex: animatioIindex,
             }}
-          >
-          </canvas>
-
+          ></canvas>
         </div>
       ) : null}
-
-
     </div>
   );
 }

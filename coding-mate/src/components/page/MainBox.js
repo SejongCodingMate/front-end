@@ -71,30 +71,37 @@ export default function MainBox() {
       position: "chapter1",
       label: "Chapter 1",
       chapterId: 1,
-      imgPosition: { top: "70%", left: "14%" },
+      imgPosition: { top: "50%", left: "14.5%" },
     },
     {
       position: "chapter2",
       label: "Chapter 2",
       chapterId: 2,
-      imgPosition: { top: "62%", left: "43%" },
+      imgPosition: { top: "40%", left: "42%" },
     },
     {
       position: "chapter3",
       label: "Chapter 3",
       chapterId: 3,
-      imgPosition: { top: "40%", left: "83%" },
+      imgPosition: { top: "18%", left: "80%" },
     },
     {
       position: "chapter4",
       label: "Chapter 4",
       chapterId: 4,
-      imgPosition: { top: "28%", left: "53%" },
+      imgPosition: { top: "8%", left: "48.5%" },
     },
   ];
 
   const accessToken = localStorage.getItem("accessToken");
   const userChapterId = localStorage.getItem("chapterId");
+
+  useEffect(() => {
+    // window.onload 이벤트 리스너 등록
+    const audio = new Audio("/backgroundMusic.mp3");
+    audio.volume = 0.2;
+    audio.play();
+  }, []);
 
   // 1. 챕터 조회 메서드
   useEffect(() => {
@@ -163,7 +170,7 @@ export default function MainBox() {
       image.src = animationUrl;
 
       image.onload = () => {
-        const animationDuration = 3000;
+        const animationDuration = 4000;
         const startTime = Date.now();
 
         const animate = () => {
@@ -186,7 +193,7 @@ export default function MainBox() {
             const topInPixels = top + deltaY;
 
             // 이미지 그리기
-            ctx.drawImage(image, leftInPixels, topInPixels, 100, 100);
+            ctx.drawImage(image, leftInPixels, topInPixels, 153, 257);
           });
 
           // 애니메이션 종료 조건 설정
@@ -286,34 +293,23 @@ export default function MainBox() {
       <div
         style={{
           position: "absolute",
-          top: "2%",
-          left: "1%",
+          top: "3%",
+          left: "2%",
           zIndex: 1,
         }}
       >
         <Box
           sx={{
-            backgroundColor: "#000",
-            color: "#FFF",
-            padding: "10px",
-            fontSize: "24px",
             width: "20vw",
-            height: "15vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            height: "13vh",
             borderRadius: "20px",
+            background: "transparent", // 배경색을 투명으로 설정
+            backgroundImage: `url("https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%EC%A0%9C%EB%AA%A9.png")`,
+            backgroundSize: "100% 100%", // 배경 이미지 크기 설정  padding: "20px",
+            backgroundPosition: "1px 1px", // 가로로 10px, 세로로 20px 이동
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
           }}
-        >
-          <img
-            src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%EC%A0%9C%EB%AA%A9.png"
-            alt="Game title"
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        </Box>
+        ></Box>
       </div>
       <img
         src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%EB%A9%94%EC%9D%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%EB%B0%B0%EA%B2%BD_%ED%99%94%EC%A7%88%EC%97%85.png"
@@ -333,51 +329,48 @@ export default function MainBox() {
       >
         <Box
           sx={{
-            backgroundColor: "#000",
-            color: "#FFF",
-            padding: "10px",
-            fontSize: "18px",
-            width: "35vw",
-            height: "14vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            width: "30vw",
+            height: "12vh",
             borderRadius: "20px",
+            backgroundImage: `url(${chapterTitle})`, // chapterTitle은 이미지의 URL
+            backgroundSize: "102% 110%", // 배경 이미지 크기 설정  padding: "20px",
+            backgroundPosition: "-4px -17px", // 가로로 10px, 세로로 20px 이동
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
           }}
-        >
-          <img
-            src={chapterTitle}
-            alt="Chapter title"
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        </Box>
+        ></Box>
       </div>
       {chapterButtons.map((chapter, index) => {
-        let topPosition, leftPosition;
+        let topPosition, leftPosition, buttonWidth, buttonHeight;
         if (chapter.position === "chapter1") {
           topPosition = "75%";
           leftPosition = "11%";
+          buttonWidth = "220px";
+          buttonHeight = "150px";
         } else if (chapter.position === "chapter2") {
           topPosition = "67%";
           leftPosition = "40%";
+          buttonWidth = "180px";
+          buttonHeight = "130px";
         } else if (chapter.position === "chapter3") {
           topPosition = "46%";
           leftPosition = "80%";
+          buttonWidth = "140px";
+          buttonHeight = "110px";
         } else {
-          topPosition = "34%";
+          topPosition = "37%";
           leftPosition = "50%";
+          buttonWidth = "100px";
+          buttonHeight = "90px";
         }
         const buttonStyles = {
-          width: "30vw",
-          height: "15vh",
+          width: buttonWidth,
+          height: buttonHeight,
           position: "absolute",
           top: topPosition,
           left: leftPosition,
           zIndex: 2,
         };
+
         const imgStyles = {
           position: "absolute",
           width: "100px",
@@ -389,13 +382,7 @@ export default function MainBox() {
         };
         return (
           <React.Fragment key={`fragment-${index}`}>
-            <div
-              key={index}
-              style={{
-                ...buttonStyles,
-                width: "5%",
-              }}
-            >
+            <div key={index} style={buttonStyles}>
               <button
                 onClick={() => handleChapterButtonClick(chapter)}
                 disabled={parseInt(userChapterId) !== chapter.chapterId}
@@ -406,7 +393,23 @@ export default function MainBox() {
                   cursor: "pointer",
                 }}
               >
-                <img src={ChapterButton} alt="chapter Button" />
+                <img
+                  src={ChapterButton}
+                  alt="chapter Button"
+                  style={{
+                    width: buttonWidth,
+                    height: buttonHeight,
+                    transition: "filter 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.filter = "brightness(1.3)";
+                    e.target.style.transform = "scale(1.1)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.filter = "brightness(1)";
+                    e.target.style.transform = "scale(1)";
+                  }}
+                />
               </button>
             </div>
             <div key={`img-${index}`} style={imgStyles}>
@@ -414,10 +417,9 @@ export default function MainBox() {
                 <img
                   src={chapterUrl}
                   alt=""
-                  //alt={`chapter ${chapter.position} Character`}
                   style={{
-                    width: "100px",
-                    height: "100px",
+                    width: "153px",
+                    height: "257px",
                   }}
                 />
               )}
