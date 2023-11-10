@@ -418,25 +418,35 @@ export default function DialogueBox() {
               >
 
                 {messages[messageIndex].formatId == 5 && (
-
-                  <TextField
+                  
+                  <Box
                     style={{
                       width: "450px",
-                      height: "100px",
-                      marginTop: "10%",
+                      height: "150px",
+                      marginTop: "2%",
+                      marginLeft: "40%",
+                      textAlign: "center",
+                      backgroundImage: `url(${codehintBackground})`,
+                      backgroundSize: '100% 100%',
+                      color: "white",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
-                    InputProps={{
-                      style: {
-                        backgroundImage: `url(${codehintBackground})`,
-                        backgroundSize: '100% 100%',
-                        height: "150px",
-                        color: "white",
-                      }
-                    }}
-                    defaultValue={messages[messageIndex].hint}
-                    multiline
-                    rowsMax={10}
-                  />
+                  >
+                    <Typography 
+                      variant="body1"
+                      style={{
+                        marginTop: "10%",
+                        marginLeft: "20px",
+                        marginRight: "20px",
+                        whiteSpace: "pre-line"  // 줄 바꿈을 허용하는 스타일
+                      }}
+                    >
+                      {messages[messageIndex].hint}
+                    </Typography>
+                  </Box>
 
                 )}
 
