@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import "../../assets/fonts/Font.css";
 import ChapterButton from "../../assets/image/ChapterStone.png";
+
 const fetchChapterSave = (nextChapterId, accessToken) => {
   var myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${accessToken}`);
@@ -312,7 +313,7 @@ export default function MainBox() {
         ></Box>
       </div>
       <img
-        src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%EB%A9%94%EC%9D%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%EB%B0%B0%EA%B2%BD_%ED%99%94%EC%A7%88%EC%97%85.png"
+        src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%E1%84%82%E1%85%B2%E1%84%87%E1%85%A2%E1%84%80%E1%85%A7%E1%86%BC.png"
         alt="Map Background"
         style={{
           width: "100%",

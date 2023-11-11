@@ -10,6 +10,7 @@ import Dialogue from "./routes/page/Dialogue";
 import Item from "./routes/page/Item";
 import Main from "./routes/page/Main";
 import Mission from "./routes/page/Mission";
+import Start from "./routes/page/Start";
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/dialogue" element={<Dialogue />} />
           <Route path="/Item" element={<Item />} />
           <Route path="/mission" element={<Mission />} />
+          <Route path="/start" element={<Start />} />
         </Routes>
       </BrowserRouter>
     </div>
