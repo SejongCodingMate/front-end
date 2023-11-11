@@ -3,6 +3,9 @@ import Box from "@mui/material/Box";
 import "../../assets/animation/Shaking.css";
 import "../../assets/animation/Zoom.css";
 import "../../assets/animation/Blur.css";
+import hardLevelModalStyle from "../../assets/animation/HardLevelModalStyle";
+import easyLevelModalStyle from "../../assets/animation/EasyLevelModalStyle";
+import middleLevelModalStyle from "../../assets/animation/MiddleLevelModalStyle";
 import back from "../../assets/image/back.png";
 import codemirrorBackground from "../../assets/image/code_background.png";
 import codehintBackground from "../../assets/image/hint_background.png";
@@ -111,6 +114,7 @@ export default function DialogueBox() {
   const [isCorrect, setIsCorrect] = useState(false);
   const canvasRef = useRef(null);
   const [animatioIindex, setAnimatioIindex] = useState(-1);
+  const [modalLevelOpen, setModalLevelOpen] = useState(false);
 
   const handleBackButtonClick = () => {
     navigate("/main");
@@ -170,6 +174,30 @@ export default function DialogueBox() {
 
     fetchStory(nextStoryId, token)
       .then((data) => {
+        const formatId = data.data[0].story.formatId;
+        if (formatId == 6) {
+          localStorage.setItem("easyId", data.data[0].easyId);
+          localStorage.setItem("mediumId", data.data[0].mediumId);
+          localStorage.setItem("hardId", data.data[0].hardId);
+
+          const message = data.data[1];
+          const initialMessages = [
+            {
+              formatId: message.story.formatId,
+              speaker: message.speaker,
+              text: message.text,
+              currentStoryId: message.story.id,
+              nextStoryId: message.story.nextId,
+              characterImage: message.characterImage,
+              backgroundImage: message.story.backgroundImage,
+            }
+          ];
+
+          setMessages(initialMessages);
+          setMessageIndex(1);
+          openLevelModal();
+
+        }
         const initialMessages = data.data.map((message) => ({
           formatId: message.story.formatId,
           speaker: message.speaker,
@@ -192,7 +220,11 @@ export default function DialogueBox() {
       });
   }, []);
 
-  // 6. NextMessage 핸들링
+  const openLevelModal = () => {
+    setModalLevelOpen(true);
+  };
+
+  // 7. NextMessage 핸들링
   const handleNextMessage = () => {
     // 1. 메세지 내용 출력
     if (messageIndex < messages.length - 1) {
@@ -268,7 +300,7 @@ export default function DialogueBox() {
     }
   };
 
-  // 7. 코드 실행 함수
+  // 8. 코드 실행 함수
   const handleCodeExecute = () => {
     console.log(messages[messageIndex].code);
     if (userInput == messages[messageIndex].code) {
@@ -281,7 +313,7 @@ export default function DialogueBox() {
     }
   };
 
-  // 8. 코드 실행 함수
+  // 9. 정답일 때 애니메이션 실행 함수
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
@@ -527,6 +559,60 @@ export default function DialogueBox() {
                         }}
                       />
                     ) : null}
+
+                {modalLevelOpen && (
+                  <div
+                    className="modal-container"
+                    style={{
+                      justifyContent: "space-between",
+                      zIndex: 9998,
+                    }}
+                  >
+                    <div
+                      className="modal hard"
+                      style={hardLevelModalStyle}
+                    >
+                      <div
+                        className="modal-content"
+                        style={{ marginTop: "60px" }}
+                      >
+                        <h1 style={{ color: "white" }}>어려운 방법</h1>
+                      </div>
+                    </div>
+
+
+                    <div
+                      className="modal medium"
+                      style={middleLevelModalStyle}
+                    >
+                      <div
+                        className="modal-content"
+                        style={{ marginTop: "60px" }}
+                      >
+                        <h1 style={{ color: "white" }}>중간 방법</h1>
+                      </div>
+                    </div>
+
+
+                    <div
+                      className="modal easy"
+                      style={easyLevelModalStyle}
+                    >
+                      <div
+                        className="modal-content"
+                        style={{ marginTop: "60px" }}
+                      >
+                        <h1 style={{ color: "white" }}>쉬운 방법</h1>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+
+
+
+
+
                   </div>
 
                   {messages.length > 0 && messages[messageIndex].formatId !== 5 && (
@@ -599,40 +685,42 @@ export default function DialogueBox() {
                       ) : null}
 
                         <Grid
-                          container
-                          justifyContent="flex-end"
+                        container
+                        justifyContent="flex-end"
+                        style={{
+                          position: "fixed",
+                          bottom: "50px",
+                          right: "100px",
+                        }}
+                      >
+                        {messages[messageIndex].formatId !== 6 && messages[messageIndex].formatId !== 4 ? (
+                        <Button
+                          color="primary"
+                          type="submit"
+                          variant="outlined"
+                          onClick={handleNextMessage}
                           style={{
-                            position: "fixed",
-                            bottom: "50px",
-                            right: "100px",
+                            backgroundImage: `url(${nextButton})`,
+                            backgroundSize: 'cover', 
+                            backgroundPosition: 'center',
+                            backgroundRepeat: 'no-repeat',
+                            width: "100px",
+                            height: "50px",
+                            border: 'none',
+                            transition: 'transform 0.3s ease', // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.filter = "brightness(1.05)"; // 밝기 증가
+                            e.target.style.transform = "scale(1.05)"; // 크기 확대
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.filter = "brightness(1)"; // 밝기 복원
+                            e.target.style.transform = "scale(1)"; // 크기 복원
                           }}
                         >
-                          <Button
-                            color="primary"
-                            type="submit"
-                            variant="outlined"
-                            onClick={handleNextMessage}
-                            style={{
-                              backgroundImage: `url(${nextButton})`,
-                              backgroundSize: 'cover', 
-                              backgroundPosition: 'center',
-                              backgroundRepeat: 'no-repeat',
-                              width: "100px",
-                              height: "50px",
-                              border: 'none',
-                              transition: 'transform 0.3s ease', // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
-                            }}
-                            onMouseEnter={(e) => {
-                              e.target.style.filter = "brightness(1.05)"; // 밝기 증가
-                              e.target.style.transform = "scale(1.05)"; // 크기 확대
-                            }}
-                            onMouseLeave={(e) => {
-                              e.target.style.filter = "brightness(1)"; // 밝기 복원
-                              e.target.style.transform = "scale(1)"; // 크기 복원
-                            }}
-                          >
-                          </Button>
-                        </Grid>
+                        </Button>
+                        ) : null}
+                      </Grid>
                       </div>
                     )}
                 </Grid>
