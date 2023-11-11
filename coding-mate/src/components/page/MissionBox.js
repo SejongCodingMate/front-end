@@ -3,6 +3,9 @@ import Box from "@mui/material/Box";
 import "../../assets/animation/Shaking.css";
 import "../../assets/animation/Zoom.css";
 import "../../assets/animation/Blur.css";
+import hardLevelModalStyle from "../../assets/animation/HardLevelModalStyle";
+import easyLevelModalStyle from "../../assets/animation/EasyLevelModalStyle";
+import middleLevelModalStyle from "../../assets/animation/MiddleLevelModalStyle";
 import back from "../../assets/image/back.png";
 import codemirrorBackground from "../../assets/image/code_background.png";
 import codehintBackground from "../../assets/image/hint_background.png";
@@ -103,6 +106,8 @@ export default function DialogueBox() {
   const [message, setMessage] = useState("");
   const [isAnimating, setAnimating] = useState(false);
   const [codeAnswer, setCodeAnswer] = useState(null);
+  const [code, setCode] = useState(null);
+  const [showCodeAnimation, setShowCodeAnimation] = useState("");
   const navigate = useNavigate();
   const [userInput, setUserInput] = useState(null);
   const [missionBackgroundImage, setMissionBackgroundImage] = useState(null);
@@ -111,6 +116,7 @@ export default function DialogueBox() {
   const [isCorrect, setIsCorrect] = useState(false);
   const canvasRef = useRef(null);
   const [animatioIindex, setAnimatioIindex] = useState(-1);
+  const [modalLevelOpen, setModalLevelOpen] = useState(false);
 
   const handleBackButtonClick = () => {
     navigate("/main");
@@ -156,6 +162,23 @@ export default function DialogueBox() {
     }
   }, [messageIndex]);
 
+  useEffect(() => {
+    if (messages[messageIndex]) {
+      if (messages[messageIndex].speaker === "USER") {
+        const getCodeFromLocalStorage = async () => {
+          const localStorageCode = await localStorage.getItem("code");
+          setCode(localStorageCode);
+          console.log(localStorageCode); 
+          setShowCodeAnimation("");
+          showTextSequentially(localStorageCode, setShowCodeAnimation, 35, () => {
+          });
+        };
+  
+        getCodeFromLocalStorage();
+      }
+    }
+  }, [messageIndex]);
+
   // 5. 초기 랜더링
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -170,6 +193,30 @@ export default function DialogueBox() {
 
     fetchStory(nextStoryId, token)
       .then((data) => {
+        const formatId = data.data[0].story.formatId;
+        if (formatId == 6) {
+          localStorage.setItem("easyId", data.data[0].easyId);
+          localStorage.setItem("mediumId", data.data[0].mediumId);
+          localStorage.setItem("hardId", data.data[0].hardId);
+
+          const message = data.data[1];
+          const initialMessages = [
+            {
+              formatId: message.story.formatId,
+              speaker: message.speaker,
+              text: message.text,
+              currentStoryId: message.story.id,
+              nextStoryId: message.story.nextId,
+              characterImage: message.characterImage,
+              backgroundImage: message.story.backgroundImage,
+            }
+          ];
+
+          setMessages(initialMessages);
+          setMessageIndex(1);
+          openLevelModal();
+
+        }
         const initialMessages = data.data.map((message) => ({
           formatId: message.story.formatId,
           speaker: message.speaker,
@@ -192,7 +239,11 @@ export default function DialogueBox() {
       });
   }, []);
 
-  // 6. NextMessage 핸들링
+  const openLevelModal = () => {
+    setModalLevelOpen(true);
+  };
+
+  // 7. NextMessage 핸들링
   const handleNextMessage = () => {
     // 1. 메세지 내용 출력
     if (messageIndex < messages.length - 1) {
@@ -225,7 +276,7 @@ export default function DialogueBox() {
             localStorage.setItem("forematId", formatId);
             console.log(localStorage.getItem("formatId"));
             if (formatId === 1) {
-              window.location.href = "dialogue";
+              window.location.href = "/dialogue";
             } else if (formatId === 3) {
               window.location.href = "/item";
             } else if (formatId === 4) {
@@ -268,7 +319,7 @@ export default function DialogueBox() {
     }
   };
 
-  // 7. 코드 실행 함수
+  // 8. 코드 실행 함수
   const handleCodeExecute = () => {
     console.log(messages[messageIndex].code);
     if (userInput == messages[messageIndex].code) {
@@ -281,7 +332,53 @@ export default function DialogueBox() {
     }
   };
 
-  // 8. 코드 실행 함수
+  // 9. 난이도 선택 시 문제를 보여주는 함수
+  const handleMiddleCode = () => {
+    setModalLevelOpen(false);
+
+    const token = localStorage.getItem("accessToken");
+    const nextStoryId = localStorage.getItem("mediumId");
+    console.log(nextStoryId);
+
+    if (!token) {
+      console.error("AccessToken이 없습니다.");
+      return;
+    }
+    setAccessToken(token);
+
+    fetchStory(nextStoryId, token)
+      .then((data) => {
+        const formatId = data.data[0].story.formatId;
+        
+        if (formatId == 4) {
+          localStorage.setItem("code", data.data[0].code);
+          localStorage.setItem("itemImage", data.data[0].itemImage);
+
+          setMessageIndex(messageIndex + 1);
+          const newMessages = data.data.slice(1).map((message) => ({
+            speaker: message.speaker,
+            text: message.text,
+            currentStoryId: message.story.id,
+            nextStoryId: message.story.nextId,
+            formatId: message.story.formatId,
+            characterImage: message.characterImage,
+            backgroundImage: message.story.backgroundImage,
+            title: message.story.chapter.title,
+          }));
+          localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
+          console.log(localStorage.getItem("nextStoryId"));
+          setMissionBackgroundImage(newMessages[0].backgroundImage);
+          setMissionTitle(newMessages[0].title);
+          setMessages([...messages, ...newMessages]);
+        }
+      })
+  };
+
+
+
+
+
+  // 10. 정답일 때 애니메이션 실행 함수
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
@@ -309,8 +406,6 @@ export default function DialogueBox() {
 
       const image = new Image();
       image.src = messages[messageIndex].itemImage;
-
-      console.log(messages[messageIndex].itemImage);
 
       image.onload = () => {
         const animationDuration = 3000;
@@ -493,6 +588,7 @@ export default function DialogueBox() {
                         <div style={{ visibility: 'hidden', height: '100px' }}></div>
                       )}
 
+                      {messages[messageIndex].formatId === 6 || messages[messageIndex].formatId === 4 ? (
                       <TextField
                         onChange={(e) => setUserInput(e.target.value)}
                         label="여기에 코드를 입력해주세요."
@@ -509,8 +605,28 @@ export default function DialogueBox() {
                             fontSize: "30px",
                           }
                         }}
-                        defaultValue="print()"
+                        value={showCodeAnimation}
                       />
+                      ): 
+                      <TextField
+                          onChange={(e) => setUserInput(e.target.value)}
+                          label="여기에 코드를 입력해주세요."
+                          style={{
+                            width: "650px",
+                            marginTop: "2%",
+                            marginBottom: "5%",
+                          }}
+                          InputProps={{
+                            style: {
+                              backgroundImage: `url(${codemirrorBackground})`,
+                              backgroundSize: "100% 100%",
+                              height: "800px",
+                              fontSize: "30px",
+                            }
+                          }}
+                          defaultValue="print()"
+                        />
+                      }
                     </Box>
 
                     {messages.length > 0 ? (
@@ -527,6 +643,55 @@ export default function DialogueBox() {
                         }}
                       />
                     ) : null}
+
+                {modalLevelOpen && (
+                  <div
+                    className="modal-container"
+                    style={{
+                      justifyContent: "space-between",
+                      zIndex: 9998,
+                    }}
+                  >
+                    <div
+                      className="modal hard"
+                      style={hardLevelModalStyle}
+                    >
+                      <div
+                        className="modal-content"
+                        style={{ marginTop: "60px" }}
+                      >
+                        <h1 style={{ color: "white" }}>어려운 방법</h1>
+                      </div>
+                    </div>
+
+
+                    <div
+                      className="modal medium"
+                      style={middleLevelModalStyle}
+                      onClick={handleMiddleCode}
+                    >
+                      <div
+                        className="modal-content"
+                        style={{ marginTop: "60px" }}
+                      >
+                        <h1 style={{ color: "white" }}>중간 방법</h1>
+                      </div>
+                    </div>
+
+
+                    <div
+                      className="modal easy"
+                      style={easyLevelModalStyle}
+                    >
+                      <div
+                        className="modal-content"
+                        style={{ marginTop: "60px" }}
+                      >
+                        <h1 style={{ color: "white" }}>쉬운 방법</h1>
+                      </div>
+                    </div>
+                  </div>
+                )}
                   </div>
 
                   {messages.length > 0 && messages[messageIndex].formatId !== 5 && (
@@ -544,6 +709,7 @@ export default function DialogueBox() {
                         background: "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
                       }}
                     >
+                      {messages[messageIndex].speaker !== "USER" ? (
                       <Typography
                         variant="h3"
                         style={{
@@ -557,79 +723,85 @@ export default function DialogueBox() {
                       >
                         {messages[messageIndex].speaker}
                       </Typography>
-                      <Typography
-                        variant="h4"
-                        style={{
-                          textAlign: "center",
-                          color: "white",
-                          transform:
-                            messages[messageIndex].speaker === "AI"
-                              ? "skewX(-20deg)"
-                              : "skewX(0deg)",
-                          marginTop: "3%",
-                          fontSize: "30px",
-                          fontFamily: "LINE Seed Sans KR",
-                        }}
-                      >
-                        {isAnimating
-                          ? message.replace(/undefined/g, "").replace(/\*/g, "")
-                          : messages[messageIndex].text
-                            .split("*")
-                            .map((part, index) => {
-                              if (index % 2 === 0) {
-                                return part;
-                              } else {
-                                return (
-                                  <span
-                                    key={index}
-                                    style={{
-                                      color: "red",
-                                      fontWeight: "bold",
-                                      fontSize: "30px",
-                                    }}
-                                  >
-                                    {part}
-                                  </span>
-                                );
-                              }
-                            })}
-                      </Typography>
+                      ) : null}
 
-                        <Grid
-                          container
-                          justifyContent="flex-end"
+                      {messages[messageIndex].text && messages[messageIndex].speaker !=="USER" ? (
+                        <Typography
+                          variant="h4"
                           style={{
-                            position: "fixed",
-                            bottom: "50px",
-                            right: "100px",
+                            textAlign: "center",
+                            color: "white",
+                            transform:
+                              messages[messageIndex].speaker === "USER"
+                                ? "skewX(-20deg)"
+                                : "skewX(0deg)",
+                            marginTop: "3%",
+                            fontSize: "30px",
+                            fontFamily: "LINE Seed Sans KR",
                           }}
                         >
-                          <Button
-                            color="primary"
-                            type="submit"
-                            variant="outlined"
-                            onClick={handleNextMessage}
-                            style={{
-                              backgroundImage: `url(${nextButton})`,
-                              backgroundSize: 'cover', 
-                              backgroundPosition: 'center',
-                              backgroundRepeat: 'no-repeat',
-                              width: "100px",
-                              height: "50px",
-                              border: 'none',
-                              transition: 'transform 0.3s ease', // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
-                            }}
-                            onMouseEnter={(e) => {
-                              e.target.style.filter = "brightness(1.05)"; // 밝기 증가
-                              e.target.style.transform = "scale(1.05)"; // 크기 확대
-                            }}
-                            onMouseLeave={(e) => {
-                              e.target.style.filter = "brightness(1)"; // 밝기 복원
-                              e.target.style.transform = "scale(1)"; // 크기 복원
-                            }}
-                          >
-                          </Button>
-                        </Grid>
+                          {isAnimating
+                            ? message.replace(/undefined/g, "").replace(/\*/g, "")
+                            : messages[messageIndex].text
+                              .split("*")
+                              .map((part, index) => {
+                                if (index % 2 === 0) {
+                                  return part;
+                                } else {
+                                  return (
+                                    <span
+                                      key={index}
+                                      style={{
+                                        color: "red",
+                                        fontWeight: "bold",
+                                        fontSize: "30px",
+                                      }}
+                                    >
+                                      {part}
+                                    </span>
+                                  );
+                                }
+                              })}
+                        </Typography>
+                      ) : null}
+
+                        <Grid
+                        container
+                        justifyContent="flex-end"
+                        style={{
+                          position: "fixed",
+                          bottom: "50px",
+                          right: "100px",
+                        }}
+                      >
+                        {messages[messageIndex].formatId !== 6 && messages[messageIndex].formatId !== 5 ? (
+                        <Button
+                          color="primary"
+                          type="submit"
+                          variant="outlined"
+                          onClick={handleNextMessage}
+                          style={{
+                            backgroundImage: `url(${nextButton})`,
+                            backgroundSize: 'cover', 
+                            backgroundPosition: 'center',
+                            backgroundRepeat: 'no-repeat',
+                            width: "100px",
+                            height: "50px",
+                            border: 'none',
+                            transition: 'transform 0.3s ease', // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.filter = "brightness(1.05)"; // 밝기 증가
+                            e.target.style.transform = "scale(1.05)"; // 크기 확대
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.filter = "brightness(1)"; // 밝기 복원
+                            e.target.style.transform = "scale(1)"; // 크기 복원
+                          }}
+                        >
+                        </Button>
+                        ) : null}
+                      </Grid>
                       </div>
                     )}
                 </Grid>
