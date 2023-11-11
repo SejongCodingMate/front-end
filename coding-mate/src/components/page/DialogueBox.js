@@ -141,9 +141,11 @@ export default function DialogueBox() {
     if (messages[messageIndex]) {
       setMessage("");
       setAnimating(true);
-      showTextSequentially(messages[messageIndex].text, setMessage, 35, () => {
-        setAnimating(false);
-      });
+      if (messages[messageIndex].text) {
+        showTextSequentially(messages[messageIndex].text, setMessage, 35, () => {
+          setAnimating(false);
+        });
+      }
     }
   }, [messageIndex]);
 

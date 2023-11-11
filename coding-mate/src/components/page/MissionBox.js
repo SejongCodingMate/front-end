@@ -106,6 +106,8 @@ export default function DialogueBox() {
   const [message, setMessage] = useState("");
   const [isAnimating, setAnimating] = useState(false);
   const [codeAnswer, setCodeAnswer] = useState(null);
+  const [code, setCode] = useState(null);
+  const [showCodeAnimation, setShowCodeAnimation] = useState("");
   const navigate = useNavigate();
   const [userInput, setUserInput] = useState(null);
   const [missionBackgroundImage, setMissionBackgroundImage] = useState(null);
@@ -156,6 +158,23 @@ export default function DialogueBox() {
         showTextSequentially(messages[messageIndex].text, setMessage, 35, () => {
           setAnimating(false);
         });
+      }
+    }
+  }, [messageIndex]);
+
+  useEffect(() => {
+    if (messages[messageIndex]) {
+      if (messages[messageIndex].speaker === "USER") {
+        const getCodeFromLocalStorage = async () => {
+          const localStorageCode = await localStorage.getItem("code");
+          setCode(localStorageCode);
+          console.log(localStorageCode); 
+          setShowCodeAnimation("");
+          showTextSequentially(localStorageCode, setShowCodeAnimation, 35, () => {
+          });
+        };
+  
+        getCodeFromLocalStorage();
       }
     }
   }, [messageIndex]);
@@ -257,7 +276,7 @@ export default function DialogueBox() {
             localStorage.setItem("forematId", formatId);
             console.log(localStorage.getItem("formatId"));
             if (formatId === 1) {
-              window.location.href = "dialogue";
+              window.location.href = "/dialogue";
             } else if (formatId === 3) {
               window.location.href = "/item";
             } else if (formatId === 4) {
@@ -313,7 +332,53 @@ export default function DialogueBox() {
     }
   };
 
-  // 9. 정답일 때 애니메이션 실행 함수
+  // 9. 난이도 선택 시 문제를 보여주는 함수
+  const handleMiddleCode = () => {
+    setModalLevelOpen(false);
+
+    const token = localStorage.getItem("accessToken");
+    const nextStoryId = localStorage.getItem("mediumId");
+    console.log(nextStoryId);
+
+    if (!token) {
+      console.error("AccessToken이 없습니다.");
+      return;
+    }
+    setAccessToken(token);
+
+    fetchStory(nextStoryId, token)
+      .then((data) => {
+        const formatId = data.data[0].story.formatId;
+        
+        if (formatId == 4) {
+          localStorage.setItem("code", data.data[0].code);
+          localStorage.setItem("itemImage", data.data[0].itemImage);
+
+          setMessageIndex(messageIndex + 1);
+          const newMessages = data.data.slice(1).map((message) => ({
+            speaker: message.speaker,
+            text: message.text,
+            currentStoryId: message.story.id,
+            nextStoryId: message.story.nextId,
+            formatId: message.story.formatId,
+            characterImage: message.characterImage,
+            backgroundImage: message.story.backgroundImage,
+            title: message.story.chapter.title,
+          }));
+          localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
+          console.log(localStorage.getItem("nextStoryId"));
+          setMissionBackgroundImage(newMessages[0].backgroundImage);
+          setMissionTitle(newMessages[0].title);
+          setMessages([...messages, ...newMessages]);
+        }
+      })
+  };
+
+
+
+
+
+  // 10. 정답일 때 애니메이션 실행 함수
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
@@ -341,8 +406,6 @@ export default function DialogueBox() {
 
       const image = new Image();
       image.src = messages[messageIndex].itemImage;
-
-      console.log(messages[messageIndex].itemImage);
 
       image.onload = () => {
         const animationDuration = 3000;
@@ -525,6 +588,7 @@ export default function DialogueBox() {
                         <div style={{ visibility: 'hidden', height: '100px' }}></div>
                       )}
 
+                      {messages[messageIndex].formatId === 6 || messages[messageIndex].formatId === 4 ? (
                       <TextField
                         onChange={(e) => setUserInput(e.target.value)}
                         label="여기에 코드를 입력해주세요."
@@ -541,8 +605,28 @@ export default function DialogueBox() {
                             fontSize: "30px",
                           }
                         }}
-                        defaultValue="print()"
+                        value={showCodeAnimation}
                       />
+                      ): 
+                      <TextField
+                          onChange={(e) => setUserInput(e.target.value)}
+                          label="여기에 코드를 입력해주세요."
+                          style={{
+                            width: "650px",
+                            marginTop: "2%",
+                            marginBottom: "5%",
+                          }}
+                          InputProps={{
+                            style: {
+                              backgroundImage: `url(${codemirrorBackground})`,
+                              backgroundSize: "100% 100%",
+                              height: "800px",
+                              fontSize: "30px",
+                            }
+                          }}
+                          defaultValue="print()"
+                        />
+                      }
                     </Box>
 
                     {messages.length > 0 ? (
@@ -584,6 +668,7 @@ export default function DialogueBox() {
                     <div
                       className="modal medium"
                       style={middleLevelModalStyle}
+                      onClick={handleMiddleCode}
                     >
                       <div
                         className="modal-content"
@@ -607,12 +692,6 @@ export default function DialogueBox() {
                     </div>
                   </div>
                 )}
-
-
-
-
-
-
                   </div>
 
                   {messages.length > 0 && messages[messageIndex].formatId !== 5 && (
@@ -630,6 +709,7 @@ export default function DialogueBox() {
                         background: "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
                       }}
                     >
+                      {messages[messageIndex].speaker !== "USER" ? (
                       <Typography
                         variant="h3"
                         style={{
@@ -643,15 +723,16 @@ export default function DialogueBox() {
                       >
                         {messages[messageIndex].speaker}
                       </Typography>
+                      ) : null}
 
-                      {messages[messageIndex].text ? (
+                      {messages[messageIndex].text && messages[messageIndex].speaker !=="USER" ? (
                         <Typography
                           variant="h4"
                           style={{
                             textAlign: "center",
                             color: "white",
                             transform:
-                              messages[messageIndex].speaker === "AI"
+                              messages[messageIndex].speaker === "USER"
                                 ? "skewX(-20deg)"
                                 : "skewX(0deg)",
                             marginTop: "3%",
@@ -693,7 +774,7 @@ export default function DialogueBox() {
                           right: "100px",
                         }}
                       >
-                        {messages[messageIndex].formatId !== 6 && messages[messageIndex].formatId !== 4 ? (
+                        {messages[messageIndex].formatId !== 6 && messages[messageIndex].formatId !== 5 ? (
                         <Button
                           color="primary"
                           type="submit"
