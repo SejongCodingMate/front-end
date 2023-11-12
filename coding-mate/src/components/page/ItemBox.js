@@ -175,7 +175,6 @@ export default function ItemBox() {
 
     useEffect(() => {
         const timerId = setTimeout(() => {
-            setCharacterImageVisible(true);
             setItemImageVisible(true);
         }, 500);
 
@@ -301,7 +300,6 @@ export default function ItemBox() {
         backgroundRepeat: 'no-repeat',
       }}
     >
-
       <button
         onClick={handleBackButtonClick}
         style={{
@@ -336,7 +334,7 @@ export default function ItemBox() {
         style = {{
           backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
           backgroundRepeat: "no-repeat",
-          backgroundSize: "cover", 
+          backgroundSize: "cover",
         }}
         sx={{
           display: "flex",
@@ -364,18 +362,17 @@ export default function ItemBox() {
           >
 
             {messages.length > 0 && (
-                <div style={{ display: 'flex' }}>
+                <div style={{ justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
               <img
                 src={messages[messageIndex].characterImage}
                 alt="Character Image"
                 style={{
                   width: "500px",
-                  height: "1000px",
-                  margin: "2% 100px 5% 0",
-                  marginTop: "2%",
+                  height: "900px",
+                  marginTop: "20%",
                   marginBottom: "5%",
-                  opacity: isCharacterImageVisible ? 1 : 0.3,
-                  //transition: "opacity 2s",
+                  opacity: 0.5,
+                  transition: "opacity 2s",
                 }}
               />
 
@@ -386,11 +383,12 @@ export default function ItemBox() {
                 style={{
                   width: "550px",
                   height: "300px",
-                  margin: "2% 0 5% 100px",
-                  marginTop: "30%",
-                  marginBottom: "5%",
+                  position: "absolute",
+                  top: "50%", 
+                  left: "50%", 
+                  transform: "translate(-50%, -50%)", 
                   opacity: isItemImageVisible ? 1 : 0.3,
-                  //transition: "opacity 2s",
+                  transition: "opacity 1s",
                 }}
             />
             </div>
@@ -399,8 +397,7 @@ export default function ItemBox() {
             {messages.length > 0 && (
               <div
                 style={{
-                  opacity: isCharacterImageVisible ? 1 : 0.3, 
-                  //transition: "opacity 2s",
+                  opacity: 1, 
                   width: "100%",
                   height: "45%",
                   display: "flex",

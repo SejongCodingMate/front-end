@@ -271,7 +271,7 @@ export default function DialogueBox() {
           .then((data) => {
             const formatId = data.data[0].story.formatId;
             if (formatId === 3) {
-              window.location.href = "/item";
+              window.location.href = '/item';
             }
             if (formatId === 4) {
               window.location.href = "/mission";
