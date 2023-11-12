@@ -10,7 +10,7 @@ import { Container, Typography, Button, Switch, Fade } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import "../../assets/fonts/Font.css";
-import nextButton from "../../assets/image/next.png"
+import nextButton from "../../assets/image/next.png";
 
 // 1. 스토리 갱신
 const fetchStory = (storyId, accessToken) => {
@@ -118,7 +118,7 @@ export default function DialogueBox() {
   function showTextSequentially(text, setText, interval, callback) {
     const characters = splitText(text);
     let currentIndex = 0;
-    let currentText = '';
+    let currentText = "";
 
     function showNextCharacter() {
       if (currentIndex < characters.length) {
@@ -142,9 +142,14 @@ export default function DialogueBox() {
       setMessage("");
       setAnimating(true);
       if (messages[messageIndex].text) {
-        showTextSequentially(messages[messageIndex].text, setMessage, 35, () => {
-          setAnimating(false);
-        });
+        showTextSequentially(
+          messages[messageIndex].text,
+          setMessage,
+          35,
+          () => {
+            setAnimating(false);
+          }
+        );
       }
     }
   }, [messageIndex]);
@@ -241,7 +246,6 @@ export default function DialogueBox() {
     }
     // 2. 만약 메세지가 다 출력이 되었다면
     else {
-
       const audio = new Audio("/NextButton2.wav");
       audio.play();
 
@@ -277,7 +281,7 @@ export default function DialogueBox() {
               window.location.href = "/mission";
             }
             if (formatId === 6) {
-              window.location.href = '/mission';
+              window.location.href = "/mission";
             }
             const newMessages = data.data.map((message) => ({
               speaker: message.speaker,
@@ -453,7 +457,8 @@ export default function DialogueBox() {
                       flexDirection: "column",
                       position: "fixed" /* 요소를 고정시킴 */,
                       bottom: 0 /* 하단에 고정 */,
-                      background: "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
+                      background:
+                        "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
                     }}
                   >
                     <Typography
@@ -516,30 +521,29 @@ export default function DialogueBox() {
                       }}
                     >
                       <Button
-                            color="primary"
-                            type="submit"
-                            variant="outlined"
-                            onClick={handleNextMessage}
-                            style={{
-                              backgroundImage: `url(${nextButton})`,
-                              backgroundSize: 'cover', 
-                              backgroundPosition: 'center',
-                              backgroundRepeat: 'no-repeat',
-                              width: "100px",
-                              height: "50px",
-                              border: 'none',
-                              transition: 'transform 0.3s ease', // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
-                            }}
-                            onMouseEnter={(e) => {
-                              e.target.style.filter = "brightness(1.05)"; // 밝기 증가
-                              e.target.style.transform = "scale(1.05)"; // 크기 확대
-                            }}
-                            onMouseLeave={(e) => {
-                              e.target.style.filter = "brightness(1)"; // 밝기 복원
-                              e.target.style.transform = "scale(1)"; // 크기 복원
-                            }}
-                          >
-                          </Button>
+                        color="primary"
+                        type="submit"
+                        variant="outlined"
+                        onClick={handleNextMessage}
+                        style={{
+                          backgroundImage: `url(${nextButton})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          backgroundRepeat: "no-repeat",
+                          width: "100px",
+                          height: "50px",
+                          border: "none",
+                          transition: "transform 0.3s ease", // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.filter = "brightness(1.05)"; // 밝기 증가
+                          e.target.style.transform = "scale(1.05)"; // 크기 확대
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.filter = "brightness(1)"; // 밝기 복원
+                          e.target.style.transform = "scale(1)"; // 크기 복원
+                        }}
+                      ></Button>
                     </Grid>
                   </div>
                 )}
