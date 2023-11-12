@@ -4,8 +4,7 @@ import "../../assets/animation/Shaking.css";
 import "../../assets/animation/Zoom.css";
 import "../../assets/animation/Blur.css";
 import back from "../../assets/image/back.png";
-import leftModalStyle from "../../assets/animation/LeftModalStyle";
-import rightModalStyle from "../../assets/animation/RightModalStyle";
+import nextButton from "../../assets/image/next.png"
 import { Container, Typography, Button, Switch, Fade } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
@@ -107,11 +106,13 @@ export default function ItemBox() {
   
   function showTextSequentially(text, setText, interval, callback) {
     const characters = splitText(text);
-    let currentIndex = -1;
+    let currentIndex = 0;
+    let currentText = '';
   
     function showNextCharacter() {
       if (currentIndex < characters.length) {
-        setText((prevText) => prevText + characters[currentIndex]);
+        currentText += characters[currentIndex];
+        setText(currentText);
         currentIndex++;
         setTimeout(showNextCharacter, interval);
       } 
@@ -129,7 +130,7 @@ export default function ItemBox() {
     if (messages[messageIndex]) {
       setMessage('');
       setAnimating(true);
-      showTextSequentially(messages[messageIndex].text, setMessage, 30, () => {
+      showTextSequentially(messages[messageIndex].text, setMessage, 35, () => {
         setAnimating(false);
       });
     }
@@ -183,46 +184,6 @@ export default function ItemBox() {
         };
     }, []);
 
-  // 2. 모달 오픈
-  const openModal = () => {
-    setModalOpen(true);
-    setCharacterImageVisible(false);
-    const nextStoryId = messages[messageIndex]?.nextStoryId + 1;
-    fetchStory(nextStoryId, accessToken)
-          .then((data) => {
-            const res = data.data[0].story.formatId;
-            if (res === 2) {
-              openModal();
-            }
-            else if (res === 3) {
-              showPicture();
-            }
-            const newMessages = data.data.map((message) => ({
-              speaker: message.speaker,
-              text: message.text,
-              currentStoryId: message.story.id,
-              nextStoryId: message.story.nextId,
-              formatId: message.story.formatId,
-              screenEffect: message.screenEffect,
-              soundEffect: message.soundEffect,
-              characterImage: message.characterImage,
-              backgroundImage: message.story.backgroundImage,
-            }));
-            setMessages([...messages, ...newMessages]);
-          })
-          .catch((error) => {
-            console.error("다음 스토리 불러오기 오류:", error);
-          });
-  };
-
-  // 3. 모달 닫힘
-  const handleModalClick = () => {
-    // 모달을 닫는 이벤트 처리
-    setModalOpen(false);
-    setCharacterImageVisible(true);
-    setMessageIndex(messageIndex + 1);
-  };
-
   // 4. 아이템 등장
   const showPicture = () => {
     setMessageIndex(messageIndex + 1);
@@ -234,8 +195,8 @@ export default function ItemBox() {
       fetchStory(nextStoryId, accessToken)
         .then((data) => {
           const res = data.data[0].story.formatId;
-          if (res === 2) {
-            openModal();
+          if (res === 1 || res === 2) {
+            window.location.href = '/dialogue';
           }
           else if (res === 3) {
             showPicture();
@@ -295,14 +256,14 @@ export default function ItemBox() {
         fetchStory(nextStoryId, accessToken)
           .then((data) => {
             const res = data.data[0].story.formatId;
-            if (res === 2) {
-              openModal();
-            }
             if (res === 3) {
               showPicture();
             }
-            if (res === 1) {
+            if (res === 1 || res === 2) {
                 window.location.href = '/dialogue';
+            }
+            if (res === 6 ) {
+              window.location.href = '/mission';
             }
             const newMessages = data.data.map((message) => ({
               speaker: message.speaker,
@@ -414,7 +375,7 @@ export default function ItemBox() {
                   marginTop: "2%",
                   marginBottom: "5%",
                   opacity: isCharacterImageVisible ? 1 : 0.3,
-                  transition: "opacity 2s",
+                  //transition: "opacity 2s",
                 }}
               />
 
@@ -423,90 +384,43 @@ export default function ItemBox() {
                 src = {itemImage}
                 alt="Item Image"
                 style={{
-                  width: "300px",
+                  width: "550px",
                   height: "300px",
                   margin: "2% 0 5% 100px",
-                  marginTop: "45%",
+                  marginTop: "30%",
                   marginBottom: "5%",
                   opacity: isItemImageVisible ? 1 : 0.3,
-                  transition: "opacity 2s",
+                  //transition: "opacity 2s",
                 }}
             />
             </div>
-            )}
-
-            {modalOpen && (
-              <div
-                className="modal-container"
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  zIndex: 9998,
-                }}
-                onClick={handleModalClick}
-              >
-                {/* 왼쪽 모달 */}
-                <div
-                  className="modal left"
-                  style = {leftModalStyle}
-                  onMouseEnter={(e) => {
-                    e.target.style.transform = "scale(1.05)"; // 호버 시 확대 효과
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.transform = "scale(1)"; // 호버 종료 시 본래 크기로 복귀
-                  }}
-                >
-                  <div className="modal-content">
-                    <h1>도와준다</h1>
-                  </div>
-                </div>
-                {/* 오른쪽 모달 */}
-                <div
-                  className="modal right"
-                  style = {rightModalStyle}
-                  onMouseEnter={(e) => {
-                    e.target.style.transform = "scale(1.05)"; // 호버 시 확대 효과
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.transform = "scale(1)"; // 호버 종료 시 본래 크기로 복귀
-                  }}
-                >
-                  <div className="modal-content">
-                    <h1>무시한다</h1>
-                  </div>
-                </div>
-              </div>
             )}
 
             {messages.length > 0 && (
               <div
                 style={{
                   opacity: isCharacterImageVisible ? 1 : 0.3, 
-                  transition: "opacity 2s",
+                  //transition: "opacity 2s",
                   width: "100%",
-                  height: "20%",
+                  height: "45%",
                   display: "flex",
                   alignItems: "center",
                   flexDirection: "column",
                   position: "fixed" /* 요소를 고정시킴 */,
                   bottom: 0 /* 하단에 고정 */,
-                  background:
-                        "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.62) 8.67%, #000 89.06%)",
-                    
-                
+                  background: "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
+
                 }}
               >
                 <Typography
                   variant="h3"
                   style={{
                     textAlign: "center",
-                    color:
-                      messages[messageIndex].speaker === "AI"
-                        ? "white"
-                        : "#0A84FF",
+                    color: "white",
                     fontSize: "40px",
                     fontFamily: "LINE Seed Sans KR",
-                    marginTop: "1%",
+                    fontWeight: "bold",
+                    marginTop: "10%", // 대사 위치
                   }}
                 >
                   {messages[messageIndex].speaker}
@@ -515,15 +429,12 @@ export default function ItemBox() {
                   variant="h4"
                   style={{
                     textAlign: "center",
-                    color:
-                      messages[messageIndex].speaker === "AI"
-                        ? "white"
-                        : "white",
+                    color: "white",
                     transform:
                       messages[messageIndex].speaker === "AI"
                         ? "skewX(-20deg)"
                         : "skewX(0deg)",
-                    marginTop: "2%",
+                    marginTop: "3%",
                     fontSize: "30px",
                     fontFamily: "LINE Seed Sans KR",
                   }}
@@ -548,19 +459,35 @@ export default function ItemBox() {
                   justifyContent="flex-end"
                   style={{
                     position: "fixed",
-                    bottom: "20px",
-                    right: "60px",
+                    bottom: "50px",
+                    right: "100px",
                   }}
                 >
                   <Button
-                    color="primary"
-                    type="submit"
-                    variant="outlined"
-                    onClick={handleNextMessage}
-                    style={{ backgroundColor: "black", color: "#34C759" }}
-                  >
-                    Next
-                  </Button>
+                      color="primary"
+                      type="submit"
+                      variant="outlined"
+                      onClick={handleNextMessage}
+                      style={{
+                        backgroundImage: `url(${nextButton})`,
+                        backgroundSize: 'cover', 
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        width: "100px",
+                        height: "50px",
+                        border: 'none',
+                        transition: 'transform 0.3s ease', // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.filter = "brightness(1.05)"; // 밝기 증가
+                        e.target.style.transform = "scale(1.05)"; // 크기 확대
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.filter = "brightness(1)"; // 밝기 복원
+                        e.target.style.transform = "scale(1)"; // 크기 복원
+                      }}
+                    >
+                    </Button>
                 </Grid>
               </div>
             )}

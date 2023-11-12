@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import "../../assets/fonts/Font.css";
+import ChapterButton from "../../assets/image/ChapterStone.png";
 
 const fetchChapterSave = (nextChapterId, accessToken) => {
   var myHeaders = new Headers();
@@ -63,7 +64,6 @@ export default function MainBox() {
   const [animationUrl, setAnimationUrl] = useState("");
   const [animationEnd, setAnimationEnd] = useState(false);
   const [animatioIindex, setAnimatioIindex] = useState(3);
-  const title = "AI : ESCAPE";
   const navigate = useNavigate();
   const canvasRef = useRef(null);
 
@@ -72,24 +72,37 @@ export default function MainBox() {
       position: "chapter1",
       label: "Chapter 1",
       chapterId: 1,
-      imgPosition: { top: "56%", left: "2%" },
+      imgPosition: { top: "50%", left: "14.5%" },
     },
     {
       position: "chapter2",
       label: "Chapter 2",
       chapterId: 2,
-      imgPosition: { top: "42%", left: "55%" },
+      imgPosition: { top: "40%", left: "42%" },
     },
     {
       position: "chapter3",
       label: "Chapter 3",
       chapterId: 3,
-      imgPosition: { top: "30%", left: "62%" },
+      imgPosition: { top: "18%", left: "80%" },
+    },
+    {
+      position: "chapter4",
+      label: "Chapter 4",
+      chapterId: 4,
+      imgPosition: { top: "8%", left: "48.5%" },
     },
   ];
 
   const accessToken = localStorage.getItem("accessToken");
   const userChapterId = localStorage.getItem("chapterId");
+
+  useEffect(() => {
+    // window.onload 이벤트 리스너 등록
+    const audio = new Audio("/backgroundMusic.mp3");
+    audio.volume = 0.2;
+    audio.play();
+  }, []);
 
   // 1. 챕터 조회 메서드
   useEffect(() => {
@@ -158,7 +171,7 @@ export default function MainBox() {
       image.src = animationUrl;
 
       image.onload = () => {
-        const animationDuration = 3000;
+        const animationDuration = 4000;
         const startTime = Date.now();
 
         const animate = () => {
@@ -181,7 +194,7 @@ export default function MainBox() {
             const topInPixels = top + deltaY;
 
             // 이미지 그리기
-            ctx.drawImage(image, leftInPixels, topInPixels, 100, 100);
+            ctx.drawImage(image, leftInPixels, topInPixels, 153, 257);
           });
 
           // 애니메이션 종료 조건 설정
@@ -281,27 +294,26 @@ export default function MainBox() {
       <div
         style={{
           position: "absolute",
-          bottom: "5%",
-          left: "3%",
+          top: "3%",
+          left: "2%",
           zIndex: 1,
         }}
       >
         <Box
           sx={{
-            backgroundColor: "#000",
-            color: "#FFF",
-            padding: "10px",
-            fontSize: "24px",
             width: "20vw",
-            height: "10vh",
-            textAlign: "center",
+            height: "13vh",
+            borderRadius: "20px",
+            background: "transparent", // 배경색을 투명으로 설정
+            backgroundImage: `url("https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%EC%A0%9C%EB%AA%A9.png")`,
+            backgroundSize: "100% 100%", // 배경 이미지 크기 설정  padding: "20px",
+            backgroundPosition: "1px 1px", // 가로로 10px, 세로로 20px 이동
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
           }}
-        >
-          {title}
-        </Box>
+        ></Box>
       </div>
       <img
-        src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/mpa3.png"
+        src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%E1%84%82%E1%85%B2%E1%84%87%E1%85%A2%E1%84%80%E1%85%A7%E1%86%BC.png"
         alt="Map Background"
         style={{
           width: "100%",
@@ -318,38 +330,48 @@ export default function MainBox() {
       >
         <Box
           sx={{
-            backgroundColor: "#000",
-            color: "#FFF",
-            padding: "10px",
-            fontSize: "18px",
-            width: "40vw",
-            height: "30vh",
-            textAlign: "center",
+            width: "30vw",
+            height: "12vh",
+            borderRadius: "20px",
+            backgroundImage: `url(${chapterTitle})`, // chapterTitle은 이미지의 URL
+            backgroundSize: "102% 110%", // 배경 이미지 크기 설정  padding: "20px",
+            backgroundPosition: "-4px -17px", // 가로로 10px, 세로로 20px 이동
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
           }}
-        >
-          {chapterTitle}
-        </Box>
+        ></Box>
       </div>
       {chapterButtons.map((chapter, index) => {
-        let topPosition, leftPosition;
+        let topPosition, leftPosition, buttonWidth, buttonHeight;
         if (chapter.position === "chapter1") {
-          topPosition = "50%";
-          leftPosition = "10%";
+          topPosition = "75%";
+          leftPosition = "11%";
+          buttonWidth = "220px";
+          buttonHeight = "150px";
         } else if (chapter.position === "chapter2") {
-          topPosition = "42%";
+          topPosition = "67%";
           leftPosition = "40%";
+          buttonWidth = "180px";
+          buttonHeight = "130px";
         } else if (chapter.position === "chapter3") {
-          topPosition = "25%";
-          leftPosition = "47%";
+          topPosition = "46%";
+          leftPosition = "80%";
+          buttonWidth = "140px";
+          buttonHeight = "110px";
+        } else {
+          topPosition = "37%";
+          leftPosition = "50%";
+          buttonWidth = "100px";
+          buttonHeight = "90px";
         }
         const buttonStyles = {
-          width: "30vw",
-          height: "15vh",
+          width: buttonWidth,
+          height: buttonHeight,
           position: "absolute",
           top: topPosition,
           left: leftPosition,
           zIndex: 2,
         };
+
         const imgStyles = {
           position: "absolute",
           width: "100px",
@@ -362,25 +384,43 @@ export default function MainBox() {
         return (
           <React.Fragment key={`fragment-${index}`}>
             <div key={index} style={buttonStyles}>
-              <Button
-                variant="contained"
-                color="success"
-                style={{ margin: "10%" }}
+              <button
                 onClick={() => handleChapterButtonClick(chapter)}
                 disabled={parseInt(userChapterId) !== chapter.chapterId}
+                style={{
+                  background: "none",
+                  border: "none",
+                  outline: "none",
+                  cursor: "pointer",
+                }}
               >
-                {chapter.label}
-              </Button>
+                <img
+                  src={ChapterButton}
+                  alt="chapter Button"
+                  style={{
+                    width: buttonWidth,
+                    height: buttonHeight,
+                    transition: "filter 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.filter = "brightness(1.3)";
+                    e.target.style.transform = "scale(1.1)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.filter = "brightness(1)";
+                    e.target.style.transform = "scale(1)";
+                  }}
+                />
+              </button>
             </div>
             <div key={`img-${index}`} style={imgStyles}>
               {imagePosition === chapter.position && (
                 <img
                   src={chapterUrl}
                   alt=""
-                  //alt={`chapter ${chapter.position} Character`}
                   style={{
-                    width: "100px",
-                    height: "100px",
+                    width: "153px",
+                    height: "257px",
                   }}
                 />
               )}

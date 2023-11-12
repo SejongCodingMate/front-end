@@ -10,6 +10,7 @@ import { Container, Typography, Button, Switch, Fade } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import "../../assets/fonts/Font.css";
+import nextButton from "../../assets/image/next.png"
 
 // 1. 스토리 갱신
 const fetchStory = (storyId, accessToken) => {
@@ -96,6 +97,12 @@ export default function DialogueBox() {
   const [leftModalMessage, setLeftModalMessage] = useState("");
   const [rightModalMessage, setRightModalMessage] = useState("");
   const navigate = useNavigate();
+  const [audioError, setAudioError] = useState(false);
+
+  const handleAudioError = () => {
+    console.error("오디오 파일을 로드하는 동안 오류가 발생했습니다.");
+    setAudioError(true);
+  };
 
   // 1. 뒤로가기
   const handleBackButtonClick = () => {
@@ -110,11 +117,13 @@ export default function DialogueBox() {
   // 3. 대사 애니메이션
   function showTextSequentially(text, setText, interval, callback) {
     const characters = splitText(text);
-    let currentIndex = -1;
+    let currentIndex = 0;
+    let currentText = '';
 
     function showNextCharacter() {
       if (currentIndex < characters.length) {
-        setText((prevText) => prevText + characters[currentIndex]);
+        currentText += characters[currentIndex];
+        setText(currentText);
         currentIndex++;
         setTimeout(showNextCharacter, interval);
       } else {
@@ -132,9 +141,11 @@ export default function DialogueBox() {
     if (messages[messageIndex]) {
       setMessage("");
       setAnimating(true);
-      showTextSequentially(messages[messageIndex].text, setMessage, 30, () => {
-        setAnimating(false);
-      });
+      if (messages[messageIndex].text) {
+        showTextSequentially(messages[messageIndex].text, setMessage, 35, () => {
+          setAnimating(false);
+        });
+      }
     }
   }, [messageIndex]);
 
@@ -215,6 +226,8 @@ export default function DialogueBox() {
     // 모달을 닫는 이벤트 처리
     setModalOpen(false);
     setImageVisible(true);
+    const audio = new Audio("/hover.mp3");
+    audio.play();
     setMessageIndex(messageIndex + 1);
   };
 
@@ -223,9 +236,22 @@ export default function DialogueBox() {
     // 1. 메세지 내용 출력
     if (messageIndex < messages.length - 1) {
       setMessageIndex(messageIndex + 1);
+      const audio = new Audio("/NextButton2.wav");
+      audio.play();
     }
     // 2. 만약 메세지가 다 출력이 되었다면
     else {
+
+      const audio = new Audio("/NextButton2.wav");
+      audio.play();
+
+      if (localStorage.getItem("nextStoryId") == 0) {
+        const userChapterId = localStorage.getItem("chapterId");
+        localStorage.setItem("chapterId", parseInt(userChapterId) + 1);
+        const renewalChapterId = localStorage.getItem("chapterId");
+        fetchChapterSave(renewalChapterId, accessToken);
+        window.location.href = "/main";
+      }
       // 2-1. 로컬스토리지 StoryID 갱신
       const currentStoryId = messages[messageIndex]?.currentStoryId;
       const nextStoryId = messages[messageIndex]?.nextStoryId;
@@ -240,20 +266,18 @@ export default function DialogueBox() {
           // window.alert(saveMessages);
         });
 
-        if (localStorage.getItem("nextStoryId") == 0) {
-          const userChapterId = localStorage.getItem("chapterId");
-          localStorage.setItem("chapterId", parseInt(userChapterId) + 1);
-          const renewalChapterId = localStorage.getItem("chapterId");
-          fetchChapterSave(renewalChapterId, accessToken);
-          window.location.href = "/main";
-        }
-
         // 2-2. 스토리 로드 API
         fetchStory(nextStoryId, accessToken)
           .then((data) => {
             const formatId = data.data[0].story.formatId;
             if (formatId === 3) {
               window.location.href = '/item';
+            }
+            if (formatId === 4) {
+              window.location.href = "/mission";
+            }
+            if (formatId === 6) {
+              window.location.href = '/mission';
             }
             const newMessages = data.data.map((message) => ({
               speaker: message.speaker,
@@ -358,10 +382,10 @@ export default function DialogueBox() {
                     src={messages[messageIndex].characterImage}
                     alt="Character Image"
                     style={{
-                      width: "600px",
-                      height: "1000px",
-                      marginTop: "2%",
-                      marginBottom: "5%",
+                      width: "1250px",
+                      height: "1200px",
+                      marginTop: "7%",
+                      marginBottom: "3%",
                       opacity: isImageVisible ? 1 : 0.3,
                       transition: "opacity 2s",
                     }}
@@ -423,27 +447,24 @@ export default function DialogueBox() {
                       opacity: isImageVisible ? 1 : 0.3,
                       transition: "opacity 2s",
                       width: "100%",
-                      height: "20%",
+                      height: "45%",
                       display: "flex",
                       alignItems: "center",
                       flexDirection: "column",
                       position: "fixed" /* 요소를 고정시킴 */,
                       bottom: 0 /* 하단에 고정 */,
-                      background:
-                        "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.62) 8.67%, #000 89.06%)",
+                      background: "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
                     }}
                   >
                     <Typography
                       variant="h3"
                       style={{
                         textAlign: "center",
-                        color:
-                          messages[messageIndex].speaker === "AI"
-                            ? "white"
-                            : "#0A84FF",
+                        color: "white",
                         fontSize: "40px",
                         fontFamily: "LINE Seed Sans KR",
-                        marginTop: "1%",
+                        fontWeight: "bold",
+                        marginTop: "10%", // 대사 위치
                       }}
                     >
                       {messages[messageIndex].speaker}
@@ -452,15 +473,12 @@ export default function DialogueBox() {
                       variant="h4"
                       style={{
                         textAlign: "center",
-                        color:
-                          messages[messageIndex].speaker === "AI"
-                            ? "white"
-                            : "white",
+                        color: "white",
                         transform:
                           messages[messageIndex].speaker === "AI"
                             ? "skewX(-20deg)"
                             : "skewX(0deg)",
-                        marginTop: "2%",
+                        marginTop: "3%",
                         fontSize: "30px",
                         fontFamily: "LINE Seed Sans KR",
                       }}
@@ -493,19 +511,35 @@ export default function DialogueBox() {
                       justifyContent="flex-end"
                       style={{
                         position: "fixed",
-                        bottom: "20px",
-                        right: "60px",
+                        bottom: "50px",
+                        right: "100px",
                       }}
                     >
                       <Button
-                        color="primary"
-                        type="submit"
-                        variant="outlined"
-                        onClick={handleNextMessage}
-                        style={{ backgroundColor: "black", color: "#34C759" }}
-                      >
-                        Next
-                      </Button>
+                            color="primary"
+                            type="submit"
+                            variant="outlined"
+                            onClick={handleNextMessage}
+                            style={{
+                              backgroundImage: `url(${nextButton})`,
+                              backgroundSize: 'cover', 
+                              backgroundPosition: 'center',
+                              backgroundRepeat: 'no-repeat',
+                              width: "100px",
+                              height: "50px",
+                              border: 'none',
+                              transition: 'transform 0.3s ease', // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.filter = "brightness(1.05)"; // 밝기 증가
+                              e.target.style.transform = "scale(1.05)"; // 크기 확대
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.filter = "brightness(1)"; // 밝기 복원
+                              e.target.style.transform = "scale(1)"; // 크기 복원
+                            }}
+                          >
+                          </Button>
                     </Grid>
                   </div>
                 )}
