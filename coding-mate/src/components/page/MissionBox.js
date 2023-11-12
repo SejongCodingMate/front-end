@@ -165,8 +165,8 @@ export default function DialogueBox() {
   useEffect(() => {
     if (messages[messageIndex]) {
       if (messages[messageIndex].speaker === "USER") {
-        const getCodeFromLocalStorage = async () => {
-          const localStorageCode = await localStorage.getItem("code");
+        const getCodeFromLocalStorage = () => {
+          const localStorageCode = localStorage.getItem("code");
           setCode(localStorageCode);
           console.log(localStorageCode); 
           setShowCodeAnimation("");
