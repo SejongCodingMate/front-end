@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import "../../assets/fonts/Font.css";
 import ChapterButton from "../../assets/image/ChapterStone.png";
+import back from "../../assets/image/backButton.png";
 
 const fetchChapterSave = (nextChapterId, accessToken) => {
   var myHeaders = new Headers();
@@ -64,6 +65,7 @@ export default function MainBox() {
   const [animationUrl, setAnimationUrl] = useState("");
   const [animationEnd, setAnimationEnd] = useState(false);
   const [animatioIindex, setAnimatioIindex] = useState(3);
+  const [isImageVisible, setImageVisible] = useState(true);
   const navigate = useNavigate();
   const canvasRef = useRef(null);
 
@@ -72,25 +74,25 @@ export default function MainBox() {
       position: "chapter1",
       label: "Chapter 1",
       chapterId: 1,
-      imgPosition: { top: "50%", left: "14.5%" },
+      imgPosition: { top: "30%", left: "27.5%" },
     },
     {
       position: "chapter2",
       label: "Chapter 2",
       chapterId: 2,
-      imgPosition: { top: "40%", left: "42%" },
+      imgPosition: { top: "20%", left: "48.2%" },
     },
     {
       position: "chapter3",
       label: "Chapter 3",
       chapterId: 3,
-      imgPosition: { top: "18%", left: "80%" },
+      imgPosition: { top: "24.2%", left: "69.2%" },
     },
     {
       position: "chapter4",
       label: "Chapter 4",
       chapterId: 4,
-      imgPosition: { top: "8%", left: "48.5%" },
+      imgPosition: { top: "39%", left: "88.8%" },
     },
   ];
 
@@ -280,6 +282,10 @@ export default function MainBox() {
     }
   };
 
+  const handleBackButtonClick = () => {
+    navigate("/");
+  };
+
   return (
     <Box
       sx={{
@@ -295,22 +301,33 @@ export default function MainBox() {
         style={{
           position: "absolute",
           top: "3%",
-          left: "2%",
+          left: -6,
           zIndex: 1,
         }}
       >
-        <Box
-          sx={{
-            width: "20vw",
-            height: "13vh",
-            borderRadius: "20px",
-            background: "transparent", // 배경색을 투명으로 설정
-            backgroundImage: `url("https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%EC%A0%9C%EB%AA%A9.png")`,
-            backgroundSize: "100% 100%", // 배경 이미지 크기 설정  padding: "20px",
-            backgroundPosition: "1px 1px", // 가로로 10px, 세로로 20px 이동
-            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
+        <button
+          onClick={handleBackButtonClick}
+          style={{
+            position: "absolute",
+            width: "86px",
+            height: "69px",
+            top: "20px",
+            backgroundColor: "transparent",
+            color: "#FFF",
+            border: "none",
+            cursor: "pointer",
+            zIndex: 999,
           }}
-        ></Box>
+        >
+          <img
+            style={{
+              width: "100%",
+              height: "90%",
+            }}
+            src={back}
+            alt="뒤로 가기"
+          />
+        </button>
       </div>
       <img
         src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%E1%84%82%E1%85%B2%E1%84%87%E1%85%A2%E1%84%80%E1%85%A7%E1%86%BC.png"
@@ -322,50 +339,46 @@ export default function MainBox() {
       />
       <div
         style={{
-          position: "absolute",
-          bottom: "5%",
-          right: "3%",
-          zIndex: 1,
+          opacity: isImageVisible ? 1 : 0.3,
+          transition: "opacity 2s",
+          width: "100%",
+          height: "45%",
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+          position: "fixed",
+          bottom: 0,
+          background:
+            "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
         }}
       >
         <Box
           sx={{
-            width: "30vw",
-            height: "12vh",
-            borderRadius: "20px",
-            backgroundImage: `url(${chapterTitle})`, // chapterTitle은 이미지의 URL
-            backgroundSize: "102% 110%", // 배경 이미지 크기 설정  padding: "20px",
-            backgroundPosition: "-4px -17px", // 가로로 10px, 세로로 20px 이동
-            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
+            width: "50%",
+            height: "40%",
+            backgroundImage:
+              "url('https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/main/text1.png')",
+            backgroundSize: "100% 100%",
+            marginTop: "8%",
           }}
         ></Box>
       </div>
       {chapterButtons.map((chapter, index) => {
-        let topPosition, leftPosition, buttonWidth, buttonHeight;
+        let topPosition, leftPosition;
         if (chapter.position === "chapter1") {
-          topPosition = "75%";
-          leftPosition = "11%";
-          buttonWidth = "220px";
-          buttonHeight = "150px";
+          topPosition = "18%";
+          leftPosition = "22%";
         } else if (chapter.position === "chapter2") {
-          topPosition = "67%";
-          leftPosition = "40%";
-          buttonWidth = "180px";
-          buttonHeight = "130px";
+          topPosition = "8%";
+          leftPosition = "43%";
         } else if (chapter.position === "chapter3") {
-          topPosition = "46%";
-          leftPosition = "80%";
-          buttonWidth = "140px";
-          buttonHeight = "110px";
+          topPosition = "12%";
+          leftPosition = "65%";
         } else {
-          topPosition = "37%";
-          leftPosition = "50%";
-          buttonWidth = "100px";
-          buttonHeight = "90px";
+          topPosition = "28%";
+          leftPosition = "80%";
         }
         const buttonStyles = {
-          width: buttonWidth,
-          height: buttonHeight,
           position: "absolute",
           top: topPosition,
           left: leftPosition,
@@ -381,12 +394,17 @@ export default function MainBox() {
           left: chapter.imgPosition.left,
           display: animationEnd ? "block" : "none",
         };
+
+        // 현재 챕터가 사용자의 챕터와 일치하는 경우에만 밝게 표시
+        const isCurrentChapterActive =
+          parseInt(userChapterId) === chapter.chapterId;
+
         return (
           <React.Fragment key={`fragment-${index}`}>
             <div key={index} style={buttonStyles}>
               <button
                 onClick={() => handleChapterButtonClick(chapter)}
-                disabled={parseInt(userChapterId) !== chapter.chapterId}
+                disabled={!isCurrentChapterActive}
                 style={{
                   background: "none",
                   border: "none",
@@ -395,20 +413,26 @@ export default function MainBox() {
                 }}
               >
                 <img
-                  src={ChapterButton}
+                  src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/main/1.png"
                   alt="chapter Button"
                   style={{
-                    width: buttonWidth,
-                    height: buttonHeight,
+                    maxWidth: "265px",
+                    maxHeight: "265px",
                     transition: "filter 0.3s",
+                    filter: isCurrentChapterActive
+                      ? "brightness(1.5)"
+                      : "brightness(1)",
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.filter = "brightness(1.3)";
-                    e.target.style.transform = "scale(1.1)";
+                    if (isCurrentChapterActive) {
+                      e.target.style.filter = "brightness(1.5)";
+                      e.target.style.transform = "scale(1.1)";
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.filter = "brightness(1)";
-                    e.target.style.transform = "scale(1)";
+                    if (isCurrentChapterActive) {
+                      e.target.style.transform = "scale(1)";
+                    }
                   }}
                 />
               </button>
@@ -419,8 +443,8 @@ export default function MainBox() {
                   src={chapterUrl}
                   alt=""
                   style={{
-                    width: "153px",
-                    height: "257px",
+                    width: "111px",
+                    height: "187px",
                   }}
                 />
               )}
