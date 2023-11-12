@@ -99,12 +99,12 @@ export default function MainBox() {
   const accessToken = localStorage.getItem("accessToken");
   const userChapterId = localStorage.getItem("chapterId");
 
-  // useEffect(() => {
-  //   // window.onload 이벤트 리스너 등록
-  //   const audio = new Audio("/backgroundMusic.mp3");
-  //   audio.volume = 0.2;
-  //   audio.play();
-  // }, []);
+  useEffect(() => {
+    // window.onload 이벤트 리스너 등록
+    const audio = new Audio("/backgroundMusic.mp3");
+    audio.volume = 0.2;
+    audio.play();
+  }, []);
 
   // 1. 챕터 조회 메서드
   useEffect(() => {
