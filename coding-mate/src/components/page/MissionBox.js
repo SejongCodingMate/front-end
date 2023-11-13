@@ -9,7 +9,7 @@ import middleLevelModalStyle from "../../assets/animation/MiddleLevelModalStyle"
 import back from "../../assets/image/back.png";
 import codemirrorBackground from "../../assets/image/code_background.png";
 import codehintBackground from "../../assets/image/hint_background.png";
-import nextButton from "../../assets/image/next.png"
+import nextButton from "../../assets/image/next.png";
 import {
   Container,
   Paper,
@@ -131,7 +131,7 @@ export default function DialogueBox() {
   function showTextSequentially(text, setText, interval, callback) {
     const characters = splitText(text);
     let currentIndex = 0;
-    let currentText = '';
+    let currentText = "";
 
     function showNextCharacter() {
       if (currentIndex < characters.length) {
@@ -155,9 +155,14 @@ export default function DialogueBox() {
       setMessage("");
       setAnimating(true);
       if (messages[messageIndex].text) {
-        showTextSequentially(messages[messageIndex].text, setMessage, 35, () => {
-          setAnimating(false);
-        });
+        showTextSequentially(
+          messages[messageIndex].text,
+          setMessage,
+          35,
+          () => {
+            setAnimating(false);
+          }
+        );
       }
     }
   }, [messageIndex]);
@@ -168,12 +173,16 @@ export default function DialogueBox() {
         const getCodeFromLocalStorage = () => {
           const localStorageCode = localStorage.getItem("code");
           setCode(localStorageCode);
-          console.log(localStorageCode); 
+          console.log(localStorageCode);
           setShowCodeAnimation("");
-          showTextSequentially(localStorageCode, setShowCodeAnimation, 35, () => {
-          });
+          showTextSequentially(
+            localStorageCode,
+            setShowCodeAnimation,
+            35,
+            () => {}
+          );
         };
-  
+
         getCodeFromLocalStorage();
       }
     }
@@ -209,13 +218,12 @@ export default function DialogueBox() {
               nextStoryId: message.story.nextId,
               characterImage: message.characterImage,
               backgroundImage: message.story.backgroundImage,
-            }
+            },
           ];
 
           setMessages(initialMessages);
           setMessageIndex(1);
           openLevelModal();
-
         }
         const initialMessages = data.data.map((message) => ({
           formatId: message.story.formatId,
@@ -328,7 +336,7 @@ export default function DialogueBox() {
       setAnimatioIindex(10);
       setIsCorrect(true);
     } else {
-      window.alert("코드를 다시 입력해주세요.")
+      window.alert("코드를 다시 입력해주세요.");
     }
   };
 
@@ -346,37 +354,32 @@ export default function DialogueBox() {
     }
     setAccessToken(token);
 
-    fetchStory(nextStoryId, token)
-      .then((data) => {
-        const formatId = data.data[0].story.formatId;
-        
-        if (formatId == 4) {
-          localStorage.setItem("code", data.data[0].code);
-          localStorage.setItem("itemImage", data.data[0].itemImage);
+    fetchStory(nextStoryId, token).then((data) => {
+      const formatId = data.data[0].story.formatId;
 
-          setMessageIndex(messageIndex + 1);
-          const newMessages = data.data.slice(1).map((message) => ({
-            speaker: message.speaker,
-            text: message.text,
-            currentStoryId: message.story.id,
-            nextStoryId: message.story.nextId,
-            formatId: message.story.formatId,
-            characterImage: message.characterImage,
-            backgroundImage: message.story.backgroundImage,
-            title: message.story.chapter.title,
-          }));
-          localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
-          console.log(localStorage.getItem("nextStoryId"));
-          setMissionBackgroundImage(newMessages[0].backgroundImage);
-          setMissionTitle(newMessages[0].title);
-          setMessages([...messages, ...newMessages]);
-        }
-      })
+      if (formatId == 4) {
+        localStorage.setItem("code", data.data[0].code);
+        localStorage.setItem("itemImage", data.data[0].itemImage);
+
+        setMessageIndex(messageIndex + 1);
+        const newMessages = data.data.slice(1).map((message) => ({
+          speaker: message.speaker,
+          text: message.text,
+          currentStoryId: message.story.id,
+          nextStoryId: message.story.nextId,
+          formatId: message.story.formatId,
+          characterImage: message.characterImage,
+          backgroundImage: message.story.backgroundImage,
+          title: message.story.chapter.title,
+        }));
+        localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
+        console.log(localStorage.getItem("nextStoryId"));
+        setMissionBackgroundImage(newMessages[0].backgroundImage);
+        setMissionTitle(newMessages[0].title);
+        setMessages([...messages, ...newMessages]);
+      }
+    });
   };
-
-
-
-
 
   // 10. 정답일 때 애니메이션 실행 함수
   useEffect(() => {
@@ -502,18 +505,16 @@ export default function DialogueBox() {
                 backgroundColor: "transparent",
               }}
             >
-              <Container 
-                maxWidth="xl" 
-                style={{ 
-                  textAlign: 'center', 
-                  justifyContent: 'center', 
-                  alignItems: 'center',
-                  minHeight: '100vh'
+              <Container
+                maxWidth="xl"
+                style={{
+                  textAlign: "center",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  minHeight: "100vh",
                 }}
               >
-
                 {messages[messageIndex].formatId == 5 && (
-                  
                   <Box
                     style={{
                       width: "450px",
@@ -522,7 +523,7 @@ export default function DialogueBox() {
                       marginLeft: "40%",
                       textAlign: "center",
                       backgroundImage: `url(${codehintBackground})`,
-                      backgroundSize: '100% 100%',
+                      backgroundSize: "100% 100%",
                       color: "white",
                       display: "flex",
                       flexDirection: "column",
@@ -530,19 +531,18 @@ export default function DialogueBox() {
                       justifyContent: "center",
                     }}
                   >
-                    <Typography 
+                    <Typography
                       variant="body1"
                       style={{
                         marginTop: "10%",
                         marginLeft: "20px",
                         marginRight: "20px",
-                        whiteSpace: "pre-line"  // 줄 바꿈을 허용하는 스타일
+                        whiteSpace: "pre-line", // 줄 바꿈을 허용하는 스타일
                       }}
                     >
                       {messages[messageIndex].hint}
                     </Typography>
                   </Box>
-
                 )}
 
                 <Grid
@@ -570,45 +570,29 @@ export default function DialogueBox() {
                       }}
                     >
                       {messages[messageIndex].formatId !== 4 ? (
-                          <Button
-                            color="primary"
-                            type="submit"
-                            variant="outlined"
-                            onClick={handleCodeExecute}
-                            style={{ 
-                              backgroundColor: 'white', 
-                              color: '#34C759', 
-                              float: 'right', 
-                              bottom: 0,      
-                            }}
+                        <Button
+                          color="primary"
+                          type="submit"
+                          variant="outlined"
+                          onClick={handleCodeExecute}
+                          style={{
+                            backgroundColor: "white",
+                            color: "#34C759",
+                            float: "right",
+                            bottom: 0,
+                          }}
                         >
-                            RUN ▶️
+                          RUN ▶️
                         </Button>
                       ) : (
-                        <div style={{ visibility: 'hidden', height: '100px' }}></div>
+                        <div
+                          style={{ visibility: "hidden", height: "100px" }}
+                        ></div>
                       )}
 
-                      {messages[messageIndex].formatId === 6 || messages[messageIndex].formatId === 4 ? (
-                      <TextField
-                        onChange={(e) => setUserInput(e.target.value)}
-                        label="여기에 코드를 입력해주세요."
-                        style={{
-                          width: "650px",
-                          marginTop: "2%",
-                          marginBottom: "5%",
-                        }}
-                        InputProps={{
-                          style: {
-                            backgroundImage: `url(${codemirrorBackground})`,
-                            backgroundSize: "100% 100%",
-                            height: "800px",
-                            fontSize: "30px",
-                          }
-                        }}
-                        value={showCodeAnimation}
-                      />
-                      ): 
-                      <TextField
+                      {messages[messageIndex].formatId === 6 ||
+                      messages[messageIndex].formatId === 4 ? (
+                        <TextField
                           onChange={(e) => setUserInput(e.target.value)}
                           label="여기에 코드를 입력해주세요."
                           style={{
@@ -622,11 +606,30 @@ export default function DialogueBox() {
                               backgroundSize: "100% 100%",
                               height: "800px",
                               fontSize: "30px",
-                            }
+                            },
+                          }}
+                          value={showCodeAnimation}
+                        />
+                      ) : (
+                        <TextField
+                          onChange={(e) => setUserInput(e.target.value)}
+                          label="여기에 코드를 입력해주세요."
+                          style={{
+                            width: "650px",
+                            marginTop: "2%",
+                            marginBottom: "5%",
+                          }}
+                          InputProps={{
+                            style: {
+                              backgroundImage: `url(${codemirrorBackground})`,
+                              backgroundSize: "100% 100%",
+                              height: "800px",
+                              fontSize: "30px",
+                            },
                           }}
                           defaultValue="print()"
                         />
-                      }
+                      )}
                     </Box>
 
                     {messages.length > 0 ? (
@@ -644,164 +647,161 @@ export default function DialogueBox() {
                       />
                     ) : null}
 
-                {modalLevelOpen && (
-                  <div
-                    className="modal-container"
-                    style={{
-                      justifyContent: "space-between",
-                      zIndex: 9998,
-                    }}
-                  >
-                    <div
-                      className="modal hard"
-                      style={hardLevelModalStyle}
-                    >
+                    {modalLevelOpen && (
                       <div
-                        className="modal-content"
-                        style={{ marginTop: "60px" }}
-                      >
-                        <h1 style={{ color: "white" }}>어려운 방법</h1>
-                      </div>
-                    </div>
-
-
-                    <div
-                      className="modal medium"
-                      style={middleLevelModalStyle}
-                      onClick={handleMiddleCode}
-                    >
-                      <div
-                        className="modal-content"
-                        style={{ marginTop: "60px" }}
-                      >
-                        <h1 style={{ color: "white" }}>중간 방법</h1>
-                      </div>
-                    </div>
-
-
-                    <div
-                      className="modal easy"
-                      style={easyLevelModalStyle}
-                    >
-                      <div
-                        className="modal-content"
-                        style={{ marginTop: "60px" }}
-                      >
-                        <h1 style={{ color: "white" }}>쉬운 방법</h1>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                  </div>
-
-                  {messages.length > 0 && messages[messageIndex].formatId !== 5 && (
-                    <div
-                      style={{
-                        opacity: isImageVisible ? 1 : 0.3,
-                        transition: "opacity 2s",
-                        width: "100%",
-                        height: "45%",
-                        display: "flex",
-                        alignItems: "center",
-                        flexDirection: "column",
-                        position: "fixed" /* 요소를 고정시킴 */,
-                        bottom: 0 /* 하단에 고정 */,
-                        background: "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
-                      }}
-                    >
-                      {messages[messageIndex].speaker !== "USER" ? (
-                      <Typography
-                        variant="h3"
+                        className="modal-container"
                         style={{
-                          textAlign: "center",
-                          color: "white",
-                          fontSize: "40px",
-                          fontFamily: "LINE Seed Sans KR",
-                          fontWeight: "bold",
-                          marginTop: "10%", // 대사 위치
+                          justifyContent: "space-between",
+                          zIndex: 9998,
                         }}
                       >
-                        {messages[messageIndex].speaker}
-                      </Typography>
-                      ) : null}
+                        <div className="modal hard" style={hardLevelModalStyle}>
+                          <div
+                            className="modal-content"
+                            style={{ marginTop: "60px" }}
+                          >
+                            <h1 style={{ color: "white" }}>어려운 방법</h1>
+                          </div>
+                        </div>
 
-                      {messages[messageIndex].text && messages[messageIndex].speaker !=="USER" ? (
-                        <Typography
-                          variant="h4"
-                          style={{
-                            textAlign: "center",
-                            color: "white",
-                            transform:
-                              messages[messageIndex].speaker === "USER"
-                                ? "skewX(-20deg)"
-                                : "skewX(0deg)",
-                            marginTop: "3%",
-                            fontSize: "30px",
-                            fontFamily: "LINE Seed Sans KR",
-                          }}
+                        <div
+                          className="modal medium"
+                          style={middleLevelModalStyle}
+                          onClick={handleMiddleCode}
                         >
-                          {isAnimating
-                            ? message.replace(/undefined/g, "").replace(/\*/g, "")
-                            : messages[messageIndex].text
-                              .split("*")
-                              .map((part, index) => {
-                                if (index % 2 === 0) {
-                                  return part;
-                                } else {
-                                  return (
-                                    <span
-                                      key={index}
-                                      style={{
-                                        color: "red",
-                                        fontWeight: "bold",
-                                        fontSize: "30px",
-                                      }}
-                                    >
-                                      {part}
-                                    </span>
-                                  );
-                                }
-                              })}
-                        </Typography>
-                      ) : null}
+                          <div
+                            className="modal-content"
+                            style={{ marginTop: "60px" }}
+                          >
+                            <h1 style={{ color: "white" }}>중간 방법</h1>
+                          </div>
+                        </div>
+
+                        <div className="modal easy" style={easyLevelModalStyle}>
+                          <div
+                            className="modal-content"
+                            style={{ marginTop: "60px" }}
+                          >
+                            <h1 style={{ color: "white" }}>쉬운 방법</h1>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {messages.length > 0 &&
+                    messages[messageIndex].formatId !== 5 && (
+                      <div
+                        style={{
+                          opacity: isImageVisible ? 1 : 0.3,
+                          transition: "opacity 2s",
+                          width: "100%",
+                          height: "45%",
+                          display: "flex",
+                          alignItems: "center",
+                          flexDirection: "column",
+                          position: "fixed" /* 요소를 고정시킴 */,
+                          bottom: 0 /* 하단에 고정 */,
+                          background:
+                            "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
+                        }}
+                      >
+                        {messages[messageIndex].speaker !== "USER" ? (
+                          <Typography
+                            variant="h3"
+                            style={{
+                              textAlign: "center",
+                              color: "white",
+                              fontSize: "40px",
+                              fontFamily: "LINE Seed Sans KR",
+                              fontWeight: "bold",
+                              marginTop: "10%", // 대사 위치
+                            }}
+                          >
+                            {messages[messageIndex].speaker}
+                          </Typography>
+                        ) : null}
+
+                        {messages[messageIndex].text &&
+                        messages[messageIndex].speaker !== "USER" ? (
+                          <Typography
+                            variant="h4"
+                            style={{
+                              textAlign: "center",
+                              color: "white",
+                              transform:
+                                messages[messageIndex].speaker === "USER"
+                                  ? "skewX(-20deg)"
+                                  : "skewX(0deg)",
+                              marginTop: "3%",
+                              fontSize: "30px",
+                              fontFamily: "LINE Seed Sans KR",
+                            }}
+                          >
+                            {isAnimating
+                              ? message
+                                  .replace(/undefined/g, "")
+                                  .replace(/\*/g, "")
+                              : messages[messageIndex].text
+                                  .split("*")
+                                  .map((part, index) => {
+                                    if (index % 2 === 0) {
+                                      return part;
+                                    } else {
+                                      return (
+                                        <span
+                                          key={index}
+                                          style={{
+                                            color: "red",
+                                            fontWeight: "bold",
+                                            fontSize: "30px",
+                                          }}
+                                        >
+                                          {part}
+                                        </span>
+                                      );
+                                    }
+                                  })}
+                          </Typography>
+                        ) : null}
 
                         <Grid
-                        container
-                        justifyContent="flex-end"
-                        style={{
-                          position: "fixed",
-                          bottom: "50px",
-                          right: "100px",
-                        }}
-                      >
-                        {messages[messageIndex].formatId !== 6 && messages[messageIndex].formatId !== 5 ? (
-                        <Button
-                          color="primary"
-                          type="submit"
-                          variant="outlined"
-                          onClick={handleNextMessage}
+                          container
+                          justifyContent="flex-end"
                           style={{
-                            backgroundImage: `url(${nextButton})`,
-                            backgroundSize: 'cover', 
-                            backgroundPosition: 'center',
-                            backgroundRepeat: 'no-repeat',
-                            width: "100px",
-                            height: "50px",
-                            border: 'none',
-                            transition: 'transform 0.3s ease', // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.filter = "brightness(1.05)"; // 밝기 증가
-                            e.target.style.transform = "scale(1.05)"; // 크기 확대
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.filter = "brightness(1)"; // 밝기 복원
-                            e.target.style.transform = "scale(1)"; // 크기 복원
+                            position: "fixed",
+                            bottom: "50px",
+                            right: "100px",
                           }}
                         >
-                        </Button>
-                        ) : null}
-                      </Grid>
+                          {messages[messageIndex].formatId !== 6 &&
+                          messages[messageIndex].formatId !== 5 ? (
+                            <Button
+                              color="primary"
+                              type="submit"
+                              variant="outlined"
+                              onClick={handleNextMessage}
+                              style={{
+                                backgroundImage: `url(${nextButton})`,
+                                backgroundSize: "cover",
+                                backgroundPosition: "center",
+                                backgroundRepeat: "no-repeat",
+                                width: "100px",
+                                height: "50px",
+                                border: "none",
+                                transition: "transform 0.3s ease", // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
+                              }}
+                              onMouseEnter={(e) => {
+                                e.target.style.filter = "brightness(1.05)"; // 밝기 증가
+                                e.target.style.transform = "scale(1.05)"; // 크기 확대
+                              }}
+                              onMouseLeave={(e) => {
+                                e.target.style.filter = "brightness(1)"; // 밝기 복원
+                                e.target.style.transform = "scale(1)"; // 크기 복원
+                              }}
+                            ></Button>
+                          ) : null}
+                        </Grid>
                       </div>
                     )}
                 </Grid>
