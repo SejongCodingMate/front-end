@@ -288,7 +288,11 @@ export default function DialogueBox() {
             } else if (formatId === 3) {
               window.location.href = "/item";
             } else if (formatId === 4) {
-              const newMessages = data.data.map((message) => ({
+              localStorage.setItem("code", data.data[0].code);
+              localStorage.setItem("itemImage", data.data[0].itemImage);
+      
+              setMessageIndex(messageIndex + 1);
+              const newMessages = data.data.slice(1).map((message) => ({
                 speaker: message.speaker,
                 text: message.text,
                 currentStoryId: message.story.id,
@@ -298,6 +302,8 @@ export default function DialogueBox() {
                 backgroundImage: message.story.backgroundImage,
                 title: message.story.chapter.title,
               }));
+              localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
+              console.log(localStorage.getItem("nextStoryId"));
               setMissionBackgroundImage(newMessages[0].backgroundImage);
               setMissionTitle(newMessages[0].title);
               setMessages([...messages, ...newMessages]);
