@@ -569,7 +569,8 @@ export default function DialogueBox() {
                         marginRight: "200px",
                       }}
                     >
-                      {messages[messageIndex].formatId !== 4 ? (
+                      {messages[messageIndex].formatId !== 4 &&  
+                        messages[messageIndex].formatId !== 6? (
                         <Button
                           color="primary"
                           type="submit"
@@ -590,8 +591,9 @@ export default function DialogueBox() {
                         ></div>
                       )}
 
-                      {messages[messageIndex].formatId === 6 ||
-                      messages[messageIndex].formatId === 4 ? (
+                      {messages.length > 0 && 
+                        messages[messageIndex].formatId === 4 && 
+                        (
                         <TextField
                           onChange={(e) => setUserInput(e.target.value)}
                           label="여기에 코드를 입력해주세요."
@@ -610,8 +612,11 @@ export default function DialogueBox() {
                           }}
                           value={showCodeAnimation}
                         />
-                      ) : (
-                        <TextField
+                      )}
+                      {messages.length > 0 && 
+                        messages[messageIndex].formatId === 5 && 
+                        (
+                          <TextField
                           onChange={(e) => setUserInput(e.target.value)}
                           label="여기에 코드를 입력해주세요."
                           style={{
@@ -625,14 +630,14 @@ export default function DialogueBox() {
                               backgroundSize: "100% 100%",
                               height: "800px",
                               fontSize: "30px",
-                            },
+                            }
                           }}
                           defaultValue="print()"
                         />
                       )}
                     </Box>
 
-                    {messages.length > 0 ? (
+                    {messages.length > 0 && messages[messageIndex].formatId !== 6 && (
                       <img
                         src={messages[messageIndex].characterImage}
                         alt="Character Image"
@@ -645,7 +650,7 @@ export default function DialogueBox() {
                           transition: "opacity 2s",
                         }}
                       />
-                    ) : null}
+                    )}
 
                     {modalLevelOpen && (
                       <div
