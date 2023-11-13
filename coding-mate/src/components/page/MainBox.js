@@ -283,7 +283,7 @@ export default function MainBox() {
   };
 
   const handleBackButtonClick = () => {
-    navigate("/");
+    navigate("/login");
   };
 
   return (
@@ -302,7 +302,7 @@ export default function MainBox() {
           position: "absolute",
           top: "3%",
           left: -6,
-          zIndex: 1,
+          zIndex: 9999,
         }}
       >
         <button
