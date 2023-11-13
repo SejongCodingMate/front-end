@@ -333,20 +333,58 @@ export default function DialogueBox() {
     }
   };
 
-  // 8. 코드 실행 함수
+  // 8. 코드창 엔터키 인식 함수
+  const handleInputEnter = (e) => {
+    const inputValue = e.target.value;
+    const formattedCode = inputValue.replace(/\n/g, '\\n')
+    setUserInput(formattedCode);
+  }
+
+  // 9. 코드 실행 함수
   const handleCodeExecute = () => {
     console.log(messages[messageIndex].code);
-    if (userInput == messages[messageIndex].code) {
-      console.log("정답");
-      console.log(messages[messageIndex].hint);
-      setAnimatioIindex(10);
-      setIsCorrect(true);
-    } else {
-      window.alert("코드를 다시 입력해주세요.");
-    }
+    console.log(userInput);
+
+    const accessToken = localStorage.getItem("accessToken");
+    const storyId = localStorage.getItem("nextStoryId");
+
+    console.log(storyId);
+
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${accessToken}`);
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      code: userInput,
+      input: ""
+
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch(`http://3.37.164.99/api/code/execute`, requestOptions)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data["message"] == "정답입니다.") {
+        setAnimatioIindex(10);
+        setIsCorrect(true);
+      } else {
+        window.alert("코드를 다시 입력해주세요.");
+      }
+      
+    })
+    .catch((error) => {
+      console.error("스토리 불러오기 오류:", error);
+      throw error;
+    });
   };
 
-  // 9. 난이도 선택 시 문제를 보여주는 함수
+  // 10. 난이도 선택 시 문제를 보여주는 함수
   const handleMiddleCode = () => {
     setModalLevelOpen(false);
 
@@ -387,7 +425,7 @@ export default function DialogueBox() {
     });
   };
 
-  // 10. 정답일 때 애니메이션 실행 함수
+  // 11. 정답일 때 애니메이션 실행 함수
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
@@ -623,7 +661,7 @@ export default function DialogueBox() {
                         messages[messageIndex].formatId === 5 && 
                         (
                           <TextField
-                          onChange={(e) => setUserInput(e.target.value)}
+                          onChange={handleInputEnter}
                           label="여기에 코드를 입력해주세요."
                           style={{
                             width: "650px",
@@ -639,6 +677,7 @@ export default function DialogueBox() {
                             }
                           }}
                           defaultValue="print()"
+                          multiline
                         />
                       )}
                     </Box>
