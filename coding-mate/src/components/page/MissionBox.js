@@ -173,7 +173,6 @@ export default function DialogueBox() {
         const getCodeFromLocalStorage = () => {
           const localStorageCode = localStorage.getItem("code");
           setCode(localStorageCode);
-          console.log(localStorageCode);
           setShowCodeAnimation("");
           showTextSequentially(
             localStorageCode,
@@ -282,7 +281,6 @@ export default function DialogueBox() {
           .then((data) => {
             const formatId = data.data[0].story.formatId;
             localStorage.setItem("forematId", formatId);
-            console.log(localStorage.getItem("formatId"));
             if (formatId === 1) {
               window.location.href = "/dialogue";
             } else if (formatId === 3) {
@@ -303,7 +301,6 @@ export default function DialogueBox() {
                 title: message.story.chapter.title,
               }));
               localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
-              console.log(localStorage.getItem("nextStoryId"));
               setMissionBackgroundImage(newMessages[0].backgroundImage);
               setMissionTitle(newMessages[0].title);
               setMessages([...messages, ...newMessages]);
@@ -342,13 +339,8 @@ export default function DialogueBox() {
 
   // 9. 코드 실행 함수
   const handleCodeExecute = () => {
-    console.log(messages[messageIndex].code);
-    console.log(userInput);
-
     const accessToken = localStorage.getItem("accessToken");
     const storyId = localStorage.getItem("nextStoryId");
-
-    console.log(storyId);
 
     var myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${accessToken}`);
@@ -390,7 +382,6 @@ export default function DialogueBox() {
 
     const token = localStorage.getItem("accessToken");
     const nextStoryId = localStorage.getItem("mediumId");
-    console.log(nextStoryId);
 
     if (!token) {
       console.error("AccessToken이 없습니다.");
@@ -417,7 +408,6 @@ export default function DialogueBox() {
           title: message.story.chapter.title,
         }));
         localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
-        console.log(localStorage.getItem("nextStoryId"));
         setMissionBackgroundImage(newMessages[0].backgroundImage);
         setMissionTitle(newMessages[0].title);
         setMessages([...messages, ...newMessages]);
