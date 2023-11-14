@@ -170,10 +170,9 @@ export default function DialogueBox() {
   useEffect(() => {
     if (messages[messageIndex]) {
       if (messages[messageIndex].speaker === "USER") {
-        const getCodeFromLocalStorage = async () => {
-          const localStorageCode = await localStorage.getItem("code");
+        const getCodeFromLocalStorage = () => {
+          const localStorageCode = localStorage.getItem("code");
           setCode(localStorageCode);
-          console.log(localStorageCode);
           setShowCodeAnimation("");
           showTextSequentially(
             localStorageCode,
@@ -282,13 +281,16 @@ export default function DialogueBox() {
           .then((data) => {
             const formatId = data.data[0].story.formatId;
             localStorage.setItem("forematId", formatId);
-            console.log(localStorage.getItem("formatId"));
             if (formatId === 1) {
               window.location.href = "/dialogue";
             } else if (formatId === 3) {
               window.location.href = "/item";
             } else if (formatId === 4) {
-              const newMessages = data.data.map((message) => ({
+              localStorage.setItem("code", data.data[0].code);
+              localStorage.setItem("itemImage", data.data[0].itemImage);
+      
+              setMessageIndex(messageIndex + 1);
+              const newMessages = data.data.slice(1).map((message) => ({
                 speaker: message.speaker,
                 text: message.text,
                 currentStoryId: message.story.id,
@@ -298,6 +300,7 @@ export default function DialogueBox() {
                 backgroundImage: message.story.backgroundImage,
                 title: message.story.chapter.title,
               }));
+              localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
               setMissionBackgroundImage(newMessages[0].backgroundImage);
               setMissionTitle(newMessages[0].title);
               setMessages([...messages, ...newMessages]);
@@ -327,26 +330,58 @@ export default function DialogueBox() {
     }
   };
 
-  // 8. 코드 실행 함수
+  // 8. 코드창 엔터키 인식 함수
+  const handleInputEnter = (e) => {
+    const inputValue = e.target.value;
+    const formattedCode = inputValue.replace(/\n/g, '\\n')
+    setUserInput(formattedCode);
+  }
+
+  // 9. 코드 실행 함수
   const handleCodeExecute = () => {
-    console.log(messages[messageIndex].code);
-    if (userInput == messages[messageIndex].code) {
-      console.log("정답");
-      console.log(messages[messageIndex].hint);
-      setAnimatioIindex(10);
-      setIsCorrect(true);
-    } else {
-      window.alert("코드를 다시 입력해주세요.");
-    }
+    const accessToken = localStorage.getItem("accessToken");
+    const storyId = localStorage.getItem("nextStoryId");
+
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${accessToken}`);
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      code: userInput,
+      input: ""
+
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch(`http://3.37.164.99/api/code/execute`, requestOptions)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data["message"] == "정답입니다.") {
+        setAnimatioIindex(10);
+        setIsCorrect(true);
+      } else {
+        window.alert("코드를 다시 입력해주세요.");
+      }
+      
+    })
+    .catch((error) => {
+      console.error("스토리 불러오기 오류:", error);
+      throw error;
+    });
   };
 
-  // 9. 난이도 선택 시 문제를 보여주는 함수
+  // 10. 난이도 선택 시 문제를 보여주는 함수
   const handleMiddleCode = () => {
     setModalLevelOpen(false);
 
     const token = localStorage.getItem("accessToken");
     const nextStoryId = localStorage.getItem("mediumId");
-    console.log(nextStoryId);
 
     if (!token) {
       console.error("AccessToken이 없습니다.");
@@ -373,7 +408,6 @@ export default function DialogueBox() {
           title: message.story.chapter.title,
         }));
         localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
-        console.log(localStorage.getItem("nextStoryId"));
         setMissionBackgroundImage(newMessages[0].backgroundImage);
         setMissionTitle(newMessages[0].title);
         setMessages([...messages, ...newMessages]);
@@ -381,7 +415,7 @@ export default function DialogueBox() {
     });
   };
 
-  // 10. 정답일 때 애니메이션 실행 함수
+  // 11. 정답일 때 애니메이션 실행 함수
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
@@ -569,7 +603,8 @@ export default function DialogueBox() {
                         marginRight: "200px",
                       }}
                     >
-                      {messages[messageIndex].formatId !== 4 ? (
+                      {messages[messageIndex].formatId !== 4 &&  
+                        messages[messageIndex].formatId !== 6? (
                         <Button
                           color="primary"
                           type="submit"
@@ -590,8 +625,9 @@ export default function DialogueBox() {
                         ></div>
                       )}
 
-                      {messages[messageIndex].formatId === 6 ||
-                      messages[messageIndex].formatId === 4 ? (
+                      {messages.length > 0 && 
+                        messages[messageIndex].formatId === 4 && 
+                        (
                         <TextField
                           onChange={(e) => setUserInput(e.target.value)}
                           label="여기에 코드를 입력해주세요."
@@ -610,9 +646,12 @@ export default function DialogueBox() {
                           }}
                           value={showCodeAnimation}
                         />
-                      ) : (
-                        <TextField
-                          onChange={(e) => setUserInput(e.target.value)}
+                      )}
+                      {messages.length > 0 && 
+                        messages[messageIndex].formatId === 5 && 
+                        (
+                          <TextField
+                          onChange={handleInputEnter}
                           label="여기에 코드를 입력해주세요."
                           style={{
                             width: "650px",
@@ -625,14 +664,15 @@ export default function DialogueBox() {
                               backgroundSize: "100% 100%",
                               height: "800px",
                               fontSize: "30px",
-                            },
+                            }
                           }}
                           defaultValue="print()"
+                          multiline
                         />
                       )}
                     </Box>
 
-                    {messages.length > 0 ? (
+                    {messages.length > 0 && messages[messageIndex].formatId !== 6 && (
                       <img
                         src={messages[messageIndex].characterImage}
                         alt="Character Image"
@@ -645,7 +685,7 @@ export default function DialogueBox() {
                           transition: "opacity 2s",
                         }}
                       />
-                    ) : null}
+                    )}
 
                     {modalLevelOpen && (
                       <div
