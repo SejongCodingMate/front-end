@@ -1,9 +1,9 @@
 const middleLevelModalStyle = {
-    margin: "-35px auto",
+    margin: "25% auto",
     position: "fixed",
     right: 0, 
     left: 0,  
-    top: "30%",
+    top: 0,
     width: "20%", 
     height: "15%",
     zIndex: 9999,
