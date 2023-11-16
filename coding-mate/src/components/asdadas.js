@@ -67,6 +67,7 @@ export default function MainBox() {
   const [animatioIindex, setAnimatioIindex] = useState(3);
   const [isImageVisible, setImageVisible] = useState(true);
   const [isDialogueVisible, setDialogueVisible] = useState(false);
+
   const navigate = useNavigate();
   const canvasRef = useRef(null);
 
@@ -277,14 +278,12 @@ export default function MainBox() {
         .then((data) => {
           const res = data.data[0].story.formatId;
           console.log(res);
-          if (res === 4 || res === 5 || res === 6) {
-            window.location.href = "/mission";
+          if (res === 4) {
+            setDialogueVisible(true); // 대화 상자를 표시합니다.
+            // 여기에서 다른 동작을 수행하거나 다른 페이지로 이동할 수도 있습니다.
           }
-          if (res === 3) {
-            window.location.href = "/Item";
-          }
-          if (res === 1 || res === 2) {
-            window.location.href = "/dialogue";
+          if (res === 1 || res === 2 || res === 3) {
+            window.location.href = "/dialogue"; // 대화 페이지로 이동하려면
           }
         })
         .catch((error) => {
@@ -349,60 +348,32 @@ export default function MainBox() {
           height: "100%",
         }}
       />
-      {isDialogueVisible && (
-        <div
-          style={{
-            opacity: isImageVisible ? 1 : 0.3,
-            transition: "opacity 2s",
-            width: "100%",
-            height: "45%",
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "column",
-            position: "fixed",
-            bottom: 0,
-            background:
-              "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
-          }}
-        >
-          <Box
-            sx={{
-              width: "50%",
-              height: "40%",
-              backgroundImage:
-                "url('https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/main/text1.png')",
-              backgroundSize: "100% 100%",
-              marginTop: "8%",
-            }}
-          ></Box>
-          <button
-            onClick={handleChapterButtonClick}
-            style={{
-              position: "absolute",
-              bottom: "10px",
-              left: "50%",
-              transform: "translateX(-50%)",
-              background: "#FFF",
-              outline: "none",
-              cursor: "pointer",
-              zIndex: 9999,
-            }}
-          >
-            next
-          </button>
-        </div>
-      )}
-      <button
-        onClick={() => setDialogueVisible((prev) => !prev)}
+      <div
         style={{
-          position: "absolute",
-          top: "10px",
-          left: "10px",
-          zIndex: 9999,
+          opacity: isImageVisible ? 1 : 0.3,
+          transition: "opacity 2s",
+          width: "100%",
+          height: "45%",
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+          position: "fixed",
+          bottom: 0,
+          background:
+            "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
         }}
       >
-        대화 상자 토글
-      </button>
+        <Box
+          sx={{
+            width: "50%",
+            height: "40%",
+            backgroundImage:
+              "url('https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/main/text1.png')",
+            backgroundSize: "100% 100%",
+            marginTop: "8%",
+          }}
+        ></Box>
+      </div>
       {chapterButtons.map((chapter, index) => {
         let topPosition, leftPosition;
         if (chapter.position === "chapter1") {
