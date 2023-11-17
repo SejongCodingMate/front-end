@@ -638,7 +638,7 @@ export default function DialogueBox() {
                     >
                       {messages.length > 0 && 
                         messages[messageIndex].formatId === 4 && 
-                        messages[messageIndex].speaker === "USER" &&
+                        messages[messageIndex].text === "(예제 실행)" &&
                         (
                         <TextField
                           onChange={(e) => setUserInput(e.target.value)}
@@ -779,7 +779,6 @@ export default function DialogueBox() {
                                     style={{
                                       width: "600px",
                                       height: "120px",
-                                      marginTop: "3%",
                                       marginLeft: "5%",
                                       marginRight: "15%",
                                       textAlign: "center",
@@ -795,7 +794,6 @@ export default function DialogueBox() {
                                       variant="body1"
                                       style={{
                                         whiteSpace: "pre-line", // 줄 바꿈을 허용하는 스타일
-                                        marginTop: "5%",
                                         fontSize: "20px",
                                         fontFamily: "ChosunKm",
                                         fontWeight: 700,
@@ -831,7 +829,7 @@ export default function DialogueBox() {
 
                     {messages.length > 0 &&
                     (
-                      (messages[messageIndex].formatId === 4 && messages[messageIndex].speaker !== "USER") ||
+                      (messages[messageIndex].formatId === 4 && messages[messageIndex].text !== "(예제 실행)") ||
                       (messages[messageIndex].formatId === 5 && isCorrect)
                     ) && ( 
                       <img
