@@ -706,75 +706,68 @@ export default function DialogueBox() {
                                     }}
                                   >
 
-                                  <Button
-                                    color="primary"
-                                    type="submit"
-                                    variant="outlined"
+                                  <img
                                     onClick={() => handleModalCode("easyId")}
                                     style={{
                                       backgroundImage: `url(${easyButton})`,
-                                      float: "right",
-                                      top: "30px",
+                                      marginTop: "30px",
                                       right: "70px",
                                       bottom: 0,
                                       width: "175px",
                                       height: "50px",
                                       backgroundRepeat: "no-repeat",
-                                      marginLeft: "100px",
+                                      marginLeft: "40px",
+                                      outline: "none",
+                                      cursor: "pointer",
                                     }}
                                   />
 
-                                  <Button
-                                    color="primary"
-                                    type="submit"
-                                    variant="outlined"
+                                  <img
                                     onClick={() => handleModalCode("hardId")}
                                     style={{
                                       backgroundImage: `url(${hardButton})`,
-                                      float: "right",
-                                      top: "30px",
+                                      marginTop: "30px",
                                       right: "70px",
                                       bottom: 0,
                                       width: "175px",
                                       height: "50px",
                                       backgroundRepeat: "no-repeat",
                                       marginLeft: "10px",
+                                      outline: "none",
+                                      cursor: "pointer",
                                     }}
                                   />
 
-                                  <Button
-                                    color="primary"
-                                    type="submit"
-                                    variant="outlined"
+                                  <img
                                     onClick={handleHintOpen}
                                     style={{
                                       backgroundImage: `url(${hintButton})`,
-                                      float: "right",
-                                      top: "30px",
+                                      marginTop: "30px",
                                       right: "70px",
                                       bottom: 0,
                                       width: "120px",
                                       height: "50px",
                                       backgroundRepeat: "no-repeat",
                                       marginLeft: "10px",
+                                      outline: "none",
+                                      cursor: "pointer",
                                     }}
                                   />
 
-                                  <Button
-                                    color="primary"
-                                    type="submit"
-                                    variant="outlined"
+                                  <img
                                     onClick={handleCodeExecute}
                                     style={{
                                       backgroundImage: `url(${runButton})`,
                                       float: "right",
-                                      top: "30px",
+                                      marginTop: "30px",
                                       right: "70px",
                                       bottom: 0,
                                       width: "100px",
                                       height: "50px",
                                       backgroundRepeat: "no-repeat",
                                       marginLeft: "10px",
+                                      outline: "none",
+                                      cursor: "pointer",
                                     }}
                                   />
 
@@ -812,7 +805,7 @@ export default function DialogueBox() {
                                       {messages[messageIndex].text}
                                     </Typography>
                                   </Box>
-                                  
+
                                   <textarea
                                     onChange={handleInputEnter}
                                     style={{
