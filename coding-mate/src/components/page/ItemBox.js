@@ -226,9 +226,15 @@ export default function ItemBox() {
     // 1. 메세지 내용 출력
     if (messageIndex < messages.length - 1) {
       setMessageIndex(messageIndex + 1);
+      
+      const audio = new Audio("/NextButton2.wav");
+      audio.play();
     }
     // 2. 만약 메세지가 다 출력이 되었다면
     else {
+      const audio = new Audio("/NextButton2.wav");
+      audio.play();
+
       // 2-1. 로컬스토리지 StoryID 갱신
       const currentStoryId = messages[messageIndex]?.currentStoryId;
       const nextStoryId = messages[messageIndex]?.nextStoryId;
