@@ -361,6 +361,7 @@ export default function MainBox() {
             flexDirection: "column",
             position: "fixed",
             bottom: 0,
+            zIndex: 9999,
             background:
               "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
           }}
