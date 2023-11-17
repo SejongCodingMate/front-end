@@ -209,7 +209,27 @@ export default function DialogueBox() {
     fetchStory(nextStoryId, token)
       .then((data) => {
         const formatId = data.data[0].story.formatId;
-        if (formatId == 6) {
+        if (formatId === 5) {
+          const newMessages = data.data.map((message) => ({
+            currentStoryId: message.story.id,
+            nextStoryId: message.story.nextId,
+            formatId: message.story.formatId,
+            characterImage: message.characterImage,
+            backgroundImage: message.story.backgroundImage,
+            code: message.code,
+            hint: message.hint,
+            itemImage: message.itemImage,
+            input: message.input,
+            text: message.text,
+          }));
+          setMissionHint(newMessages.hint);
+          setCodeAnswer(newMessages.code);
+          setMissionBackgroundImage(newMessages[0].backgroundImage);
+          setMissionTitle(newMessages[0].backgroundImage);
+          setMessages([...messages, ...newMessages]);
+        }
+        else{
+          if (formatId == 6) {
           localStorage.setItem("easyId", data.data[0].easyId);
           localStorage.setItem("mediumId", data.data[0].mediumId);
           localStorage.setItem("hardId", data.data[0].hardId);
@@ -247,6 +267,7 @@ export default function DialogueBox() {
         setMissionTitle(initialMessages[0].title);
         setMissionBackgroundImage(initialMessages[0].backgroundImage);
         localStorage.setItem("codeAnswer", codeAnswer);
+      }
       })
       .catch((error) => {
         console.error("초기 스토리 불러오기 오류:", error);
@@ -428,62 +449,81 @@ export default function DialogueBox() {
   // 11. 정답일 때 애니메이션 실행 함수
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (canvas && isCorrect) { 
+    if (canvas && isCorrect) {
       const ctx = canvas.getContext("2d");
       const browserWidth = window.innerWidth;
       const browserHeight = window.innerHeight;
-
+  
       const imageAlt = "Character Image";
       const imageList = document.querySelectorAll("img");
-
+  
       let target = null;
       imageList.forEach((image) => {
         if (image.alt === imageAlt) {
           target = image;
         }
       });
-
+  
       const imageRect = target.getBoundingClientRect();
-      const topLeftX = imageRect.left;
-      const topLeftY = imageRect.top;
-      const bottomLeftY = imageRect.top + imageRect.height;
+      const bottom30PercentY = imageRect.bottom - (imageRect.height * 0.35);
+      const leftpxX = imageRect.left + 50;
+      const rightpxX = leftpxX + 100;
 
+      console.log(leftpxX)
+      console.log(rightpxX)
+  
       canvas.width = browserWidth;
       canvas.height = browserHeight;
-
+  
       const image = new Image();
       image.src = messages[messageIndex].itemImage;
-
+  
       image.onload = () => {
-        const animationDuration = 3000;
-        const startTime = Date.now();
-
+        const animationDuration = 1500;
+        const totalAnimations = 3;
+        let animationCount = 0;
+  
         const animate = () => {
-          // 현재 시간 계산
           const currentTime = Date.now() - startTime;
-          console.log(currentTime);
-          // Canvas를 지우고 새로 그리기
+          //console.log(currentTime);
+  
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-          // 이미지를 현재 위치로 그리기
-          const deltaY =
-            topLeftY +
-            ((bottomLeftY - topLeftY) / animationDuration) * currentTime;
-
-          // 이미지 그리기
-          ctx.drawImage(image, topLeftX, deltaY, 438, 302);
-
-          // 애니메이션 종료 조건 설정
+  
+          let deltaX;
+          // 시간이 animationDuration의 절반보다 작으면 증가, 그렇지 않으면 감소
+          if (currentTime < animationDuration / 2) {
+            deltaX =
+            leftpxX +
+              ((rightpxX - leftpxX) / (animationDuration / 2)) * currentTime;
+          } else {
+            deltaX =
+            rightpxX -
+              ((rightpxX - leftpxX) / (animationDuration / 2)) * (currentTime - animationDuration / 2);
+          }
+  
+          ctx.drawImage(image, deltaX, bottom30PercentY, 438, 302);
+  
           if (currentTime < animationDuration) {
             requestAnimationFrame(animate);
           } else {
-            handleNextMessage();
+            animationCount++;
+            if (animationCount < totalAnimations) {
+              // 다음 반복을 위해 애니메이션 재시작
+              startTime = Date.now();
+              animate();
+            } else {
+              handleNextMessage();
+            }
           }
         };
+  
+        let startTime = Date.now();
         animate();
       };
     }
   }, [isCorrect]);
+  
+  
 
   // 12. 힌트 공개 여부에 대한 함수
   const handleHintOpen = () => {
@@ -598,6 +638,7 @@ export default function DialogueBox() {
                     >
                       {messages.length > 0 && 
                         messages[messageIndex].formatId === 4 && 
+                        messages[messageIndex].speaker === "USER" &&
                         (
                         <TextField
                           onChange={(e) => setUserInput(e.target.value)}
@@ -802,7 +843,11 @@ export default function DialogueBox() {
                       )}
                     </Box>
 
-                    {messages.length > 0 && messages[messageIndex].formatId !== 6 && (
+                    {messages.length > 0 &&
+                    (
+                      (messages[messageIndex].formatId === 4 && messages[messageIndex].speaker !== "USER") ||
+                      (messages[messageIndex].formatId === 5 && isCorrect)
+                    ) && ( 
                       <img
                         src={messages[messageIndex].characterImage}
                         alt="Character Image"
@@ -813,6 +858,10 @@ export default function DialogueBox() {
                           marginBottom: "5%",
                           opacity: isImageVisible ? 1 : 0.3,
                           transition: "opacity 2s",
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
                         }}
                       />
                     )}
