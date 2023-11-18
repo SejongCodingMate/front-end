@@ -10,6 +10,7 @@ import middleLevelModalStyle from "../../assets/animation/MiddleLevelModalStyle"
 import back from "../../assets/image/back.png";
 import codemirrorBackground from "../../assets/image/code_background.png";
 import codehintBackground from "../../assets/image/hint_background.png";
+import exampleCodeBackground from "../../assets/image/exampleCodeBackground.png";
 import nextButton from "../../assets/image/next.png";
 import codebox from "../../assets/image/code_box.png";
 import runButton from "../../assets/image/run_button.png";
@@ -223,7 +224,7 @@ export default function DialogueBox() {
             text: message.text,
           }));
           setMissionHint(newMessages.hint);
-          setCodeAnswer(newMessages.code);
+          setCodeAnswer(newMessages[0].code);
           setMissionBackgroundImage(newMessages[0].backgroundImage);
           setMissionTitle(newMessages[0].backgroundImage);
           setMessages([...messages, ...newMessages]);
@@ -437,8 +438,11 @@ export default function DialogueBox() {
           characterImage: message.characterImage,
           backgroundImage: message.story.backgroundImage,
           title: message.story.chapter.title,
+          code: message.code,
         }));
+        localStorage.setItem("speaker", newMessages[0].speaker);
         localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
+        setCodeAnswer(newMessages[0].code);
         setMissionBackgroundImage(newMessages[0].backgroundImage);
         setMissionTitle(newMessages[0].title);
         setMessages([...messages, ...newMessages]);
@@ -642,7 +646,6 @@ export default function DialogueBox() {
                         (
                         <TextField
                           onChange={(e) => setUserInput(e.target.value)}
-                          label="여기에 코드를 입력해주세요."
                           style={{
                             width: "650px",
                             marginTop: "2%",
@@ -650,10 +653,11 @@ export default function DialogueBox() {
                           }}
                           InputProps={{
                             style: {
-                              backgroundImage: `url(${codebox})`,
+                              backgroundImage: `url(${exampleCodeBackground})`,
                               backgroundSize: "100% 100%",
                               height: "1000px",
                               fontSize: "30px",
+                              fontFamily: "Jeongnimsaji-R",
                             },
                           }}
                           value={showCodeAnimation}
@@ -692,11 +696,7 @@ export default function DialogueBox() {
                                 style={{
                                   backgroundImage: `url(${codebox})`,
                                   backgroundRepeat: "no-repeat",
-                                }}
-                                sx={{
-                                  width: "700px",
                                   height: "1000px",
-                                  
                                 }}
                               >
                                   <div
@@ -794,8 +794,8 @@ export default function DialogueBox() {
                                       variant="body1"
                                       style={{
                                         whiteSpace: "pre-line", // 줄 바꿈을 허용하는 스타일
-                                        fontSize: "20px",
-                                        fontFamily: "ChosunKm",
+                                        fontSize: "30px",
+                                        fontFamily: "Jeongnimsaji-R",
                                         fontWeight: 700,
                                         textAlign: "center",
                                       }}
@@ -813,12 +813,13 @@ export default function DialogueBox() {
                                       marginBottom: "5%",
                                       left: 0,
                                       backgroundColor: "rgba(0, 0, 0, 0)",
+                                      fontFamily: "Jeongnimsaji-R",
                                       border: "none",
                                       outline: "none",
-                                      fontSize: "30px",
+                                      fontSize: "25px",
                                       overflow: "hidden",
                                     }}
-                                    defaultValue="print()"
+                                    defaultValue={codeAnswer}
                                   />
 
                               </Box>
@@ -917,7 +918,6 @@ export default function DialogueBox() {
                     }}
                   >
 
-
                           <Typography
                             variant="h3"
                             style={{
@@ -926,7 +926,21 @@ export default function DialogueBox() {
                               fontSize: "40px",
                               fontFamily: "LINE Seed Sans KR",
                               fontWeight: "bold",
-                              marginTop: "10%", // 대사 위치
+                              marginTop: "5%",
+                            }}
+                          >
+                            {localStorage.getItem("speaker")}
+                          </Typography>
+
+
+                          <Typography
+                            variant="h3"
+                            style={{
+                              textAlign: "center",
+                              color: "white",
+                              fontSize: "30px",
+                              fontFamily: "LINE Seed Sans KR",
+                              marginTop: "3%", 
                             }}
                           >
                             {messages[messageIndex].hint}
