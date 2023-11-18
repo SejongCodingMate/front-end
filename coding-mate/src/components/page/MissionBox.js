@@ -10,6 +10,7 @@ import middleLevelModalStyle from "../../assets/animation/MiddleLevelModalStyle"
 import back from "../../assets/image/back.png";
 import codemirrorBackground from "../../assets/image/code_background.png";
 import codehintBackground from "../../assets/image/hint_background.png";
+import exampleCodeBackground from "../../assets/image/exampleCodeBackground.png";
 import nextButton from "../../assets/image/next.png";
 import codebox from "../../assets/image/code_box.png";
 import runButton from "../../assets/image/run_button.png";
@@ -642,7 +643,6 @@ export default function DialogueBox() {
                         (
                         <TextField
                           onChange={(e) => setUserInput(e.target.value)}
-                          label="여기에 코드를 입력해주세요."
                           style={{
                             width: "650px",
                             marginTop: "2%",
@@ -650,7 +650,7 @@ export default function DialogueBox() {
                           }}
                           InputProps={{
                             style: {
-                              backgroundImage: `url(${codebox})`,
+                              backgroundImage: `url(${exampleCodeBackground})`,
                               backgroundSize: "100% 100%",
                               height: "1000px",
                               fontSize: "30px",
