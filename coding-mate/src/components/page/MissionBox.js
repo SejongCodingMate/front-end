@@ -439,6 +439,7 @@ export default function DialogueBox() {
           backgroundImage: message.story.backgroundImage,
           title: message.story.chapter.title,
         }));
+        localStorage.setItem("speaker", newMessages[0].speaker);
         localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
         setMissionBackgroundImage(newMessages[0].backgroundImage);
         setMissionTitle(newMessages[0].title);
@@ -917,7 +918,6 @@ export default function DialogueBox() {
                     }}
                   >
 
-
                           <Typography
                             variant="h3"
                             style={{
@@ -926,7 +926,21 @@ export default function DialogueBox() {
                               fontSize: "40px",
                               fontFamily: "LINE Seed Sans KR",
                               fontWeight: "bold",
-                              marginTop: "10%", // 대사 위치
+                              marginTop: "5%",
+                            }}
+                          >
+                            {localStorage.getItem("speaker")}
+                          </Typography>
+
+
+                          <Typography
+                            variant="h3"
+                            style={{
+                              textAlign: "center",
+                              color: "white",
+                              fontSize: "30px",
+                              fontFamily: "LINE Seed Sans KR",
+                              marginTop: "3%", 
                             }}
                           >
                             {messages[messageIndex].hint}
