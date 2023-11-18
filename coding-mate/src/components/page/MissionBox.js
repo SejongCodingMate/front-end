@@ -794,8 +794,8 @@ export default function DialogueBox() {
                                       variant="body1"
                                       style={{
                                         whiteSpace: "pre-line", // 줄 바꿈을 허용하는 스타일
-                                        fontSize: "20px",
-                                        fontFamily: "ChosunKm",
+                                        fontSize: "30px",
+                                        fontFamily: "Jeongnimsaji-R",
                                         fontWeight: 700,
                                         textAlign: "center",
                                       }}
