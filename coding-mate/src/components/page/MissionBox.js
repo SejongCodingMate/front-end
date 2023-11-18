@@ -224,7 +224,7 @@ export default function DialogueBox() {
             text: message.text,
           }));
           setMissionHint(newMessages.hint);
-          setCodeAnswer(newMessages.code);
+          setCodeAnswer(newMessages[0].code);
           setMissionBackgroundImage(newMessages[0].backgroundImage);
           setMissionTitle(newMessages[0].backgroundImage);
           setMessages([...messages, ...newMessages]);
@@ -438,9 +438,11 @@ export default function DialogueBox() {
           characterImage: message.characterImage,
           backgroundImage: message.story.backgroundImage,
           title: message.story.chapter.title,
+          code: message.code,
         }));
         localStorage.setItem("speaker", newMessages[0].speaker);
         localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
+        setCodeAnswer(newMessages[0].code);
         setMissionBackgroundImage(newMessages[0].backgroundImage);
         setMissionTitle(newMessages[0].title);
         setMessages([...messages, ...newMessages]);
@@ -693,11 +695,7 @@ export default function DialogueBox() {
                                 style={{
                                   backgroundImage: `url(${codebox})`,
                                   backgroundRepeat: "no-repeat",
-                                }}
-                                sx={{
-                                  width: "700px",
                                   height: "1000px",
-                                  
                                 }}
                               >
                                   <div
@@ -814,12 +812,13 @@ export default function DialogueBox() {
                                       marginBottom: "5%",
                                       left: 0,
                                       backgroundColor: "rgba(0, 0, 0, 0)",
+                                      fontFamily: "Jeongnimsaji-R",
                                       border: "none",
                                       outline: "none",
-                                      fontSize: "30px",
+                                      fontSize: "25px",
                                       overflow: "hidden",
                                     }}
-                                    defaultValue="print()"
+                                    defaultValue={codeAnswer}
                                   />
 
                               </Box>
