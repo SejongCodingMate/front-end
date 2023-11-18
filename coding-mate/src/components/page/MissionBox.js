@@ -657,6 +657,7 @@ export default function DialogueBox() {
                               backgroundSize: "100% 100%",
                               height: "1000px",
                               fontSize: "30px",
+                              fontFamily: "Jeongnimsaji-R",
                             },
                           }}
                           value={showCodeAnimation}
