@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import "../../assets/fonts/Font.css";
 import ChapterButton from "../../assets/image/ChapterStone.png";
 import back from "../../assets/image/backButton.png";
+import clearButton from "../../assets/image/clear_button.png";
 
 const fetchChapterSave = (nextChapterId, accessToken) => {
   var myHeaders = new Headers();
@@ -69,6 +70,10 @@ export default function MainBox() {
   const [isDialogueVisible, setDialogueVisible] = useState(false);
   const navigate = useNavigate();
   const canvasRef = useRef(null);
+  const firstChapterImageRef = useRef();
+  const secondChapterImageRef = useRef();
+  const thirdChapterImageRef = useRef();
+  const finalChapterImageRef = useRef();
 
   const chapterButtons = [
     {
@@ -340,6 +345,55 @@ export default function MainBox() {
             alt="뒤로 가기"
           />
         </button>
+
+        <img
+          id="1"
+          src = {clearButton}
+          ref={firstChapterImageRef}
+          style = {{
+            position: 'fixed',
+            top : "27%",
+            left: "23%",
+            opacity: userChapterId > (firstChapterImageRef.current ? parseInt(firstChapterImageRef.current.id) : 1) ? 1 : 0,
+          }}
+        />
+
+        <img
+          id="2"
+          src = {clearButton}
+          ref={secondChapterImageRef}
+          style = {{
+            position: 'fixed',
+            top : "18%",
+            left: "44%",
+            opacity: userChapterId > (secondChapterImageRef.current ? parseInt(secondChapterImageRef.current.id) : 2) ? 1 : 0,
+          }}
+        />
+
+        <img
+          id="3"
+          src = {clearButton}
+          ref={thirdChapterImageRef}
+          style = {{
+            position: 'fixed',
+            top : "23%",
+            left: "65%",
+            opacity: userChapterId > (thirdChapterImageRef.current ? parseInt(thirdChapterImageRef.current.id) : 3) ? 1 : 0,
+          }}
+        />
+
+        <img
+          id="4"
+          src = {clearButton}
+          ref={finalChapterImageRef}
+          style = {{
+            position: 'fixed',
+            top : "33%",
+            left: "90%",
+            opacity: userChapterId > (finalChapterImageRef.current ? parseInt(finalChapterImageRef.current.id) : 3) ? 1 : 0,
+          }}
+        />
+
       </div>
       <img
         src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%E1%84%82%E1%85%B2%E1%84%87%E1%85%A2%E1%84%80%E1%85%A7%E1%86%BC.png"
