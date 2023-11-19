@@ -238,17 +238,16 @@ export default function DialogueBox() {
 
   // 9. NextMessage 핸들링
   const handleNextMessage = () => {
+
+    const audio = new Audio("/NextButton2.wav");
+    audio.play();
+    
     // 1. 메세지 내용 출력
     if (messageIndex < messages.length - 1) {
-      setMessageIndex(messageIndex + 1);
-      const audio = new Audio("/NextButton2.wav");
-      audio.play();
+      setMessageIndex(messageIndex + 1); 
     }
     // 2. 만약 메세지가 다 출력이 되었다면
     else {
-      const audio = new Audio("/NextButton2.wav");
-      audio.play();
-
       if (localStorage.getItem("nextStoryId") == 0) {
         const userChapterId = localStorage.getItem("chapterId");
         localStorage.setItem("chapterId", parseInt(userChapterId) + 1);
@@ -533,7 +532,7 @@ export default function DialogueBox() {
                           width: "100px",
                           height: "50px",
                           border: "none",
-                          transition: "transform 0.3s ease", // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
+                          transition: "transform 0.3s ease", // transform 속성을 통해 크기 변경을 부드럽게
                         }}
                         onMouseEnter={(e) => {
                           e.target.style.filter = "brightness(1.05)"; // 밝기 증가

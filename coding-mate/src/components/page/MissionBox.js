@@ -8,12 +8,12 @@ import hardLevelModalStyle from "../../assets/animation/HardLevelModalStyle";
 import easyLevelModalStyle from "../../assets/animation/EasyLevelModalStyle";
 import middleLevelModalStyle from "../../assets/animation/MiddleLevelModalStyle";
 import back from "../../assets/image/back.png";
-import codemirrorBackground from "../../assets/image/code_background.png";
-import codehintBackground from "../../assets/image/hint_background.png";
+import exampleCodeBackground from "../../assets/image/exampleCodeBackground.png";
 import nextButton from "../../assets/image/next.png";
 import codebox from "../../assets/image/code_box.png";
 import runButton from "../../assets/image/run_button.png";
 import easyButton from "../../assets/image/easy_button.png";
+import middleButton from "../../assets/image/middle_button.png";
 import hardButton from "../../assets/image/hard_button.png";
 import hintButton from "../../assets/image/hint_button.png";
 import {
@@ -108,17 +108,12 @@ export default function DialogueBox() {
   const [isImageVisible, setImageVisible] = useState(true);
   const [isShaking, setShaking] = useState(false);
   let [chImage, setChImage] = useState(null);
-  const modalBackground = useRef();
   const [message, setMessage] = useState("");
   const [isAnimating, setAnimating] = useState(false);
-  const [codeAnswer, setCodeAnswer] = useState(null);
   const [code, setCode] = useState(null);
   const [showCodeAnimation, setShowCodeAnimation] = useState("");
   const navigate = useNavigate();
   const [userInput, setUserInput] = useState(null);
-  const [missionBackgroundImage, setMissionBackgroundImage] = useState(null);
-  const [missionTitle, setMissionTitle] = useState(null);
-  const [missionHint, setMissionHint] = useState(null);
   const [isCorrect, setIsCorrect] = useState(false);
   const canvasRef = useRef(null);
   const [animatioIindex, setAnimatioIindex] = useState(-1);
@@ -209,7 +204,24 @@ export default function DialogueBox() {
     fetchStory(nextStoryId, token)
       .then((data) => {
         const formatId = data.data[0].story.formatId;
-        if (formatId == 6) {
+        if (formatId === 5) {
+          const newMessages = data.data.map((message) => ({
+            currentStoryId: message.story.id,
+            nextStoryId: message.story.nextId,
+            formatId: message.story.formatId,
+            characterImage: message.characterImage,
+            backgroundImage: message.story.backgroundImage,
+            code: message.code,
+            hint: message.hint,
+            itemImage: message.itemImage,
+            input: message.input,
+            text: message.text,
+          }));
+          localStorage.setItem("codeGuide", newMessages[0].code);
+          setMessages([...messages, ...newMessages]);
+        }
+        else{
+          if (formatId == 6) {
           localStorage.setItem("easyId", data.data[0].easyId);
           localStorage.setItem("mediumId", data.data[0].mediumId);
           localStorage.setItem("hardId", data.data[0].hardId);
@@ -243,10 +255,7 @@ export default function DialogueBox() {
           code: message.code,
         }));
         setMessages(initialMessages);
-        setCodeAnswer(initialMessages[0].code);
-        setMissionTitle(initialMessages[0].title);
-        setMissionBackgroundImage(initialMessages[0].backgroundImage);
-        localStorage.setItem("codeAnswer", codeAnswer);
+      }
       })
       .catch((error) => {
         console.error("초기 스토리 불러오기 오류:", error);
@@ -308,8 +317,6 @@ export default function DialogueBox() {
                 title: message.story.chapter.title,
               }));
               localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
-              setMissionBackgroundImage(newMessages[0].backgroundImage);
-              setMissionTitle(newMessages[0].title);
               setMessages([...messages, ...newMessages]);
             } else if (formatId === 5) {
               const newMessages = data.data.map((message) => ({
@@ -324,10 +331,7 @@ export default function DialogueBox() {
                 input: message.input,
                 text: message.text,
               }));
-              setMissionHint(newMessages.hint);
-              setCodeAnswer(newMessages.code);
-              setMissionBackgroundImage(newMessages[0].backgroundImage);
-              setMissionTitle(newMessages[0].backgroundImage);
+              localStorage.setItem("codeGuide", newMessages[0].code);
               setMessages([...messages, ...newMessages]);
             }
           })
@@ -390,8 +394,13 @@ export default function DialogueBox() {
   const handleModalCode = (level) => {  
     setModalLevelOpen(false);
 
+    const audio = new Audio("/hover.mp3");
+    audio.play();
+    
+    localStorage.setItem("choice", level);
+
     const token = localStorage.getItem("accessToken");
-    const nextStoryId = localStorage.getItem(level); 
+    const nextStoryId = localStorage.getItem(localStorage.getItem("choice")); 
 
     if (!token) {
       console.error("AccessToken이 없습니다.");
@@ -416,10 +425,10 @@ export default function DialogueBox() {
           characterImage: message.characterImage,
           backgroundImage: message.story.backgroundImage,
           title: message.story.chapter.title,
+          code: message.code,
         }));
+        localStorage.setItem("speaker", newMessages[0].speaker);
         localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
-        setMissionBackgroundImage(newMessages[0].backgroundImage);
-        setMissionTitle(newMessages[0].title);
         setMessages([...messages, ...newMessages]);
       }
     });
@@ -428,62 +437,81 @@ export default function DialogueBox() {
   // 11. 정답일 때 애니메이션 실행 함수
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (canvas && isCorrect) { 
+    if (canvas && isCorrect) {
       const ctx = canvas.getContext("2d");
       const browserWidth = window.innerWidth;
       const browserHeight = window.innerHeight;
-
+  
       const imageAlt = "Character Image";
       const imageList = document.querySelectorAll("img");
-
+  
       let target = null;
       imageList.forEach((image) => {
         if (image.alt === imageAlt) {
           target = image;
         }
       });
-
+  
       const imageRect = target.getBoundingClientRect();
-      const topLeftX = imageRect.left;
-      const topLeftY = imageRect.top;
-      const bottomLeftY = imageRect.top + imageRect.height;
+      const bottom30PercentY = imageRect.bottom - (imageRect.height * 0.35);
+      const leftpxX = imageRect.left + 50;
+      const rightpxX = leftpxX + 100;
 
+      console.log(leftpxX)
+      console.log(rightpxX)
+  
       canvas.width = browserWidth;
       canvas.height = browserHeight;
-
+  
       const image = new Image();
       image.src = messages[messageIndex].itemImage;
-
+  
       image.onload = () => {
-        const animationDuration = 3000;
-        const startTime = Date.now();
-
+        const animationDuration = 1500;
+        const totalAnimations = 3;
+        let animationCount = 0;
+  
         const animate = () => {
-          // 현재 시간 계산
           const currentTime = Date.now() - startTime;
-          console.log(currentTime);
-          // Canvas를 지우고 새로 그리기
+          //console.log(currentTime);
+  
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-          // 이미지를 현재 위치로 그리기
-          const deltaY =
-            topLeftY +
-            ((bottomLeftY - topLeftY) / animationDuration) * currentTime;
-
-          // 이미지 그리기
-          ctx.drawImage(image, topLeftX, deltaY, 438, 302);
-
-          // 애니메이션 종료 조건 설정
+  
+          let deltaX;
+          // 시간이 animationDuration의 절반보다 작으면 증가, 그렇지 않으면 감소
+          if (currentTime < animationDuration / 2) {
+            deltaX =
+            leftpxX +
+              ((rightpxX - leftpxX) / (animationDuration / 2)) * currentTime;
+          } else {
+            deltaX =
+            rightpxX -
+              ((rightpxX - leftpxX) / (animationDuration / 2)) * (currentTime - animationDuration / 2);
+          }
+  
+          ctx.drawImage(image, deltaX, bottom30PercentY, 438, 302);
+  
           if (currentTime < animationDuration) {
             requestAnimationFrame(animate);
           } else {
-            handleNextMessage();
+            animationCount++;
+            if (animationCount < totalAnimations) {
+              // 다음 반복을 위해 애니메이션 재시작
+              startTime = Date.now();
+              animate();
+            } else {
+              handleNextMessage();
+            }
           }
         };
+  
+        let startTime = Date.now();
         animate();
       };
     }
   }, [isCorrect]);
+  
+  
 
   // 12. 힌트 공개 여부에 대한 함수
   const handleHintOpen = () => {
@@ -598,10 +626,10 @@ export default function DialogueBox() {
                     >
                       {messages.length > 0 && 
                         messages[messageIndex].formatId === 4 && 
+                        messages[messageIndex].text === "(예제 실행)" &&
                         (
                         <TextField
                           onChange={(e) => setUserInput(e.target.value)}
-                          label="여기에 코드를 입력해주세요."
                           style={{
                             width: "650px",
                             marginTop: "2%",
@@ -609,10 +637,11 @@ export default function DialogueBox() {
                           }}
                           InputProps={{
                             style: {
-                              backgroundImage: `url(${codebox})`,
+                              backgroundImage: `url(${exampleCodeBackground})`,
                               backgroundSize: "100% 100%",
                               height: "1000px",
                               fontSize: "30px",
+                              fontFamily: "Jeongnimsaji-R",
                             },
                           }}
                           value={showCodeAnimation}
@@ -643,7 +672,8 @@ export default function DialogueBox() {
                                   alignItems : "center",
                                   justifyContent: 'center',
                                   height: '100vh',
-                                  marginTop: "20px",
+                                  position: "fixed",
+                                  top: "3%",
                                 }}
                             >
 
@@ -651,11 +681,7 @@ export default function DialogueBox() {
                                 style={{
                                   backgroundImage: `url(${codebox})`,
                                   backgroundRepeat: "no-repeat",
-                                }}
-                                sx={{
-                                  width: "700px",
                                   height: "1000px",
-                                  
                                 }}
                               >
                                   <div
@@ -665,75 +691,152 @@ export default function DialogueBox() {
                                     }}
                                   >
 
-                                  <Button
-                                    color="primary"
-                                    type="submit"
-                                    variant="outlined"
-                                    onClick={() => handleModalCode("easyId")}
-                                    style={{
-                                      backgroundImage: `url(${easyButton})`,
-                                      float: "right",
-                                      top: "30px",
-                                      right: "70px",
-                                      bottom: 0,
-                                      width: "175px",
-                                      height: "50px",
-                                      backgroundRepeat: "no-repeat",
-                                      marginLeft: "100px",
-                                    }}
-                                  />
+                                  {localStorage.getItem("choice") === "mediumId"
+                                    && (
+                                    <img
+                                      onClick={() => handleModalCode("easyId")}
+                                      style={{
+                                        backgroundImage: `url(${easyButton})`,
+                                        marginTop: "30px",
+                                        right: "70px",
+                                        bottom: 0,
+                                        width: "175px",
+                                        height: "50px",
+                                        backgroundRepeat: "no-repeat",
+                                        marginLeft: "2%",
+                                        outline: "none",
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  )} 
 
-                                  <Button
-                                    color="primary"
-                                    type="submit"
-                                    variant="outlined"
+                                  {localStorage.getItem("choice") === "mediumId"
+                                    && (
+
+                                    <img
+                                      onClick={() => handleModalCode("hardId")}
+                                      style={{
+                                        backgroundImage: `url(${hardButton})`,
+                                        marginTop: "30px",
+                                        right: "70px",
+                                        bottom: 0,
+                                        width: "175px",
+                                        height: "50px",
+                                        backgroundRepeat: "no-repeat",
+                                        marginLeft: "10px",
+                                        outline: "none",
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  )}
+
+                                  {localStorage.getItem("choice") === "easyId"
+                                    && (
+                                    <img
+                                      onClick={() => handleModalCode("mediumId")}
+                                      style={{
+                                        backgroundImage: `url(${middleButton})`,
+                                        marginTop: "30px",
+                                        right: "70px",
+                                        bottom: 0,
+                                        width: "175px",
+                                        height: "50px",
+                                        backgroundRepeat: "no-repeat",
+                                        marginLeft: "40px",
+                                        outline: "none",
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  )} 
+
+                                  {localStorage.getItem("choice") === "easyId"
+                                    && (
+
+                                  <img
                                     onClick={() => handleModalCode("hardId")}
                                     style={{
                                       backgroundImage: `url(${hardButton})`,
-                                      float: "right",
-                                      top: "30px",
+                                      marginTop: "30px",
                                       right: "70px",
                                       bottom: 0,
                                       width: "175px",
                                       height: "50px",
                                       backgroundRepeat: "no-repeat",
                                       marginLeft: "10px",
+                                      outline: "none",
+                                      cursor: "pointer",
                                     }}
                                   />
+                                  )}
 
-                                  <Button
-                                    color="primary"
-                                    type="submit"
-                                    variant="outlined"
+                                  {localStorage.getItem("choice") === "hardId"
+                                    && (
+                                    <img
+                                      onClick={() => handleModalCode("easyId")}
+                                      style={{
+                                        backgroundImage: `url(${easyButton})`,
+                                        marginTop: "30px",
+                                        right: "70px",
+                                        bottom: 0,
+                                        width: "175px",
+                                        height: "50px",
+                                        backgroundRepeat: "no-repeat",
+                                        marginLeft: "40px",
+                                        outline: "none",
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  )}
+
+                                  {localStorage.getItem("choice") === "hardId"
+                                    && (
+                                  <img
+                                    onClick={() => handleModalCode("mediumId")}
+                                    style={{
+                                      backgroundImage: `url(${middleButton})`,
+                                      marginTop: "30px",
+                                      right: "70px",
+                                      bottom: 0,
+                                      width: "175px",
+                                      height: "50px",
+                                      backgroundRepeat: "no-repeat",
+                                      marginLeft: "10px",
+                                      outline: "none",
+                                      cursor: "pointer",
+                                    }}
+                                  />
+                                  )}
+
+                                  <img
                                     onClick={handleHintOpen}
                                     style={{
                                       backgroundImage: `url(${hintButton})`,
-                                      float: "right",
-                                      top: "30px",
+                                      marginTop: "30px",
                                       right: "70px",
                                       bottom: 0,
                                       width: "120px",
                                       height: "50px",
                                       backgroundRepeat: "no-repeat",
                                       marginLeft: "10px",
+                                      outline: "none",
+                                      cursor: "pointer",
                                     }}
                                   />
 
-                                  <Button
-                                    color="primary"
-                                    type="submit"
-                                    variant="outlined"
+                                  <img
                                     onClick={handleCodeExecute}
                                     style={{
                                       backgroundImage: `url(${runButton})`,
                                       float: "right",
-                                      top: "30px",
-                                      right: "70px",
+                                      marginTop: "30px",
+                                      marginRight: "1%",
                                       bottom: 0,
                                       width: "100px",
                                       height: "50px",
                                       backgroundRepeat: "no-repeat",
                                       marginLeft: "10px",
+                                      outline: "none",
+                                      cursor: "pointer",
                                     }}
                                   />
 
@@ -743,11 +846,8 @@ export default function DialogueBox() {
 
                                   <Box
                                     style={{
-                                      width: "600px",
+                                      width: "700px",
                                       height: "120px",
-                                      marginTop: "3%",
-                                      marginLeft: "5%",
-                                      marginRight: "15%",
                                       textAlign: "center",
                                       backgroundSize: "100% 100%",
                                       color: "black",
@@ -761,48 +861,50 @@ export default function DialogueBox() {
                                       variant="body1"
                                       style={{
                                         whiteSpace: "pre-line", // 줄 바꿈을 허용하는 스타일
-                                        marginTop: "5%",
-                                        fontSize: "20px",
-                                        fontFamily: "ChosunKm",
+                                        fontSize: "30px",
+                                        fontFamily: "Jeongnimsaji-R",
                                         fontWeight: 700,
                                         textAlign: "center",
+                                        position: "fixed",
+                                        left: 0,
+                                        right: 0,
                                       }}
                                     >
                                       {messages[messageIndex].text}
                                     </Typography>
                                   </Box>
-                
 
+                                  <textarea
+                                    onChange={handleInputEnter}
+                                    style={{
+                                      position: "fixed",
+                                      width: "auto",
+                                      height: "800px",
+                                      marginTop : "10%",
+                                      marginBottom: "5%",
+                                      left: "5%",
+                                      right: "5%",
+                                      backgroundColor: "rgba(0, 0, 0, 0)",
+                                      fontFamily: "Jeongnimsaji-R",
+                                      border: "none",
+                                      outline: "none",
+                                      fontSize: "25px",
+                                      overflow: "hidden",
+                                    }}
+                                    defaultValue={localStorage.getItem("codeGuide")}
+                                  />
 
-                                  
-
-                                  <TextField
-                                      onChange={handleInputEnter}
-                                      label="여기에 코드를 입력해주세요."
-                                      style={{
-                                        width: "600px",
-                                        top: "2%",
-                                        marginBottom: "5%",
-                                        left: 0,
-                                      }}
-                                      InputProps={{
-                                        style: {
-                                          backgroundImage: "transparent",
-                                          backgroundSize: "100% 100%",
-                                          height: "800px",
-                                          fontSize: "30px",
-                                        }
-                                      }}
-                                      defaultValue="print()"
-                                      multiline
-                                    />
                               </Box>
                           </div>
                         </Grid>
                       )}
                     </Box>
 
-                    {messages.length > 0 && messages[messageIndex].formatId !== 6 && (
+                    {messages.length > 0 &&
+                    (
+                      (messages[messageIndex].formatId === 4 && messages[messageIndex].text !== "(예제 실행)") ||
+                      (messages[messageIndex].formatId === 5 && isCorrect)
+                    ) && ( 
                       <img
                         src={messages[messageIndex].characterImage}
                         alt="Character Image"
@@ -813,6 +915,10 @@ export default function DialogueBox() {
                           marginBottom: "5%",
                           opacity: isImageVisible ? 1 : 0.3,
                           transition: "opacity 2s",
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
                         }}
                       />
                     )}
@@ -884,7 +990,6 @@ export default function DialogueBox() {
                     }}
                   >
 
-
                           <Typography
                             variant="h3"
                             style={{
@@ -893,7 +998,21 @@ export default function DialogueBox() {
                               fontSize: "40px",
                               fontFamily: "LINE Seed Sans KR",
                               fontWeight: "bold",
-                              marginTop: "10%", // 대사 위치
+                              marginTop: "5%",
+                            }}
+                          >
+                            {localStorage.getItem("speaker")}
+                          </Typography>
+
+
+                          <Typography
+                            variant="h3"
+                            style={{
+                              textAlign: "center",
+                              color: "white",
+                              fontSize: "30px",
+                              fontFamily: "LINE Seed Sans KR",
+                              marginTop: "3%", 
                             }}
                           >
                             {messages[messageIndex].hint}
@@ -1003,7 +1122,7 @@ export default function DialogueBox() {
                                 width: "100px",
                                 height: "50px",
                                 border: "none",
-                                transition: "transform 0.3s ease", // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
+                                transition: "transform 0.3s ease", // transform 속성을 통해 크기 변경을 부드럽게
                               }}
                               onMouseEnter={(e) => {
                                 e.target.style.filter = "brightness(1.05)"; // 밝기 증가
