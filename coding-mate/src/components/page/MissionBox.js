@@ -393,6 +393,10 @@ export default function DialogueBox() {
   // 10. 난이도 선택 시 문제를 보여주는 함수
   const handleModalCode = (level) => {  
     setModalLevelOpen(false);
+
+    const audio = new Audio("/hover.mp3");
+    audio.play();
+    
     localStorage.setItem("choice", level);
 
     const token = localStorage.getItem("accessToken");
