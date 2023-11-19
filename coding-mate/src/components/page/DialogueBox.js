@@ -532,7 +532,7 @@ export default function DialogueBox() {
                           width: "100px",
                           height: "50px",
                           border: "none",
-                          transition: "transform 0.3s ease", // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
+                          transition: "transform 0.3s ease", // transform 속성을 통해 크기 변경을 부드럽게
                         }}
                         onMouseEnter={(e) => {
                           e.target.style.filter = "brightness(1.05)"; // 밝기 증가

@@ -8,8 +8,6 @@ import hardLevelModalStyle from "../../assets/animation/HardLevelModalStyle";
 import easyLevelModalStyle from "../../assets/animation/EasyLevelModalStyle";
 import middleLevelModalStyle from "../../assets/animation/MiddleLevelModalStyle";
 import back from "../../assets/image/back.png";
-import codemirrorBackground from "../../assets/image/code_background.png";
-import codehintBackground from "../../assets/image/hint_background.png";
 import exampleCodeBackground from "../../assets/image/exampleCodeBackground.png";
 import nextButton from "../../assets/image/next.png";
 import codebox from "../../assets/image/code_box.png";
@@ -110,16 +108,12 @@ export default function DialogueBox() {
   const [isImageVisible, setImageVisible] = useState(true);
   const [isShaking, setShaking] = useState(false);
   let [chImage, setChImage] = useState(null);
-  const modalBackground = useRef();
   const [message, setMessage] = useState("");
   const [isAnimating, setAnimating] = useState(false);
   const [code, setCode] = useState(null);
   const [showCodeAnimation, setShowCodeAnimation] = useState("");
   const navigate = useNavigate();
   const [userInput, setUserInput] = useState(null);
-  const [missionBackgroundImage, setMissionBackgroundImage] = useState(null);
-  const [missionTitle, setMissionTitle] = useState(null);
-  const [missionHint, setMissionHint] = useState(null);
   const [isCorrect, setIsCorrect] = useState(false);
   const canvasRef = useRef(null);
   const [animatioIindex, setAnimatioIindex] = useState(-1);
@@ -223,10 +217,7 @@ export default function DialogueBox() {
             input: message.input,
             text: message.text,
           }));
-          setMissionHint(newMessages.hint);
           localStorage.setItem("codeGuide", newMessages[0].code);
-          setMissionBackgroundImage(newMessages[0].backgroundImage);
-          setMissionTitle(newMessages[0].backgroundImage);
           setMessages([...messages, ...newMessages]);
         }
         else{
@@ -264,8 +255,6 @@ export default function DialogueBox() {
           code: message.code,
         }));
         setMessages(initialMessages);
-        setMissionTitle(initialMessages[0].title);
-        setMissionBackgroundImage(initialMessages[0].backgroundImage);
       }
       })
       .catch((error) => {
@@ -328,8 +317,6 @@ export default function DialogueBox() {
                 title: message.story.chapter.title,
               }));
               localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
-              setMissionBackgroundImage(newMessages[0].backgroundImage);
-              setMissionTitle(newMessages[0].title);
               setMessages([...messages, ...newMessages]);
             } else if (formatId === 5) {
               const newMessages = data.data.map((message) => ({
@@ -344,10 +331,7 @@ export default function DialogueBox() {
                 input: message.input,
                 text: message.text,
               }));
-              setMissionHint(newMessages.hint);
               localStorage.setItem("codeGuide", newMessages[0].code);
-              setMissionBackgroundImage(newMessages[0].backgroundImage);
-              setMissionTitle(newMessages[0].backgroundImage);
               setMessages([...messages, ...newMessages]);
             }
           })
@@ -441,8 +425,6 @@ export default function DialogueBox() {
         }));
         localStorage.setItem("speaker", newMessages[0].speaker);
         localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
-        setMissionBackgroundImage(newMessages[0].backgroundImage);
-        setMissionTitle(newMessages[0].title);
         setMessages([...messages, ...newMessages]);
       }
     });
@@ -1136,7 +1118,7 @@ export default function DialogueBox() {
                                 width: "100px",
                                 height: "50px",
                                 border: "none",
-                                transition: "transform 0.3s ease", // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
+                                transition: "transform 0.3s ease", // transform 속성을 통해 크기 변경을 부드럽게
                               }}
                               onMouseEnter={(e) => {
                                 e.target.style.filter = "brightness(1.05)"; // 밝기 증가

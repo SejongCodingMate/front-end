@@ -88,9 +88,7 @@ export default function ItemBox() {
   const [isCharacterImageVisible, setCharacterImageVisible] = useState(false);
   const [isItemImageVisible, setItemImageVisible] = useState(false);
   const [isShaking, setShaking] = useState(false);
-  let [chImage, setChImage] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const modalBackground = useRef();
   const [message, setMessage] = useState('');
   const [isAnimating, setAnimating] = useState(false);
   const [itemImage, setItemImage] = useState([]);
