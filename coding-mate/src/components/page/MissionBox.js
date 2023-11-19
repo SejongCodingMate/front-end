@@ -15,6 +15,7 @@ import nextButton from "../../assets/image/next.png";
 import codebox from "../../assets/image/code_box.png";
 import runButton from "../../assets/image/run_button.png";
 import easyButton from "../../assets/image/easy_button.png";
+import middleButton from "../../assets/image/middle_button.png";
 import hardButton from "../../assets/image/hard_button.png";
 import hintButton from "../../assets/image/hint_button.png";
 import {
@@ -408,9 +409,10 @@ export default function DialogueBox() {
   // 10. 난이도 선택 시 문제를 보여주는 함수
   const handleModalCode = (level) => {  
     setModalLevelOpen(false);
+    localStorage.setItem("choice", level);
 
     const token = localStorage.getItem("accessToken");
-    const nextStoryId = localStorage.getItem(level); 
+    const nextStoryId = localStorage.getItem(localStorage.getItem("choice")); 
 
     if (!token) {
       console.error("AccessToken이 없습니다.");
@@ -684,7 +686,8 @@ export default function DialogueBox() {
                                   alignItems : "center",
                                   justifyContent: 'center',
                                   height: '100vh',
-                                  marginTop: "20px",
+                                  position: "fixed",
+                                  top: "3%",
                                 }}
                             >
 
@@ -702,21 +705,66 @@ export default function DialogueBox() {
                                     }}
                                   >
 
-                                  <img
-                                    onClick={() => handleModalCode("easyId")}
-                                    style={{
-                                      backgroundImage: `url(${easyButton})`,
-                                      marginTop: "30px",
-                                      right: "70px",
-                                      bottom: 0,
-                                      width: "175px",
-                                      height: "50px",
-                                      backgroundRepeat: "no-repeat",
-                                      marginLeft: "40px",
-                                      outline: "none",
-                                      cursor: "pointer",
-                                    }}
-                                  />
+                                  {localStorage.getItem("choice") === "mediumId"
+                                    && (
+                                    <img
+                                      onClick={() => handleModalCode("easyId")}
+                                      style={{
+                                        backgroundImage: `url(${easyButton})`,
+                                        marginTop: "30px",
+                                        right: "70px",
+                                        bottom: 0,
+                                        width: "175px",
+                                        height: "50px",
+                                        backgroundRepeat: "no-repeat",
+                                        marginLeft: "2%",
+                                        outline: "none",
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  )} 
+
+                                  {localStorage.getItem("choice") === "mediumId"
+                                    && (
+
+                                    <img
+                                      onClick={() => handleModalCode("hardId")}
+                                      style={{
+                                        backgroundImage: `url(${hardButton})`,
+                                        marginTop: "30px",
+                                        right: "70px",
+                                        bottom: 0,
+                                        width: "175px",
+                                        height: "50px",
+                                        backgroundRepeat: "no-repeat",
+                                        marginLeft: "10px",
+                                        outline: "none",
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  )}
+
+                                  {localStorage.getItem("choice") === "easyId"
+                                    && (
+                                    <img
+                                      onClick={() => handleModalCode("mediumId")}
+                                      style={{
+                                        backgroundImage: `url(${middleButton})`,
+                                        marginTop: "30px",
+                                        right: "70px",
+                                        bottom: 0,
+                                        width: "175px",
+                                        height: "50px",
+                                        backgroundRepeat: "no-repeat",
+                                        marginLeft: "40px",
+                                        outline: "none",
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  )} 
+
+                                  {localStorage.getItem("choice") === "easyId"
+                                    && (
 
                                   <img
                                     onClick={() => handleModalCode("hardId")}
@@ -733,6 +781,45 @@ export default function DialogueBox() {
                                       cursor: "pointer",
                                     }}
                                   />
+                                  )}
+
+                                  {localStorage.getItem("choice") === "hardId"
+                                    && (
+                                    <img
+                                      onClick={() => handleModalCode("easyId")}
+                                      style={{
+                                        backgroundImage: `url(${easyButton})`,
+                                        marginTop: "30px",
+                                        right: "70px",
+                                        bottom: 0,
+                                        width: "175px",
+                                        height: "50px",
+                                        backgroundRepeat: "no-repeat",
+                                        marginLeft: "40px",
+                                        outline: "none",
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  )}
+
+                                  {localStorage.getItem("choice") === "hardId"
+                                    && (
+                                  <img
+                                    onClick={() => handleModalCode("mediumId")}
+                                    style={{
+                                      backgroundImage: `url(${middleButton})`,
+                                      marginTop: "30px",
+                                      right: "70px",
+                                      bottom: 0,
+                                      width: "175px",
+                                      height: "50px",
+                                      backgroundRepeat: "no-repeat",
+                                      marginLeft: "10px",
+                                      outline: "none",
+                                      cursor: "pointer",
+                                    }}
+                                  />
+                                  )}
 
                                   <img
                                     onClick={handleHintOpen}
@@ -756,7 +843,7 @@ export default function DialogueBox() {
                                       backgroundImage: `url(${runButton})`,
                                       float: "right",
                                       marginTop: "30px",
-                                      right: "70px",
+                                      marginRight: "1%",
                                       bottom: 0,
                                       width: "100px",
                                       height: "50px",
@@ -773,10 +860,8 @@ export default function DialogueBox() {
 
                                   <Box
                                     style={{
-                                      width: "600px",
+                                      width: "700px",
                                       height: "120px",
-                                      marginLeft: "5%",
-                                      marginRight: "15%",
                                       textAlign: "center",
                                       backgroundSize: "100% 100%",
                                       color: "black",
@@ -794,6 +879,9 @@ export default function DialogueBox() {
                                         fontFamily: "Jeongnimsaji-R",
                                         fontWeight: 700,
                                         textAlign: "center",
+                                        position: "fixed",
+                                        left: 0,
+                                        right: 0,
                                       }}
                                     >
                                       {messages[messageIndex].text}
@@ -803,11 +891,13 @@ export default function DialogueBox() {
                                   <textarea
                                     onChange={handleInputEnter}
                                     style={{
-                                      width: "600px",
+                                      position: "fixed",
+                                      width: "auto",
                                       height: "800px",
                                       marginTop : "10%",
                                       marginBottom: "5%",
-                                      left: 0,
+                                      left: "5%",
+                                      right: "5%",
                                       backgroundColor: "rgba(0, 0, 0, 0)",
                                       fontFamily: "Jeongnimsaji-R",
                                       border: "none",
