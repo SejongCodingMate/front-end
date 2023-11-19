@@ -112,7 +112,6 @@ export default function DialogueBox() {
   const modalBackground = useRef();
   const [message, setMessage] = useState("");
   const [isAnimating, setAnimating] = useState(false);
-  const [codeAnswer, setCodeAnswer] = useState(null);
   const [code, setCode] = useState(null);
   const [showCodeAnimation, setShowCodeAnimation] = useState("");
   const navigate = useNavigate();
@@ -224,7 +223,7 @@ export default function DialogueBox() {
             text: message.text,
           }));
           setMissionHint(newMessages.hint);
-          setCodeAnswer(newMessages[0].code);
+          localStorage.setItem("codeGuide", newMessages[0].code);
           setMissionBackgroundImage(newMessages[0].backgroundImage);
           setMissionTitle(newMessages[0].backgroundImage);
           setMessages([...messages, ...newMessages]);
@@ -264,10 +263,8 @@ export default function DialogueBox() {
           code: message.code,
         }));
         setMessages(initialMessages);
-        setCodeAnswer(initialMessages[0].code);
         setMissionTitle(initialMessages[0].title);
         setMissionBackgroundImage(initialMessages[0].backgroundImage);
-        localStorage.setItem("codeAnswer", codeAnswer);
       }
       })
       .catch((error) => {
@@ -347,7 +344,7 @@ export default function DialogueBox() {
                 text: message.text,
               }));
               setMissionHint(newMessages.hint);
-              setCodeAnswer(newMessages.code);
+              localStorage.setItem("codeGuide", newMessages[0].code);
               setMissionBackgroundImage(newMessages[0].backgroundImage);
               setMissionTitle(newMessages[0].backgroundImage);
               setMessages([...messages, ...newMessages]);
@@ -442,7 +439,6 @@ export default function DialogueBox() {
         }));
         localStorage.setItem("speaker", newMessages[0].speaker);
         localStorage.setItem("nextStoryId", newMessages[0].nextStoryId);
-        setCodeAnswer(newMessages[0].code);
         setMissionBackgroundImage(newMessages[0].backgroundImage);
         setMissionTitle(newMessages[0].title);
         setMessages([...messages, ...newMessages]);
@@ -819,7 +815,7 @@ export default function DialogueBox() {
                                       fontSize: "25px",
                                       overflow: "hidden",
                                     }}
-                                    defaultValue={codeAnswer}
+                                    defaultValue={localStorage.getItem("codeGuide")}
                                   />
 
                               </Box>
