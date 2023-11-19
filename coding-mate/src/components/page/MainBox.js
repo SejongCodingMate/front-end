@@ -2,10 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
 import "../../assets/fonts/Font.css";
 import ChapterButton from "../../assets/image/ChapterStone.png";
 import back from "../../assets/image/backButton.png";
 import clearButton from "../../assets/image/clear_button.png";
+import nextButton from "../../assets/image/next.png";
+import arrow from "../../assets/image/Arrow.png";
 
 const fetchChapterSave = (nextChapterId, accessToken) => {
   var myHeaders = new Headers();
@@ -348,52 +351,75 @@ export default function MainBox() {
 
         <img
           id="1"
-          src = {clearButton}
+          src={clearButton}
           ref={firstChapterImageRef}
-          style = {{
-            position: 'fixed',
-            top : "27%",
+          style={{
+            position: "fixed",
+            top: "27%",
             left: "23%",
-            opacity: userChapterId > (firstChapterImageRef.current ? parseInt(firstChapterImageRef.current.id) : 1) ? 1 : 0,
+            opacity:
+              userChapterId >
+              (firstChapterImageRef.current
+                ? parseInt(firstChapterImageRef.current.id)
+                : 1)
+                ? 1
+                : 0,
           }}
         />
 
         <img
           id="2"
-          src = {clearButton}
+          src={clearButton}
           ref={secondChapterImageRef}
-          style = {{
-            position: 'fixed',
-            top : "18%",
+          style={{
+            position: "fixed",
+            top: "18%",
             left: "44%",
-            opacity: userChapterId > (secondChapterImageRef.current ? parseInt(secondChapterImageRef.current.id) : 2) ? 1 : 0,
+            opacity:
+              userChapterId >
+              (secondChapterImageRef.current
+                ? parseInt(secondChapterImageRef.current.id)
+                : 2)
+                ? 1
+                : 0,
           }}
         />
 
         <img
           id="3"
-          src = {clearButton}
+          src={clearButton}
           ref={thirdChapterImageRef}
-          style = {{
-            position: 'fixed',
-            top : "23%",
+          style={{
+            position: "fixed",
+            top: "23%",
             left: "65%",
-            opacity: userChapterId > (thirdChapterImageRef.current ? parseInt(thirdChapterImageRef.current.id) : 3) ? 1 : 0,
+            opacity:
+              userChapterId >
+              (thirdChapterImageRef.current
+                ? parseInt(thirdChapterImageRef.current.id)
+                : 3)
+                ? 1
+                : 0,
           }}
         />
 
         <img
           id="4"
-          src = {clearButton}
+          src={clearButton}
           ref={finalChapterImageRef}
-          style = {{
-            position: 'fixed',
-            top : "33%",
+          style={{
+            position: "fixed",
+            top: "33%",
             left: "90%",
-            opacity: userChapterId > (finalChapterImageRef.current ? parseInt(finalChapterImageRef.current.id) : 3) ? 1 : 0,
+            opacity:
+              userChapterId >
+              (finalChapterImageRef.current
+                ? parseInt(finalChapterImageRef.current.id)
+                : 3)
+                ? 1
+                : 0,
           }}
         />
-
       </div>
       <img
         src="https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/background/%E1%84%82%E1%85%B2%E1%84%87%E1%85%A2%E1%84%80%E1%85%A7%E1%86%BC.png"
@@ -430,34 +456,42 @@ export default function MainBox() {
               marginTop: "8%",
             }}
           ></Box>
-          <button
-            onClick={handleChapterButtonClick}
+          <Grid
+            container
+            justifyContent="flex-end"
             style={{
-              position: "absolute",
-              bottom: "10px",
-              left: "50%",
-              transform: "translateX(-50%)",
-              background: "#FFF",
-              outline: "none",
-              cursor: "pointer",
-              zIndex: 9999,
+              position: "fixed",
+              bottom: "50px",
+              right: "100px",
             }}
           >
-            next
-          </button>
+            <Button
+              color="primary"
+              type="submit"
+              variant="outlined"
+              onClick={handleChapterButtonClick}
+              style={{
+                backgroundImage: `url(${nextButton})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                width: "100px",
+                height: "50px",
+                border: "none",
+                transition: "transform 0.3s ease", // transform 속성을 통해 크기 변경을 부드럽게
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.filter = "brightness(1.05)"; // 밝기 증가
+                e.target.style.transform = "scale(1.05)"; // 크기 확대
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.filter = "brightness(1)"; // 밝기 복원
+                e.target.style.transform = "scale(1)"; // 크기 복원
+              }}
+            ></Button>
+          </Grid>
         </div>
       )}
-      <button
-        onClick={() => setDialogueVisible((prev) => !prev)}
-        style={{
-          position: "absolute",
-          top: "10px",
-          left: "10px",
-          zIndex: 9999,
-        }}
-      >
-        대화 상자 토글
-      </button>
       {chapterButtons.map((chapter, index) => {
         let topPosition, leftPosition;
         if (chapter.position === "chapter1") {
@@ -471,7 +505,7 @@ export default function MainBox() {
           leftPosition = "63%";
         } else {
           topPosition = "24%";
-          leftPosition = "calc(100% - 203px)"; // 86px는 버튼의 너비에 따라 조절
+          leftPosition = "85.6%"; // 86px는 버튼의 너비에 따라 조절
         }
         const buttonStyles = {
           position: "absolute",
@@ -498,13 +532,14 @@ export default function MainBox() {
           <React.Fragment key={`fragment-${index}`}>
             <div key={index} style={buttonStyles}>
               <button
-                onClick={() => handleChapterButtonClick(chapter)}
+                onClick={() => setDialogueVisible((prev) => !prev)}
                 disabled={!isCurrentChapterActive}
                 style={{
                   background: "none",
                   border: "none",
                   outline: "none",
                   cursor: "pointer",
+                  position: "relative", // 화살표 위치 조절을 위한 추가
                 }}
               >
                 <img
@@ -530,6 +565,20 @@ export default function MainBox() {
                     }
                   }}
                 />
+                {isCurrentChapterActive && (
+                  <img
+                    src={arrow}
+                    alt="화살표"
+                    style={{
+                      position: "absolute",
+                      top: "-25%", // 조절 가능한 값
+                      left: "28%",
+                      width: "98px",
+                      height: "auto",
+                      zIndex: 3,
+                    }}
+                  />
+                )}
               </button>
             </div>
             <div key={`img-${index}`} style={imgStyles}>
