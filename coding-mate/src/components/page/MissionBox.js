@@ -938,10 +938,16 @@ export default function DialogueBox() {
                           className="modal hard"
                           style={hardLevelModalStyle}
                           onClick={() => handleModalCode("hardId")}
+                          onMouseEnter={(e) => {
+                            e.target.style.transform = "scale(1.05)"; 
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.transform = "scale(1)"; 
+                          }}
                         >
                           <div
                             className="modal-content"
-                            style={{ marginTop: "60px" }}
+                            style={{ marginTop: "15%" }}
                           >
                             <h1 style={{ color: "white" }}>어려운 방법</h1>
                           </div>
@@ -951,10 +957,16 @@ export default function DialogueBox() {
                           className="modal medium"
                           style={middleLevelModalStyle}
                           onClick={() => handleModalCode("mediumId")}
+                          onMouseEnter={(e) => {
+                            e.target.style.transform = "scale(1.05)"; 
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.transform = "scale(1)"; 
+                          }}
                         >
                           <div
                             className="modal-content"
-                            style={{ marginTop: "60px" }}
+                            style={{ marginTop: "15%" }}
                           >
                             <h1 style={{ color: "white" }}>중간 방법</h1>
                           </div>
@@ -964,10 +976,16 @@ export default function DialogueBox() {
                           className="modal easy"
                           style={easyLevelModalStyle}
                           onClick={() => handleModalCode("easyId")}
+                          onMouseEnter={(e) => {
+                            e.target.style.transform = "scale(1.05)"; 
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.transform = "scale(1)"; 
+                          }}
                         >
                           <div
                             className="modal-content"
-                            style={{ marginTop: "60px" }}
+                            style={{ marginTop: "15%" }}
                           >
                             <h1 style={{ color: "white" }}>쉬운 방법</h1>
                           </div>
