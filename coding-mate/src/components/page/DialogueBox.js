@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import "../../assets/animation/Shaking.css";
 import "../../assets/animation/Zoom.css";
 import "../../assets/animation/Blur.css";
-import back from "../../assets/image/back.png";
+import back from "../../assets/image/backButton.png";
 import leftModalStyle from "../../assets/animation/LeftModalStyle";
 import rightModalStyle from "../../assets/animation/RightModalStyle";
 import { Container, Typography, Button, Switch, Fade } from "@mui/material";
@@ -238,13 +238,12 @@ export default function DialogueBox() {
 
   // 9. NextMessage 핸들링
   const handleNextMessage = () => {
-
     const audio = new Audio("/NextButton2.wav");
     audio.play();
-    
+
     // 1. 메세지 내용 출력
     if (messageIndex < messages.length - 1) {
-      setMessageIndex(messageIndex + 1); 
+      setMessageIndex(messageIndex + 1);
     }
     // 2. 만약 메세지가 다 출력이 되었다면
     else {
@@ -274,7 +273,7 @@ export default function DialogueBox() {
           .then((data) => {
             const formatId = data.data[0].story.formatId;
             if (formatId === 3) {
-              window.location.href = '/item';
+              window.location.href = "/item";
             }
             if (formatId === 4) {
               window.location.href = "/mission";
@@ -324,25 +323,21 @@ export default function DialogueBox() {
             onClick={handleBackButtonClick}
             style={{
               position: "absolute",
-              width: "7%",
-              height: "8%",
+              width: "86px",
+              height: "69px",
               top: "20px",
-              left: "0px",
-              backgroundColor: "#242424",
+              left: -6,
+              backgroundColor: "transparent",
               color: "#FFF",
-              border: "1px solid #FFF",
+              border: "none",
               cursor: "pointer",
-              borderTop: "5px solid #3D3D3D",
-              borderLeft: "5px solid #3D3D3D",
-              borderBottom: "none",
-              borderRight: "none",
+              zIndex: 999,
             }}
           >
             <img
               style={{
-                width: "35px",
-                height: "35px",
-                float: "right",
+                width: "100%",
+                height: "90%",
               }}
               src={back}
               alt="뒤로 가기"

@@ -7,7 +7,7 @@ import "../../assets/fonts/QuestionFont.css";
 import hardLevelModalStyle from "../../assets/animation/HardLevelModalStyle";
 import easyLevelModalStyle from "../../assets/animation/EasyLevelModalStyle";
 import middleLevelModalStyle from "../../assets/animation/MiddleLevelModalStyle";
-import back from "../../assets/image/back.png";
+import back from "../../assets/image/backButton.png";
 import exampleCodeBackground from "../../assets/image/exampleCodeBackground.png";
 import nextButton from "../../assets/image/next.png";
 import codebox from "../../assets/image/code_box.png";
@@ -171,7 +171,10 @@ export default function DialogueBox() {
 
   useEffect(() => {
     if (messages[messageIndex]) {
-      if (messages[messageIndex].speaker === "USER" || messages[messageIndex].text === "(예제 실행)") {
+      if (
+        messages[messageIndex].speaker === "USER" ||
+        messages[messageIndex].text === "(예제 실행)"
+      ) {
         const getCodeFromLocalStorage = () => {
           const localStorageCode = localStorage.getItem("code");
           setCode(localStorageCode);
@@ -219,43 +222,42 @@ export default function DialogueBox() {
           }));
           localStorage.setItem("codeGuide", newMessages[0].code);
           setMessages([...messages, ...newMessages]);
-        }
-        else{
+        } else {
           if (formatId == 6) {
-          localStorage.setItem("easyId", data.data[0].easyId);
-          localStorage.setItem("mediumId", data.data[0].mediumId);
-          localStorage.setItem("hardId", data.data[0].hardId);
+            localStorage.setItem("easyId", data.data[0].easyId);
+            localStorage.setItem("mediumId", data.data[0].mediumId);
+            localStorage.setItem("hardId", data.data[0].hardId);
 
-          const message = data.data[1];
-          const initialMessages = [
-            {
-              formatId: message.story.formatId,
-              speaker: message.speaker,
-              text: message.text,
-              currentStoryId: message.story.id,
-              nextStoryId: message.story.nextId,
-              characterImage: message.characterImage,
-              backgroundImage: message.story.backgroundImage,
-            },
-          ];
+            const message = data.data[1];
+            const initialMessages = [
+              {
+                formatId: message.story.formatId,
+                speaker: message.speaker,
+                text: message.text,
+                currentStoryId: message.story.id,
+                nextStoryId: message.story.nextId,
+                characterImage: message.characterImage,
+                backgroundImage: message.story.backgroundImage,
+              },
+            ];
 
+            setMessages(initialMessages);
+            setMessageIndex(1);
+            openLevelModal();
+          }
+          const initialMessages = data.data.map((message) => ({
+            formatId: message.story.formatId,
+            speaker: message.speaker,
+            text: message.text,
+            currentStoryId: message.story.id,
+            nextStoryId: message.story.nextId,
+            characterImage: message.characterImage,
+            backgroundImage: message.story.backgroundImage,
+            title: message.story.chapter.title,
+            code: message.code,
+          }));
           setMessages(initialMessages);
-          setMessageIndex(1);
-          openLevelModal();
         }
-        const initialMessages = data.data.map((message) => ({
-          formatId: message.story.formatId,
-          speaker: message.speaker,
-          text: message.text,
-          currentStoryId: message.story.id,
-          nextStoryId: message.story.nextId,
-          characterImage: message.characterImage,
-          backgroundImage: message.story.backgroundImage,
-          title: message.story.chapter.title,
-          code: message.code,
-        }));
-        setMessages(initialMessages);
-      }
       })
       .catch((error) => {
         console.error("초기 스토리 불러오기 오류:", error);
@@ -304,7 +306,7 @@ export default function DialogueBox() {
             } else if (formatId === 4) {
               localStorage.setItem("code", data.data[0].code);
               localStorage.setItem("itemImage", data.data[0].itemImage);
-      
+
               setMessageIndex(messageIndex + 1);
               const newMessages = data.data.slice(1).map((message) => ({
                 speaker: message.speaker,
@@ -345,9 +347,9 @@ export default function DialogueBox() {
   // 8. 코드창 엔터키 인식 함수
   const handleInputEnter = (e) => {
     const inputValue = e.target.value;
-    const formattedCode = inputValue.replace(/\n/g, '\\n')
+    const formattedCode = inputValue.replace(/\n/g, "\\n");
     setUserInput(formattedCode);
-  }
+  };
 
   // 9. 코드 실행 함수
   const handleCodeExecute = () => {
@@ -361,7 +363,7 @@ export default function DialogueBox() {
     var raw = JSON.stringify({
       code: userInput,
       input: "",
-      storyId: storyId
+      storyId: storyId,
     });
 
     const requestOptions = {
@@ -372,35 +374,34 @@ export default function DialogueBox() {
     };
 
     fetch(`http://3.37.164.99/api/code/execute`, requestOptions)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data["message"] == "정답입니다.") {
-        setAnimatioIindex(10);
-        setIsCorrect(true);
-      } else {
-        window.alert("코드를 다시 입력해주세요.");
-      }
-      
-    })
-    .catch((error) => {
-      console.error("스토리 불러오기 오류:", error);
-      throw error;
-    });
+      .then((response) => response.json())
+      .then((data) => {
+        if (data["message"] == "정답입니다.") {
+          setAnimatioIindex(10);
+          setIsCorrect(true);
+        } else {
+          window.alert("코드를 다시 입력해주세요.");
+        }
+      })
+      .catch((error) => {
+        console.error("스토리 불러오기 오류:", error);
+        throw error;
+      });
     setAnimatioIindex(-1);
     setIsCorrect(false);
   };
 
   // 10. 난이도 선택 시 문제를 보여주는 함수
-  const handleModalCode = (level) => {  
+  const handleModalCode = (level) => {
     setModalLevelOpen(false);
 
     const audio = new Audio("/hover.mp3");
     audio.play();
-    
+
     localStorage.setItem("choice", level);
 
     const token = localStorage.getItem("accessToken");
-    const nextStoryId = localStorage.getItem(localStorage.getItem("choice")); 
+    const nextStoryId = localStorage.getItem(localStorage.getItem("choice"));
 
     if (!token) {
       console.error("AccessToken이 없습니다.");
@@ -441,56 +442,57 @@ export default function DialogueBox() {
       const ctx = canvas.getContext("2d");
       const browserWidth = window.innerWidth;
       const browserHeight = window.innerHeight;
-  
+
       const imageAlt = "Character Image";
       const imageList = document.querySelectorAll("img");
-  
+
       let target = null;
       imageList.forEach((image) => {
         if (image.alt === imageAlt) {
           target = image;
         }
       });
-  
+
       const imageRect = target.getBoundingClientRect();
-      const bottom30PercentY = imageRect.bottom - (imageRect.height * 0.35);
+      const bottom30PercentY = imageRect.bottom - imageRect.height * 0.35;
       const leftpxX = imageRect.left + 50;
       const rightpxX = leftpxX + 100;
 
-      console.log(leftpxX)
-      console.log(rightpxX)
-  
+      console.log(leftpxX);
+      console.log(rightpxX);
+
       canvas.width = browserWidth;
       canvas.height = browserHeight;
-  
+
       const image = new Image();
       image.src = messages[messageIndex].itemImage;
-  
+
       image.onload = () => {
         const animationDuration = 1500;
         const totalAnimations = 3;
         let animationCount = 0;
-  
+
         const animate = () => {
           const currentTime = Date.now() - startTime;
           //console.log(currentTime);
-  
+
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
+
           let deltaX;
           // 시간이 animationDuration의 절반보다 작으면 증가, 그렇지 않으면 감소
           if (currentTime < animationDuration / 2) {
             deltaX =
-            leftpxX +
+              leftpxX +
               ((rightpxX - leftpxX) / (animationDuration / 2)) * currentTime;
           } else {
             deltaX =
-            rightpxX -
-              ((rightpxX - leftpxX) / (animationDuration / 2)) * (currentTime - animationDuration / 2);
+              rightpxX -
+              ((rightpxX - leftpxX) / (animationDuration / 2)) *
+                (currentTime - animationDuration / 2);
           }
-  
+
           ctx.drawImage(image, deltaX, bottom30PercentY, 438, 302);
-  
+
           if (currentTime < animationDuration) {
             requestAnimationFrame(animate);
           } else {
@@ -504,14 +506,12 @@ export default function DialogueBox() {
             }
           }
         };
-  
+
         let startTime = Date.now();
         animate();
       };
     }
   }, [isCorrect]);
-  
-  
 
   // 12. 힌트 공개 여부에 대한 함수
   const handleHintOpen = () => {
@@ -520,7 +520,7 @@ export default function DialogueBox() {
     } else {
       setHintOpen(false);
     }
-  }
+  };
 
   return (
     <div>
@@ -542,25 +542,21 @@ export default function DialogueBox() {
             onClick={handleBackButtonClick}
             style={{
               position: "absolute",
-              width: "7%",
-              height: "8%",
+              width: "86px",
+              height: "69px",
               top: "20px",
-              left: "0px",
-              backgroundColor: "#242424",
+              left: -6,
+              backgroundColor: "transparent",
               color: "#FFF",
-              border: "1px solid #FFF",
+              border: "none",
               cursor: "pointer",
-              borderTop: "5px solid #3D3D3D",
-              borderLeft: "5px solid #3D3D3D",
-              borderBottom: "none",
-              borderRight: "none",
+              zIndex: 999,
             }}
           >
             <img
               style={{
-                width: "35px",
-                height: "35px",
-                float: "right",
+                width: "100%",
+                height: "90%",
               }}
               src={back}
               alt="뒤로 가기"
@@ -569,34 +565,34 @@ export default function DialogueBox() {
 
           {messages.length > 0 && (
             <Box
-            className={`shake ${isShaking ? "animate" : ""}`}
-            sx={{
-              position: "relative",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-              animation: isShaking ? "shake 3s ease" : "none",
-              width: "100%",
-              height: "100%",
-              backgroundColor: "transparent",
-            }}
-          >
-            {/* 배경 이미지를 위한 박스 */}
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
+              className={`shake ${isShaking ? "animate" : ""}`}
+              sx={{
+                position: "relative",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+                animation: isShaking ? "shake 3s ease" : "none",
                 width: "100%",
                 height: "100%",
-                backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "cover",
-                filter: modalLevelOpen ? "brightness(70%)" : "none",
-                zIndex: "-1",
+                backgroundColor: "transparent",
               }}
-            ></div>
+            >
+              {/* 배경 이미지를 위한 박스 */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "cover",
+                  filter: modalLevelOpen ? "brightness(70%)" : "none",
+                  zIndex: "-1",
+                }}
+              ></div>
               <Container
                 maxWidth="xl"
                 style={{
@@ -606,7 +602,6 @@ export default function DialogueBox() {
                   minHeight: "100vh",
                 }}
               >
-
                 <Grid
                   container
                   justifyContent="center"
@@ -621,7 +616,7 @@ export default function DialogueBox() {
                 >
                   <div
                     style={{
-                      position: "relative"
+                      position: "relative",
                     }}
                   >
                     <Box
@@ -629,65 +624,60 @@ export default function DialogueBox() {
                         width: "650px",
                         marginTop: "5%",
                         marginRight: "200px",
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
                       }}
                     >
-                      {messages.length > 0 && 
-                        messages[messageIndex].formatId === 4 && 
-                        messages[messageIndex].text === "(예제 실행)" &&
-                        (
-                        <TextField
-                          onChange={(e) => setUserInput(e.target.value)}
-                          style={{
-                            width: "650px",
-                            marginTop: "2%",
-                            marginBottom: "5%",
-                          }}
-                          InputProps={{
-                            style: {
-                              backgroundImage: `url(${exampleCodeBackground})`,
-                              backgroundSize: "100% 100%",
-                              height: "1000px",
-                              fontSize: "30px",
-                              fontFamily: "Jeongnimsaji-R",
-                            },
-                          }}
-                          value={showCodeAnimation}
-                          multiline
-                        />
-                      )}
-                      {messages.length > 0 && 
-                        messages[messageIndex].formatId === 5 && 
-                        isCorrect === false &&
-                        (
-                        
-                        <Grid
-                          container
-                          justifyContent="center"
-                          alignItems="center"
-                          style={{
+                      {messages.length > 0 &&
+                        messages[messageIndex].formatId === 4 &&
+                        messages[messageIndex].text === "(예제 실행)" && (
+                          <TextField
+                            onChange={(e) => setUserInput(e.target.value)}
+                            style={{
+                              width: "650px",
+                              marginTop: "2%",
+                              marginBottom: "5%",
+                            }}
+                            InputProps={{
+                              style: {
+                                backgroundImage: `url(${exampleCodeBackground})`,
+                                backgroundSize: "100% 100%",
+                                height: "1000px",
+                                fontSize: "30px",
+                                fontFamily: "Jeongnimsaji-R",
+                              },
+                            }}
+                            value={showCodeAnimation}
+                            multiline
+                          />
+                        )}
+                      {messages.length > 0 &&
+                        messages[messageIndex].formatId === 5 &&
+                        isCorrect === false && (
+                          <Grid
+                            container
+                            justifyContent="center"
+                            alignItems="center"
+                            style={{
                               height: "100vh",
                               display: "flex",
                               flexDirection: "column",
                               alignItems: "center",
                               justifyContent: "center",
-                          }}
+                            }}
                           >
-
                             <div
-                                style={{
-                                  display: "flex",
-                                  alignItems : "center",
-                                  justifyContent: 'center',
-                                  height: '100vh',
-                                  position: "fixed",
-                                  top: "3%",
-                                }}
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                height: "100vh",
+                                position: "fixed",
+                                top: "3%",
+                              }}
                             >
-
                               <Box
                                 style={{
                                   backgroundImage: `url(${codebox})`,
@@ -695,15 +685,13 @@ export default function DialogueBox() {
                                   height: "1000px",
                                 }}
                               >
-                                  <div
-                                    style = {{
-                                      display: "flex",
-                                     
-                                    }}
-                                  >
-
-                                  {localStorage.getItem("choice") === "mediumId"
-                                    && (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                  }}
+                                >
+                                  {localStorage.getItem("choice") ===
+                                    "mediumId" && (
                                     <img
                                       onClick={() => handleModalCode("easyId")}
                                       style={{
@@ -719,11 +707,10 @@ export default function DialogueBox() {
                                         cursor: "pointer",
                                       }}
                                     />
-                                  )} 
+                                  )}
 
-                                  {localStorage.getItem("choice") === "mediumId"
-                                    && (
-
+                                  {localStorage.getItem("choice") ===
+                                    "mediumId" && (
                                     <img
                                       onClick={() => handleModalCode("hardId")}
                                       style={{
@@ -741,10 +728,12 @@ export default function DialogueBox() {
                                     />
                                   )}
 
-                                  {localStorage.getItem("choice") === "easyId"
-                                    && (
+                                  {localStorage.getItem("choice") ===
+                                    "easyId" && (
                                     <img
-                                      onClick={() => handleModalCode("mediumId")}
+                                      onClick={() =>
+                                        handleModalCode("mediumId")
+                                      }
                                       style={{
                                         backgroundImage: `url(${middleButton})`,
                                         marginTop: "30px",
@@ -758,30 +747,29 @@ export default function DialogueBox() {
                                         cursor: "pointer",
                                       }}
                                     />
-                                  )} 
-
-                                  {localStorage.getItem("choice") === "easyId"
-                                    && (
-
-                                  <img
-                                    onClick={() => handleModalCode("hardId")}
-                                    style={{
-                                      backgroundImage: `url(${hardButton})`,
-                                      marginTop: "30px",
-                                      right: "70px",
-                                      bottom: 0,
-                                      width: "175px",
-                                      height: "50px",
-                                      backgroundRepeat: "no-repeat",
-                                      marginLeft: "10px",
-                                      outline: "none",
-                                      cursor: "pointer",
-                                    }}
-                                  />
                                   )}
 
-                                  {localStorage.getItem("choice") === "hardId"
-                                    && (
+                                  {localStorage.getItem("choice") ===
+                                    "easyId" && (
+                                    <img
+                                      onClick={() => handleModalCode("hardId")}
+                                      style={{
+                                        backgroundImage: `url(${hardButton})`,
+                                        marginTop: "30px",
+                                        right: "70px",
+                                        bottom: 0,
+                                        width: "175px",
+                                        height: "50px",
+                                        backgroundRepeat: "no-repeat",
+                                        marginLeft: "10px",
+                                        outline: "none",
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  )}
+
+                                  {localStorage.getItem("choice") ===
+                                    "hardId" && (
                                     <img
                                       onClick={() => handleModalCode("easyId")}
                                       style={{
@@ -799,23 +787,25 @@ export default function DialogueBox() {
                                     />
                                   )}
 
-                                  {localStorage.getItem("choice") === "hardId"
-                                    && (
-                                  <img
-                                    onClick={() => handleModalCode("mediumId")}
-                                    style={{
-                                      backgroundImage: `url(${middleButton})`,
-                                      marginTop: "30px",
-                                      right: "70px",
-                                      bottom: 0,
-                                      width: "175px",
-                                      height: "50px",
-                                      backgroundRepeat: "no-repeat",
-                                      marginLeft: "10px",
-                                      outline: "none",
-                                      cursor: "pointer",
-                                    }}
-                                  />
+                                  {localStorage.getItem("choice") ===
+                                    "hardId" && (
+                                    <img
+                                      onClick={() =>
+                                        handleModalCode("mediumId")
+                                      }
+                                      style={{
+                                        backgroundImage: `url(${middleButton})`,
+                                        marginTop: "30px",
+                                        right: "70px",
+                                        bottom: 0,
+                                        width: "175px",
+                                        height: "50px",
+                                        backgroundRepeat: "no-repeat",
+                                        marginLeft: "10px",
+                                        outline: "none",
+                                        cursor: "pointer",
+                                      }}
+                                    />
                                   )}
 
                                   <img
@@ -850,186 +840,181 @@ export default function DialogueBox() {
                                       cursor: "pointer",
                                     }}
                                   />
+                                </div>
 
-                                  </div>
-
-
-
-                                  <Box
+                                <Box
+                                  style={{
+                                    width: "700px",
+                                    height: "120px",
+                                    textAlign: "center",
+                                    backgroundSize: "100% 100%",
+                                    color: "black",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <Typography
+                                    variant="body1"
                                     style={{
-                                      width: "700px",
-                                      height: "120px",
+                                      whiteSpace: "pre-line", // 줄 바꿈을 허용하는 스타일
+                                      fontSize: "30px",
+                                      fontFamily: "Jeongnimsaji-R",
+                                      fontWeight: 700,
                                       textAlign: "center",
-                                      backgroundSize: "100% 100%",
-                                      color: "black",
-                                      display: "flex",
-                                      flexDirection: "column",
-                                      alignItems: "center",
-                                      justifyContent: "center",
+                                      position: "fixed",
+                                      left: 0,
+                                      right: 0,
                                     }}
                                   >
-                                    <Typography
-                                      variant="body1"
-                                      style={{
-                                        whiteSpace: "pre-line", // 줄 바꿈을 허용하는 스타일
-                                        fontSize: "30px",
-                                        fontFamily: "Jeongnimsaji-R",
-                                        fontWeight: 700,
-                                        textAlign: "center",
-                                        position: "fixed",
-                                        left: 0,
-                                        right: 0,
-                                      }}
-                                    >
-                                      {messages[messageIndex].text}
-                                    </Typography>
-                                  </Box>
+                                    {messages[messageIndex].text}
+                                  </Typography>
+                                </Box>
 
-                                  <textarea
-                                    onChange={handleInputEnter}
-                                    style={{
-                                      position: "fixed",
-                                      width: "auto",
-                                      height: "800px",
-                                      marginTop : "10%",
-                                      marginBottom: "5%",
-                                      left: "5%",
-                                      right: "5%",
-                                      backgroundColor: "rgba(0, 0, 0, 0)",
-                                      fontFamily: "Jeongnimsaji-R",
-                                      border: "none",
-                                      outline: "none",
-                                      fontSize: "25px",
-                                      overflow: "hidden",
-                                    }}
-                                    defaultValue={localStorage.getItem("codeGuide")}
-                                  />
-
+                                <textarea
+                                  onChange={handleInputEnter}
+                                  style={{
+                                    position: "fixed",
+                                    width: "auto",
+                                    height: "800px",
+                                    marginTop: "10%",
+                                    marginBottom: "5%",
+                                    left: "5%",
+                                    right: "5%",
+                                    backgroundColor: "rgba(0, 0, 0, 0)",
+                                    fontFamily: "Jeongnimsaji-R",
+                                    border: "none",
+                                    outline: "none",
+                                    fontSize: "25px",
+                                    overflow: "hidden",
+                                  }}
+                                  defaultValue={localStorage.getItem(
+                                    "codeGuide"
+                                  )}
+                                />
                               </Box>
-                          </div>
-                        </Grid>
-                      )}
+                            </div>
+                          </Grid>
+                        )}
                     </Box>
 
                     {messages.length > 0 &&
-                    (
-                      (messages[messageIndex].formatId === 4 && messages[messageIndex].text !== "(예제 실행)") ||
-                      (messages[messageIndex].formatId === 5 && isCorrect)
-                    ) && ( 
-                      <img
-                        src={messages[messageIndex].characterImage}
-                        alt="Character Image"
-                        style={{
-                          width: "700px",
-                          height: "800px",
-                          marginTop: "2%",
-                          marginBottom: "5%",
-                          opacity: isImageVisible ? 1 : 0.3,
-                          transition: "opacity 2s",
-                          position: 'absolute',
-                          top: '50%',
-                          left: '50%',
-                          transform: 'translate(-50%, -50%)',
-                        }}
-                      />
-                    )}
+                      ((messages[messageIndex].formatId === 4 &&
+                        messages[messageIndex].text !== "(예제 실행)") ||
+                        (messages[messageIndex].formatId === 5 &&
+                          isCorrect)) && (
+                        <img
+                          src={messages[messageIndex].characterImage}
+                          alt="Character Image"
+                          style={{
+                            width: "700px",
+                            height: "800px",
+                            marginTop: "2%",
+                            marginBottom: "5%",
+                            opacity: isImageVisible ? 1 : 0.3,
+                            transition: "opacity 2s",
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            transform: "translate(-50%, -50%)",
+                          }}
+                        />
+                      )}
 
                     {modalLevelOpen && (
                       <div
-                      className="modal-container"
-                      style={{
-                        justifyContent: "space-between",
-                        zIndex: 9998,
-                      }}
-                    >
-                      <div 
-                        className="modal hard" 
-                        style={hardLevelModalStyle}
-                        onClick={() => handleModalCode("hardId")}
-                        >
-                        <div
-                          className="modal-content"
-                          style={{ marginTop: "60px" }}
-                        >
-                          <h1 style={{ color: "white" }}>어려운 방법</h1>
-                        </div>
-                      </div>
-
-                      <div
-                        className="modal medium"
-                        style={middleLevelModalStyle}
-                        onClick={() => handleModalCode("mediumId")}
+                        className="modal-container"
+                        style={{
+                          justifyContent: "space-between",
+                          zIndex: 9998,
+                        }}
                       >
                         <div
-                          className="modal-content"
-                          style={{ marginTop: "60px" }}
+                          className="modal hard"
+                          style={hardLevelModalStyle}
+                          onClick={() => handleModalCode("hardId")}
                         >
-                          <h1 style={{ color: "white" }}>중간 방법</h1>
+                          <div
+                            className="modal-content"
+                            style={{ marginTop: "60px" }}
+                          >
+                            <h1 style={{ color: "white" }}>어려운 방법</h1>
+                          </div>
                         </div>
-                      </div>
 
-                      <div 
-                        className="modal easy" 
-                        style={easyLevelModalStyle}
-                        onClick={() => handleModalCode("easyId")}
-                        >
                         <div
-                          className="modal-content"
-                          style={{ marginTop: "60px" }}
+                          className="modal medium"
+                          style={middleLevelModalStyle}
+                          onClick={() => handleModalCode("mediumId")}
                         >
-                          <h1 style={{ color: "white" }}>쉬운 방법</h1>
+                          <div
+                            className="modal-content"
+                            style={{ marginTop: "60px" }}
+                          >
+                            <h1 style={{ color: "white" }}>중간 방법</h1>
+                          </div>
+                        </div>
+
+                        <div
+                          className="modal easy"
+                          style={easyLevelModalStyle}
+                          onClick={() => handleModalCode("easyId")}
+                        >
+                          <div
+                            className="modal-content"
+                            style={{ marginTop: "60px" }}
+                          >
+                            <h1 style={{ color: "white" }}>쉬운 방법</h1>
+                          </div>
                         </div>
                       </div>
-                    </div>
                     )}
                   </div>
 
                   {hintOpen && (
                     <div
-                    style={{
-                      opacity: isImageVisible ? 1 : 0.3,
-                      transition: "opacity 2s",
-                      width: "100%",
-                      height: "45%",
-                      display: "flex",
-                      alignItems: "center",
-                      flexDirection: "column",
-                      position: "fixed" /* 요소를 고정시킴 */,
-                      bottom: 0 /* 하단에 고정 */,
-                      background:
-                        "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
-                    }}
-                  >
+                      style={{
+                        opacity: isImageVisible ? 1 : 0.3,
+                        transition: "opacity 2s",
+                        width: "100%",
+                        height: "45%",
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "column",
+                        position: "fixed" /* 요소를 고정시킴 */,
+                        bottom: 0 /* 하단에 고정 */,
+                        background:
+                          "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
+                      }}
+                    >
+                      <Typography
+                        variant="h3"
+                        style={{
+                          textAlign: "center",
+                          color: "white",
+                          fontSize: "40px",
+                          fontFamily: "LINE Seed Sans KR",
+                          fontWeight: "bold",
+                          marginTop: "5%",
+                        }}
+                      >
+                        {localStorage.getItem("speaker")}
+                      </Typography>
 
-                          <Typography
-                            variant="h3"
-                            style={{
-                              textAlign: "center",
-                              color: "white",
-                              fontSize: "40px",
-                              fontFamily: "LINE Seed Sans KR",
-                              fontWeight: "bold",
-                              marginTop: "5%",
-                            }}
-                          >
-                            {localStorage.getItem("speaker")}
-                          </Typography>
-
-
-                          <Typography
-                            variant="h3"
-                            style={{
-                              textAlign: "center",
-                              color: "white",
-                              fontSize: "30px",
-                              fontFamily: "LINE Seed Sans KR",
-                              marginTop: "3%", 
-                            }}
-                          >
-                            {messages[messageIndex].hint}
-                          </Typography>
-                  </div>
-
+                      <Typography
+                        variant="h3"
+                        style={{
+                          textAlign: "center",
+                          color: "white",
+                          fontSize: "30px",
+                          fontFamily: "LINE Seed Sans KR",
+                          marginTop: "3%",
+                        }}
+                      >
+                        {messages[messageIndex].hint}
+                      </Typography>
+                    </div>
                   )}
 
                   {messages.length > 0 &&
@@ -1050,7 +1035,7 @@ export default function DialogueBox() {
                         }}
                       >
                         {messages[messageIndex].speaker !== "USER" &&
-                          messages[messageIndex].text !== "(예제 실행)" ? (
+                        messages[messageIndex].text !== "(예제 실행)" ? (
                           <Typography
                             variant="h3"
                             style={{
