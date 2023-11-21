@@ -270,6 +270,10 @@ export default function DialogueBox() {
 
   // 7. NextMessage 핸들링
   const handleNextMessage = () => {
+
+    const audio = new Audio("/NextButton2.wav");
+    audio.play();
+
     // 1. 메세지 내용 출력
     if (messageIndex < messages.length - 1) {
       setMessageIndex(messageIndex + 1);
