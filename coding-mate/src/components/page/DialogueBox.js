@@ -351,12 +351,8 @@ export default function DialogueBox() {
 
           <Box
             className={`shake ${isShaking ? "animate" : ""}`}
-            style={{
-              backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-            }}
             sx={{
+              position: "relative",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -367,6 +363,21 @@ export default function DialogueBox() {
               backgroundColor: "transparent",
             }}
           >
+            {/* 배경 이미지를 위한 박스 */}
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+                filter: modalOpen ? "brightness(70%)" : "none",
+                zIndex: "-1",
+              }}
+            ></div>
             <Container maxWidth="xl">
               <Grid
                 container
@@ -389,7 +400,7 @@ export default function DialogueBox() {
                       height: "1200px",
                       marginTop: "7%",
                       marginBottom: "3%",
-                      opacity: isImageVisible ? 1 : 0.3,
+                      opacity: isImageVisible ? 1 : 0.5,
                       transition: "opacity 2s",
                     }}
                   />

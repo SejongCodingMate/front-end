@@ -334,22 +334,27 @@ export default function ItemBox() {
 
       <Box
         className={`shake ${isShaking ? "animate" : ""}`}
-        style = {{
-          backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-        }}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          animation: isShaking ? "shake 3s ease" : "none",
-          width: "100%",
-          height: "100%",
-          backgroundColor: "transparent",
+        style={{
+          position: "relative",
+          overflow: "hidden",
         }}
       >
+        {/* 백그라운드 이미지를 맨 뒤로 보내기 위해 zIndex를 설정합니다. */}
+        <div
+          style={{
+            position: "absolute",
+            top: "0",
+            left: "0",
+            width: "100%",
+            height: "100%",
+            backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            filter: "brightness(70%)", // 배경 이미지에 흐림 처리 및 어둡게 설정
+            zIndex: "-1",
+          }}
+        ></div>
+
         <Container maxWidth="xl"        >
           <Grid
             container
@@ -374,7 +379,7 @@ export default function ItemBox() {
                   height: "900px",
                   marginTop: "20%",
                   marginBottom: "5%",
-                  opacity: 0.5,
+                  opacity: 0.7,
                   transition: "opacity 2s",
                 }}
               />

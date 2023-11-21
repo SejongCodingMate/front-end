@@ -569,23 +569,34 @@ export default function DialogueBox() {
 
           {messages.length > 0 && (
             <Box
-              className={`shake ${isShaking ? "animate" : ""}`}
+            className={`shake ${isShaking ? "animate" : ""}`}
+            sx={{
+              position: "relative",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+              animation: isShaking ? "shake 3s ease" : "none",
+              width: "100%",
+              height: "100%",
+              backgroundColor: "transparent",
+            }}
+          >
+            {/* 배경 이미지를 위한 박스 */}
+            <div
               style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
                 backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "cover",
+                filter: modalLevelOpen ? "brightness(70%)" : "none",
+                zIndex: "-1",
               }}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-                animation: isShaking ? "shake 3s ease" : "none",
-                width: "100%",
-                height: "100%",
-                backgroundColor: "transparent",
-              }}
-            >
+            ></div>
               <Container
                 maxWidth="xl"
                 style={{
