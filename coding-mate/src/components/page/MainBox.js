@@ -83,7 +83,7 @@ export default function MainBox() {
       position: "chapter1",
       label: "Chapter 1",
       chapterId: 1,
-      imgPosition: { top: "42.5%", left: "6.8%" },
+      imgPosition: { top: "49.5%", left: "6.8%" },
       imageUrl:
         "https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/main/1.png",
     },
@@ -91,7 +91,7 @@ export default function MainBox() {
       position: "chapter2",
       label: "Chapter 2",
       chapterId: 2,
-      imgPosition: { top: "30%", left: "27.5%" },
+      imgPosition: { top: "37%", left: "27.5%" },
       imageUrl:
         "https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/main/2.png",
     },
@@ -116,12 +116,12 @@ export default function MainBox() {
   const accessToken = localStorage.getItem("accessToken");
   const userChapterId = localStorage.getItem("chapterId");
 
-  // useEffect(() => {
-  //   // window.onload 이벤트 리스너 등록
-  //   const audio = new Audio("/backgroundMusic.mp3");
-  //   audio.volume = 0.2;
-  //   audio.play();
-  // }, []);
+  useEffect(() => {
+    // window.onload 이벤트 리스너 등록
+    const audio = new Audio("/backgroundMusic.mp3");
+    audio.volume = 0.2;
+    audio.play();
+  }, []);
 
   // 1. 챕터 조회 메서드
   useEffect(() => {
@@ -160,81 +160,81 @@ export default function MainBox() {
     const browserWidth = window.innerWidth;
     const browserHeight = window.innerHeight;
 
-    if (chapterId > 0 && chapterId < 3 && parseInt(nextStoryId) === 0) {
-      const fromImagePositions = chapterButtons.map(() => ({
-        top:
-          (parseInt(chapterButtons[chapterId - 1].imgPosition.top, 10) *
-            browserHeight) /
-          100,
-        left:
-          (parseInt(chapterButtons[chapterId - 1].imgPosition.left, 10) *
-            browserWidth) /
-          100,
-      }));
+    // if (chapterId > 0 && chapterId < 3 && parseInt(nextStoryId) === 0) {
+    //   const fromImagePositions = chapterButtons.map(() => ({
+    //     top:
+    //       (parseInt(chapterButtons[chapterId - 1].imgPosition.top, 10) *
+    //         browserHeight) /
+    //       100,
+    //     left:
+    //       (parseInt(chapterButtons[chapterId - 1].imgPosition.left, 10) *
+    //         browserWidth) /
+    //       100,
+    //   }));
 
-      const toImagePositions = chapterButtons.map(() => ({
-        top:
-          (parseInt(chapterButtons[chapterId].imgPosition.top, 10) *
-            browserHeight) /
-          100,
-        left:
-          (parseInt(chapterButtons[chapterId].imgPosition.left, 10) *
-            browserWidth) /
-          100,
-      }));
+    //   const toImagePositions = chapterButtons.map(() => ({
+    //     top:
+    //       (parseInt(chapterButtons[chapterId].imgPosition.top, 10) *
+    //         browserHeight) /
+    //       100,
+    //     left:
+    //       (parseInt(chapterButtons[chapterId].imgPosition.left, 10) *
+    //         browserWidth) /
+    //       100,
+    //   }));
 
-      canvas.width = browserWidth;
-      canvas.height = browserHeight;
+    // canvas.width = browserWidth;
+    // canvas.height = browserHeight;
 
-      const image = new Image();
-      image.src = animationUrl;
+    // const image = new Image();
+    // image.src = animationUrl;
 
-      image.onload = () => {
-        const animationDuration = 4000;
-        const startTime = Date.now();
+    //     image.onload = () => {
+    //       const animationDuration = 4000;
+    //       const startTime = Date.now();
 
-        const animate = () => {
-          // 현재 시간 계산
-          const currentTime = Date.now() - startTime;
+    //       const animate = () => {
+    //         // 현재 시간 계산
+    //         const currentTime = Date.now() - startTime;
 
-          // Canvas를 지우고 새로 그리기
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //         // Canvas를 지우고 새로 그리기
+    //         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-          chapterButtons.forEach((button, index) => {
-            const { left, top } = fromImagePositions[index];
-            // 이미지를 현재 위치로 그리기
-            const deltaX =
-              ((toImagePositions[index].left - left) / animationDuration) *
-              currentTime;
-            const deltaY =
-              ((toImagePositions[index].top - top) / animationDuration) *
-              currentTime;
-            const leftInPixels = left + deltaX;
-            const topInPixels = top + deltaY;
+    //         chapterButtons.forEach((button, index) => {
+    //           const { left, top } = fromImagePositions[index];
+    //           // 이미지를 현재 위치로 그리기
+    //           const deltaX =
+    //             ((toImagePositions[index].left - left) / animationDuration) *
+    //             currentTime;
+    //           const deltaY =
+    //             ((toImagePositions[index].top - top) / animationDuration) *
+    //             currentTime;
+    //           const leftInPixels = left + deltaX;
+    //           const topInPixels = top + deltaY;
 
-            // 이미지 그리기
-            ctx.drawImage(image, leftInPixels, topInPixels, 153, 257);
-          });
+    //           // 이미지 그리기
+    //           ctx.drawImage(image, leftInPixels, topInPixels, 153, 257);
+    //         });
 
-          // 애니메이션 종료 조건 설정
-          if (currentTime < animationDuration) {
-            requestAnimationFrame(animate);
-          } else {
-            setAnimatioIindex(1);
-            setChapterUrl(animationUrl);
-            setAnimationEnd(true);
-          }
-        };
+    //         // 애니메이션 종료 조건 설정
+    //         if (currentTime < animationDuration) {
+    //           requestAnimationFrame(animate);
+    //         } else {
+    //           setAnimatioIindex(1);
+    //           setChapterUrl(animationUrl);
+    //           setAnimationEnd(true);
+    //         }
+    //       };
 
-        animate();
-        localStorage.setItem("nextStoryId", firstId);
-        fetchStorySave(firstId, accessToken);
-      };
-    } else {
-      setAnimatioIindex(1);
-      setChapterUrl(animationUrl);
-      setAnimationEnd(true);
-    }
+    //       animate();
+    //       localStorage.setItem("nextStoryId", firstId);
+    //       fetchStorySave(firstId, accessToken);
+    //     };
+    //   } else {
+    setAnimatioIindex(1);
+    setChapterUrl(animationUrl);
+    setAnimationEnd(true);
+    //   }
   }, [animationUrl]);
 
   // 3. Button 활성화 메서드
