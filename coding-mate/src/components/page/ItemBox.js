@@ -160,7 +160,7 @@ export default function ItemBox() {
         }));
         console.log(initialMessages[0].characterImage);
         setMessages(initialMessages);
-        showPicture()
+        showPicture();
         setItemImage(initialMessages[0].text);
       })
       .catch((error) => {
@@ -180,6 +180,8 @@ export default function ItemBox() {
 
   // 4. 아이템 등장
   const showPicture = () => {
+    const audio = new Audio("/sawSound.wav");
+    audio.play();
     setModalOpen(false);
     setCharacterImageVisible(true);
   };

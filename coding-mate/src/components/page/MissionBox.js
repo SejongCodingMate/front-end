@@ -270,7 +270,6 @@ export default function DialogueBox() {
 
   // 7. NextMessage 핸들링
   const handleNextMessage = () => {
-
     const audio = new Audio("/NextButton2.wav");
     audio.play();
 
@@ -475,6 +474,8 @@ export default function DialogueBox() {
         const animationDuration = 1500;
         const totalAnimations = 3;
         let animationCount = 0;
+        const audio = new Audio("/SAWSOUND2.mp3");
+        audio.play();
 
         const animate = () => {
           const currentTime = Date.now() - startTime;
@@ -939,10 +940,10 @@ export default function DialogueBox() {
                           style={hardLevelModalStyle}
                           onClick={() => handleModalCode("hardId")}
                           onMouseEnter={(e) => {
-                            e.target.style.transform = "scale(1.05)"; 
+                            e.target.style.transform = "scale(1.05)";
                           }}
                           onMouseLeave={(e) => {
-                            e.target.style.transform = "scale(1)"; 
+                            e.target.style.transform = "scale(1)";
                           }}
                         >
                           <div
@@ -958,10 +959,10 @@ export default function DialogueBox() {
                           style={middleLevelModalStyle}
                           onClick={() => handleModalCode("mediumId")}
                           onMouseEnter={(e) => {
-                            e.target.style.transform = "scale(1.05)"; 
+                            e.target.style.transform = "scale(1.05)";
                           }}
                           onMouseLeave={(e) => {
-                            e.target.style.transform = "scale(1)"; 
+                            e.target.style.transform = "scale(1)";
                           }}
                         >
                           <div
@@ -977,10 +978,10 @@ export default function DialogueBox() {
                           style={easyLevelModalStyle}
                           onClick={() => handleModalCode("easyId")}
                           onMouseEnter={(e) => {
-                            e.target.style.transform = "scale(1.05)"; 
+                            e.target.style.transform = "scale(1.05)";
                           }}
                           onMouseLeave={(e) => {
-                            e.target.style.transform = "scale(1)"; 
+                            e.target.style.transform = "scale(1)";
                           }}
                         >
                           <div
