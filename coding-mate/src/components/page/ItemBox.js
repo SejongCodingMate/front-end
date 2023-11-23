@@ -159,8 +159,8 @@ export default function ItemBox() {
           backgroundImage: message.story.backgroundImage,
         }));
         console.log(initialMessages[0].characterImage);
-
         setMessages(initialMessages);
+        showPicture()
         setItemImage(initialMessages[0].text);
       })
       .catch((error) => {
@@ -180,36 +180,8 @@ export default function ItemBox() {
 
   // 4. 아이템 등장
   const showPicture = () => {
-    setMessageIndex(messageIndex + 1);
-    console.log(messages[messageIndex].text);
     setModalOpen(false);
     setCharacterImageVisible(true);
-
-    const nextStoryId = messages[messageIndex]?.nextStoryId + 1;
-    fetchStory(nextStoryId, accessToken)
-      .then((data) => {
-        const res = data.data[0].story.formatId;
-        if (res === 1 || res === 2) {
-          window.location.href = "/dialogue";
-        } else if (res === 3) {
-          showPicture();
-        }
-        const newMessages = data.data.map((message) => ({
-          speaker: message.speaker,
-          text: message.text,
-          currentStoryId: message.story.id,
-          nextStoryId: message.story.nextId,
-          formatId: message.story.formatId,
-          screenEffect: message.screenEffect,
-          soundEffect: message.soundEffect,
-          characterImage: message.characterImage,
-          backgroundImage: message.story.backgroundImage,
-        }));
-        setMessages([...messages, ...newMessages]);
-      })
-      .catch((error) => {
-        console.error("다음 스토리 불러오기 오류:", error);
-      });
   };
 
   // 5. NextMessage 핸들링
