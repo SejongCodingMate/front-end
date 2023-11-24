@@ -306,6 +306,22 @@ export default function MainBox() {
     navigate("/login");
   };
 
+  const fadeInRightKeyframes = `
+  @keyframes fadeInRight {
+    from {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+`;
+  const fadeInRightAnimation = {
+    animation: "fadeInRight 1.5s ease-out",
+    animationName: "fadeInRight", // 필요한 경우, 키 프레임 이름을 지정
+  };
   return (
     <Box
       sx={{
@@ -349,6 +365,8 @@ export default function MainBox() {
           />
         </button>
 
+        <style>{fadeInRightKeyframes}</style>
+
         <img
           id="1"
           src={clearButton}
@@ -357,13 +375,13 @@ export default function MainBox() {
             position: "fixed",
             top: "27%",
             left: "23%",
-            opacity:
-              userChapterId >
-              (firstChapterImageRef.current
-                ? parseInt(firstChapterImageRef.current.id)
-                : 1)
-                ? 1
-                : 0,
+            opacity: userChapterId === "1" ? 0 : 1,
+            ...(userChapterId === "2"
+              ? {
+                  animation: "fadeInRight 1.5s ease-out",
+                  animationName: "fadeInRight",
+                }
+              : {}),
           }}
         />
 
@@ -375,13 +393,13 @@ export default function MainBox() {
             position: "fixed",
             top: "18%",
             left: "44%",
-            opacity:
-              userChapterId >
-              (secondChapterImageRef.current
-                ? parseInt(secondChapterImageRef.current.id)
-                : 2)
-                ? 1
-                : 0,
+            opacity: userChapterId <= "2" ? 0 : 1,
+            ...(userChapterId === "3"
+              ? {
+                  animation: "fadeInRight 1.5s ease-out",
+                  animationName: "fadeInRight",
+                }
+              : {}),
           }}
         />
 
@@ -393,13 +411,13 @@ export default function MainBox() {
             position: "fixed",
             top: "23%",
             left: "65%",
-            opacity:
-              userChapterId >
-              (thirdChapterImageRef.current
-                ? parseInt(thirdChapterImageRef.current.id)
-                : 3)
-                ? 1
-                : 0,
+            opacity: userChapterId <= "3" ? 0 : 1,
+            ...(userChapterId === "4"
+              ? {
+                  animation: "fadeInRight 1.5s ease-out",
+                  animationName: "fadeInRight",
+                }
+              : {}),
           }}
         />
 
@@ -411,13 +429,13 @@ export default function MainBox() {
             position: "fixed",
             top: "33%",
             left: "90%",
-            opacity:
-              userChapterId >
-              (finalChapterImageRef.current
-                ? parseInt(finalChapterImageRef.current.id)
-                : 3)
-                ? 1
-                : 0,
+            opacity: userChapterId <= "4" ? 0 : 1,
+            ...(userChapterId === "5"
+              ? {
+                  animation: "fadeInRight 1.5s ease-out",
+                  animationName: "fadeInRight",
+                }
+              : {}),
           }}
         />
       </div>
