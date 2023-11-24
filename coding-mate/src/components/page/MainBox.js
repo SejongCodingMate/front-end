@@ -77,6 +77,8 @@ export default function MainBox() {
   const secondChapterImageRef = useRef();
   const thirdChapterImageRef = useRef();
   const finalChapterImageRef = useRef();
+  const [topImagePosition, setTopImagePosition] = useState("");
+  const [leftImagePosition, setLeftImagePosition] = useState("");
 
   const chapterButtons = [
     {
@@ -99,7 +101,7 @@ export default function MainBox() {
       position: "chapter3",
       label: "Chapter 3",
       chapterId: 3,
-      imgPosition: { top: "20%", left: "48.2%" },
+      imgPosition: { top: "25%", left: "48.2%" },
       imageUrl:
         "https://sejongcodingmate.s3.ap-northeast-2.amazonaws.com/main/3.png",
     },
@@ -304,6 +306,32 @@ export default function MainBox() {
 
   const handleBackButtonClick = () => {
     navigate("/login");
+  };
+  // 7. 캐릭터 이미지 초기 위치 설정
+  useEffect(() => {
+    let top, left;
+    chapterButtons.map((chapter, index) => {
+      if (parseInt(userChapterId) === chapter.chapterId) {
+        top = chapter.imgPosition.top;
+        left = chapter.imgPosition.left;
+      }
+    })
+    setTopImagePosition(top);
+    setLeftImagePosition(left);
+  }, [userChapterId]);
+
+  // 8. 수풀 클릭 시 캐릭터 이미지 위치 변경 함수
+  const handleBushButtonClick = () => {
+    let top, left;
+    chapterButtons.map((chapter, index) => {
+      if (parseInt(userChapterId) + 1 === chapter.chapterId) {
+        top = chapter.imgPosition.top;
+        left = chapter.imgPosition.left;
+      }
+    })
+    setTopImagePosition(top);
+    setLeftImagePosition(left);
+    setDialogueVisible((prev) => !prev);
   };
 
   return (
@@ -519,8 +547,8 @@ export default function MainBox() {
           width: "100px",
           height: "100px",
           zIndex: 2,
-          top: chapter.imgPosition.top,
-          left: chapter.imgPosition.left,
+          top: topImagePosition,
+          left: leftImagePosition,
           display: animationEnd ? "block" : "none",
         };
 
@@ -532,7 +560,7 @@ export default function MainBox() {
           <React.Fragment key={`fragment-${index}`}>
             <div key={index} style={buttonStyles}>
               <button
-                onClick={() => setDialogueVisible((prev) => !prev)}
+                onClick={handleBushButtonClick}
                 disabled={!isCurrentChapterActive}
                 style={{
                   background: "none",
