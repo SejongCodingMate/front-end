@@ -9,56 +9,7 @@ import back from "../../assets/image/backButton.png";
 import clearButton from "../../assets/image/clear_button.png";
 import nextButton from "../../assets/image/next.png";
 import arrow from "../../assets/image/Arrow.png";
-
-const fetchChapterSave = (nextChapterId, accessToken) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", `Bearer ${accessToken}`);
-  myHeaders.append("Content-Type", "application/json");
-
-  var raw = JSON.stringify({
-    nextChapterId: nextChapterId,
-  });
-
-  const requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow",
-  };
-
-  return fetch(`http://3.37.164.99/api/chapter/save`, requestOptions)
-    .then((response) => response.json())
-    .then((data) => data)
-    .catch((error) => {
-      console.error("챕터 불러오기 오류:", error);
-      throw error;
-    });
-};
-
-const fetchStorySave = (nextStoryId, accessToken) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", `Bearer ${accessToken}`);
-  myHeaders.append("Content-Type", "application/json");
-
-  var raw = JSON.stringify({
-    nextStoryId: nextStoryId,
-  });
-
-  const requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow",
-  };
-
-  return fetch(`http://3.37.164.99/api/story/save`, requestOptions)
-    .then((response) => response.json())
-    .then((data) => data)
-    .catch((error) => {
-      console.error("스토리 불러오기 오류:", error);
-      throw error;
-    });
-};
+import { axiosStory, saveStory, axiosChapterSave } from '../../api/axios.js';
 
 export default function MainBox() {
   const [imagePosition, setImagePosition] = useState("chapter1");
@@ -156,87 +107,10 @@ export default function MainBox() {
   // 2. 애니메이션 메서드
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    const chapterId = parseInt(userChapterId - 1);
-    const nextStoryId = localStorage.getItem("nextStoryId");
-    const browserWidth = window.innerWidth;
-    const browserHeight = window.innerHeight;
 
-    // if (chapterId > 0 && chapterId < 3 && parseInt(nextStoryId) === 0) {
-    //   const fromImagePositions = chapterButtons.map(() => ({
-    //     top:
-    //       (parseInt(chapterButtons[chapterId - 1].imgPosition.top, 10) *
-    //         browserHeight) /
-    //       100,
-    //     left:
-    //       (parseInt(chapterButtons[chapterId - 1].imgPosition.left, 10) *
-    //         browserWidth) /
-    //       100,
-    //   }));
-
-    //   const toImagePositions = chapterButtons.map(() => ({
-    //     top:
-    //       (parseInt(chapterButtons[chapterId].imgPosition.top, 10) *
-    //         browserHeight) /
-    //       100,
-    //     left:
-    //       (parseInt(chapterButtons[chapterId].imgPosition.left, 10) *
-    //         browserWidth) /
-    //       100,
-    //   }));
-
-    // canvas.width = browserWidth;
-    // canvas.height = browserHeight;
-
-    // const image = new Image();
-    // image.src = animationUrl;
-
-    //     image.onload = () => {
-    //       const animationDuration = 4000;
-    //       const startTime = Date.now();
-
-    //       const animate = () => {
-    //         // 현재 시간 계산
-    //         const currentTime = Date.now() - startTime;
-
-    //         // Canvas를 지우고 새로 그리기
-    //         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    //         chapterButtons.forEach((button, index) => {
-    //           const { left, top } = fromImagePositions[index];
-    //           // 이미지를 현재 위치로 그리기
-    //           const deltaX =
-    //             ((toImagePositions[index].left - left) / animationDuration) *
-    //             currentTime;
-    //           const deltaY =
-    //             ((toImagePositions[index].top - top) / animationDuration) *
-    //             currentTime;
-    //           const leftInPixels = left + deltaX;
-    //           const topInPixels = top + deltaY;
-
-    //           // 이미지 그리기
-    //           ctx.drawImage(image, leftInPixels, topInPixels, 153, 257);
-    //         });
-
-    //         // 애니메이션 종료 조건 설정
-    //         if (currentTime < animationDuration) {
-    //           requestAnimationFrame(animate);
-    //         } else {
-    //           setAnimatioIindex(1);
-    //           setChapterUrl(animationUrl);
-    //           setAnimationEnd(true);
-    //         }
-    //       };
-
-    //       animate();
-    //       localStorage.setItem("nextStoryId", firstId);
-    //       fetchStorySave(firstId, accessToken);
-    //     };
-    //   } else {
     setAnimatioIindex(1);
     setChapterUrl(animationUrl);
     setAnimationEnd(true);
-    //   }
   }, [animationUrl]);
 
   // 3. Button 활성화 메서드
@@ -254,12 +128,12 @@ export default function MainBox() {
     if (parseInt(nextStoryId) < firstId) {
       localStorage.setItem("nextStoryId", firstId);
 
-      fetchStorySave(firstId, accessToken);
+      saveStory(firstId, accessToken);
       return firstId;
     } else if (parseInt(nextStoryId) > lastId) {
       localStorage.setItem("chapterId", parseInt(userChapterId) + 1);
 
-      fetchChapterSave(parseInt(userChapterId) + 1, accessToken);
+      axiosChapterSave(parseInt(userChapterId) + 1, accessToken);
 
       window.alert("스토리 진행에 오류가 발생했습니다.");
       window.location.href = "/main";
@@ -275,15 +149,7 @@ export default function MainBox() {
     if (nextStoryId !== null) {
       nextStoryId = checkNextStoryId(nextStoryId);
 
-      const requestOptions = {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
-
-      fetch(`http://3.37.164.99/api/story/${nextStoryId}`, requestOptions)
-        .then((response) => response.json())
+      axiosStory(nextStoryId, accessToken)
         .then((data) => {
           const res = data.data[0].story.formatId;
           console.log(res);
@@ -291,7 +157,7 @@ export default function MainBox() {
             window.location.href = "/mission";
           }
           if (res === 3) {
-            window.location.href = "/Item";
+            window.location.href = "/item";
           }
           if (res === 1 || res === 2) {
             window.location.href = "/dialogue";
