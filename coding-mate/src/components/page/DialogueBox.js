@@ -12,6 +12,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "../../assets/fonts/Font.css";
 import nextButton from "../../assets/image/next.png";
 import { axiosStory, saveStory, axiosChapterSave } from '../../api/axios.js';
+import { showTextSequentially } from '../../assets/animation/TextSplitAnimation.js';
 
 export default function DialogueBox() {
   const [messages, setMessages] = useState([]);
@@ -40,34 +41,7 @@ export default function DialogueBox() {
     navigate("/main");
   };
 
-  // 2. 글자 스플릿하는 함수
-  function splitText(text) {
-    return text.split("");
-  }
-
-  // 3. 대사 애니메이션
-  function showTextSequentially(text, setText, interval, callback) {
-    const characters = splitText(text);
-    let currentIndex = 0;
-    let currentText = "";
-
-    function showNextCharacter() {
-      if (currentIndex < characters.length) {
-        currentText += characters[currentIndex];
-        setText(currentText);
-        currentIndex++;
-        setTimeout(showNextCharacter, interval);
-      } else {
-        if (typeof callback === "function") {
-          callback();
-        }
-      }
-    }
-
-    showNextCharacter();
-  }
-
-  // 4. 애니메이션 UseEFfect
+  // 2. text split 애니메이션 UseEFfect
   useEffect(() => {
     if (messages[messageIndex]) {
       setMessage("");
@@ -85,7 +59,7 @@ export default function DialogueBox() {
     }
   }, [messageIndex]);
 
-  // 5. 초기 랜더링
+  // 3. 초기 랜더링
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     const nextStoryId = localStorage.getItem("nextStoryId");
@@ -120,7 +94,7 @@ export default function DialogueBox() {
       });
   }, []);
 
-  // 7. 모달 오픈
+  // 4. 모달 오픈
   const openModal = (newMessages) => {
     setModalOpen(true);
     setImageVisible(false);
@@ -160,7 +134,7 @@ export default function DialogueBox() {
       });
   };
 
-  // 8. 모달 닫힘
+  // 5. 모달 닫힘
   const handleModalClick = () => {
     // 모달을 닫는 이벤트 처리
     setModalOpen(false);
@@ -170,7 +144,7 @@ export default function DialogueBox() {
     setMessageIndex(messageIndex + 1);
   };
 
-  // 9. NextMessage 핸들링
+  // 6. NextMessage 핸들링
   const handleNextMessage = () => {
     const audio = new Audio("/NextButton2.wav");
     audio.play();

@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import "../../assets/fonts/Font.css";
 import { axiosStory, saveStory, axiosChapterSave } from '../../api/axios.js';
+import { showTextSequentially } from '../../assets/animation/TextSplitAnimation.js';
 
 export default function ItemBox() {
   const [messages, setMessages] = useState([]);
@@ -28,31 +29,6 @@ export default function ItemBox() {
   const handleBackButtonClick = () => {
     navigate("/main");
   };
-
-  function splitText(text) {
-    return text.split("");
-  }
-
-  function showTextSequentially(text, setText, interval, callback) {
-    const characters = splitText(text);
-    let currentIndex = 0;
-    let currentText = "";
-
-    function showNextCharacter() {
-      if (currentIndex < characters.length) {
-        currentText += characters[currentIndex];
-        setText(currentText);
-        currentIndex++;
-        setTimeout(showNextCharacter, interval);
-      } else {
-        if (typeof callback === "function") {
-          callback();
-        }
-      }
-    }
-
-    showNextCharacter();
-  }
 
   useEffect(() => {
     if (messages[messageIndex]) {
@@ -109,7 +85,7 @@ export default function ItemBox() {
     };
   }, []);
 
-  // 4. 아이템 등장
+  // 2. 아이템 등장
   const showPicture = () => {
     const audio = new Audio("/sawSound.wav");
     audio.play();
@@ -117,7 +93,7 @@ export default function ItemBox() {
     setCharacterImageVisible(true);
   };
 
-  // 5. NextMessage 핸들링
+  // 3. NextMessage 핸들링
   const handleNextMessage = () => {
     const audio = new Audio("/NextButton2.wav");
     audio.play();

@@ -30,6 +30,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import "../../assets/fonts/Font.css";
 import { axiosStory, saveStory, axiosChapterSave } from '../../api/axios.js';
+import { showTextSequentially } from '../../assets/animation/TextSplitAnimation.js';
 
 export default function DialogueBox() {
   const [messages, setMessages] = useState([]);
@@ -55,34 +56,7 @@ export default function DialogueBox() {
     navigate("/main");
   };
 
-  // 2. 글자 스플릿하는 함수
-  function splitText(text) {
-    return text.split("");
-  }
-
-  // 3. 대사 애니메이션
-  function showTextSequentially(text, setText, interval, callback) {
-    const characters = splitText(text);
-    let currentIndex = 0;
-    let currentText = "";
-
-    function showNextCharacter() {
-      if (currentIndex < characters.length) {
-        currentText += characters[currentIndex];
-        setText(currentText);
-        currentIndex++;
-        setTimeout(showNextCharacter, interval);
-      } else {
-        if (typeof callback === "function") {
-          callback();
-        }
-      }
-    }
-
-    showNextCharacter();
-  }
-
-  // 4. 애니메이션 UseEFfect
+  // 1. text split 애니메이션 UseEFfect - 캐릭터 대사 파트
   useEffect(() => {
     if (messages[messageIndex]) {
       setMessage("");
@@ -100,6 +74,7 @@ export default function DialogueBox() {
     }
   }, [messageIndex]);
 
+  // 2. text split 애니메이션 UseEFfect - 코드 설명(타자치는 효과 구현) 파트
   useEffect(() => {
     if (messages[messageIndex]) {
       if (
@@ -123,7 +98,7 @@ export default function DialogueBox() {
     }
   }, [messageIndex]);
 
-  // 5. 초기 랜더링
+  // 3. 초기 랜더링
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     const nextStoryId = localStorage.getItem("nextStoryId");
@@ -199,7 +174,7 @@ export default function DialogueBox() {
     setModalLevelOpen(true);
   };
 
-  // 7. NextMessage 핸들링
+  // 4. NextMessage 핸들링
   const handleNextMessage = () => {
     const audio = new Audio("/NextButton2.wav");
     audio.play();
@@ -278,14 +253,14 @@ export default function DialogueBox() {
     }
   };
 
-  // 8. 코드창 엔터키 인식 함수
+  // 5. 코드창 엔터키 인식 함수
   const handleInputEnter = (e) => {
     const inputValue = e.target.value;
     const formattedCode = inputValue.replace(/\n/g, "\\n");
     setUserInput(formattedCode);
   };
 
-  // 9. 코드 실행 함수
+  // 6. 코드 실행 함수
   const handleCodeExecute = () => {
     const accessToken = localStorage.getItem("accessToken");
     const storyId = localStorage.getItem("nextStoryId");
@@ -325,7 +300,7 @@ export default function DialogueBox() {
     setIsCorrect(false);
   };
 
-  // 10. 난이도 선택 시 문제를 보여주는 함수
+  // 7. 난이도 선택 시 문제를 보여주는 함수
   const handleModalCode = (level) => {
     setModalLevelOpen(false);
 
@@ -369,7 +344,7 @@ export default function DialogueBox() {
     });
   };
 
-  // 11. 정답일 때 애니메이션 실행 함수
+  // 8. 정답일 때 애니메이션 실행 함수
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas && isCorrect) {
@@ -449,7 +424,7 @@ export default function DialogueBox() {
     }
   }, [isCorrect]);
 
-  // 12. 힌트 공개 여부에 대한 함수
+  // 9. 힌트 공개 여부에 대한 함수
   const handleHintOpen = () => {
     if (hintOpen == false) {
       setHintOpen(true);
