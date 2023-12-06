@@ -29,76 +29,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import "../../assets/fonts/Font.css";
-
-// 1. 스토리 갱신
-const fetchStory = (storyId, accessToken) => {
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  };
-
-  return fetch(`http://3.37.164.99/api/story/${storyId}`, requestOptions)
-    .then((response) => response.json())
-    .then((data) => data)
-    .catch((error) => {
-      console.error("스토리 불러오기 오류:", error);
-      throw error;
-    });
-};
-
-// 2. 스토리 Save
-const fetchSave = (nextStoryId, accessToken) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", `Bearer ${accessToken}`);
-  myHeaders.append("Content-Type", "application/json");
-
-  var raw = JSON.stringify({
-    nextStoryId: nextStoryId,
-  });
-
-  const requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow",
-  };
-
-  return fetch(`http://3.37.164.99/api/story/save`, requestOptions)
-    .then((response) => response.json())
-    .then((data) => data)
-    .catch((error) => {
-      console.error("스토리 불러오기 오류:", error);
-      throw error;
-    });
-};
-
-// 3. 챕터 Save
-const fetchChapterSave = (nextChapterId, accessToken) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", `Bearer ${accessToken}`);
-  myHeaders.append("Content-Type", "application/json");
-
-  var raw = JSON.stringify({
-    nextChapterId: nextChapterId,
-  });
-
-  const requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow",
-  };
-
-  return fetch(`http://3.37.164.99/api/chapter/save`, requestOptions)
-    .then((response) => response.json())
-    .then((data) => data)
-    .catch((error) => {
-      console.error("챕터 불러오기 오류:", error);
-      throw error;
-    });
-};
+import { axiosStory, saveStory, axiosChapterSave } from '../../api/axios.js';
 
 export default function DialogueBox() {
   const [messages, setMessages] = useState([]);
@@ -204,7 +135,7 @@ export default function DialogueBox() {
     }
     setAccessToken(token);
 
-    fetchStory(nextStoryId, token)
+    axiosStory(nextStoryId, token)
       .then((data) => {
         const formatId = data.data[0].story.formatId;
         if (formatId === 5) {
@@ -287,18 +218,18 @@ export default function DialogueBox() {
 
       if (currentStoryId && nextStoryId) {
         // 2-1. 스토리 저장 API
-        fetchSave(nextStoryId, accessToken);
+        saveStory(nextStoryId, accessToken);
 
         if (localStorage.getItem("nextStoryId") == 0) {
           const userChapterId = localStorage.getItem("chapterId");
           localStorage.setItem("chapterId", parseInt(userChapterId) + 1);
           const renewalChapterId = localStorage.getItem("chapterId");
-          fetchChapterSave(renewalChapterId, accessToken);
+          axiosChapterSave(renewalChapterId, accessToken);
           window.location.href = "/main";
         }
 
         // 2-2. 스토리 로드 API
-        fetchStory(nextStoryId, accessToken)
+        axiosStory(nextStoryId, accessToken)
           .then((data) => {
             const formatId = data.data[0].story.formatId;
             localStorage.setItem("forematId", formatId);
@@ -412,7 +343,7 @@ export default function DialogueBox() {
     }
     setAccessToken(token);
 
-    fetchStory(nextStoryId, token).then((data) => {
+    axiosStory(nextStoryId, token).then((data) => {
       const formatId = data.data[0].story.formatId;
 
       if (formatId == 4) {
