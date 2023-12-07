@@ -1,3 +1,7 @@
+/**
+ * Created by rla124
+ */
+
 import axios from 'axios';
 
 // 1. 스토리 갱신

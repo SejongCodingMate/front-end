@@ -1,3 +1,7 @@
+/**
+ * Created by rla124
+ */
+
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import "../../assets/animation/Shaking.css";
@@ -56,7 +60,7 @@ export default function DialogueBox() {
     navigate("/main");
   };
 
-  // 1. text split 애니메이션 UseEFfect - 캐릭터 대사 파트
+  // 1. text split 애니메이션 UseEffect - 캐릭터 대사 파트
   useEffect(() => {
     if (messages[messageIndex]) {
       setMessage("");
@@ -74,7 +78,7 @@ export default function DialogueBox() {
     }
   }, [messageIndex]);
 
-  // 2. text split 애니메이션 UseEFfect - 코드 설명(타자치는 효과 구현) 파트
+  // 2. text split 애니메이션 UseEffect - 코드 설명(타자치는 효과 구현) 파트
   useEffect(() => {
     if (messages[messageIndex]) {
       if (
@@ -1047,7 +1051,7 @@ export default function DialogueBox() {
                                 width: "100px",
                                 height: "50px",
                                 border: "none",
-                                transition: "transform 0.3s ease", // transform 속성을 통해 크기 변경을 부드럽게
+                                transition: "transform 0.3s ease", // transform 속성 -> 크기 변경을 부드럽게
                               }}
                               onMouseEnter={(e) => {
                                 e.target.style.filter = "brightness(1.05)"; // 밝기 증가

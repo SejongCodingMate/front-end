@@ -1,3 +1,7 @@
+/**
+ * Created by rla124
+ */
+
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import "../../assets/animation/Shaking.css";
@@ -368,7 +372,7 @@ export default function DialogueBox() {
                       display: "flex",
                       alignItems: "center",
                       flexDirection: "column",
-                      position: "fixed" /* 요소를 고정시킴 */,
+                      position: "fixed" /* 요소 고정 */,
                       bottom: 0 /* 하단에 고정 */,
                       background:
                         "linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.6) 40%, #000 100%)", // 대사창 그라데이션
@@ -446,7 +450,7 @@ export default function DialogueBox() {
                           width: "100px",
                           height: "50px",
                           border: "none",
-                          transition: "transform 0.3s ease", // transform 속성을 통해 크기 변경을 부드럽게
+                        transition: "transform 0.3s ease", // transform 속성 -> 크기 변경을 부드럽게
                         }}
                         onMouseEnter={(e) => {
                           e.target.style.filter = "brightness(1.05)"; // 밝기 증가

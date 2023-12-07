@@ -1,3 +1,7 @@
+/**
+ * Created by rla124
+ */
+
 import React from "react";
 import MissionBox from "../../components/page/MissionBox";
 

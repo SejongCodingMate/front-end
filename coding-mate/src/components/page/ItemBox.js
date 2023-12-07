@@ -1,3 +1,7 @@
+/**
+ * Created by rla124
+ */
+
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import "../../assets/animation/Shaking.css";
@@ -206,7 +210,7 @@ export default function ItemBox() {
               overflow: "hidden",
             }}
           >
-            {/* 백그라운드 이미지를 맨 뒤로 보내기 위해 zIndex를 설정합니다. */}
+            {/* 백그라운드 이미지 zIndex*/}
             <div
               style={{
                 position: "absolute",
@@ -217,7 +221,7 @@ export default function ItemBox() {
                 backgroundImage: `url(${messages[messageIndex].backgroundImage})`,
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "cover",
-                filter: "brightness(70%)", // 배경 이미지에 흐림 처리 및 어둡게 설정
+                filter: "brightness(70%)", // 배경 이미지 흐림 처리 및 어둡게 설정
                 zIndex: "-1",
               }}
             ></div>
@@ -359,7 +363,7 @@ export default function ItemBox() {
                           width: "100px",
                           height: "50px",
                           border: "none",
-                          transition: "transform 0.3s ease", // transform 속성을 통해 크기 변경을 부드럽게 만듭니다
+                          transition: "transform 0.3s ease", // transform 속성 -> 크기 변경을 부드럽게
                         }}
                         onMouseEnter={(e) => {
                           e.target.style.filter = "brightness(1.05)"; // 밝기 증가
